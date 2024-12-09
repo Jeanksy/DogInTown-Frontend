@@ -28,13 +28,11 @@ export default function DogSignUpScreen({ navigation }) {
     if (!dogResiter) {
       navigation.navigate('TabNavigator');
     } else {
-      console.log('yo')
       const response = await fetch(`http://192.168.4.153:3000/users/dog`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userToken: userToken, name: dogName, race: selectedRace, photo: photo, size: dogSize }),
       })
-      const result = response.json();
       navigation.navigate('TabNavigator');
     }
   }
