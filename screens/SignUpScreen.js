@@ -61,7 +61,7 @@ export default function SignUpScreen({ navigation }) {
     emailCheck(),
     isAllGood();
     if (allGood === true) {
-    fetch('http://172.20.10.6:3000/users/inscription', {
+    fetch('https://dog-in-town-backend.vercel.app/users/inscription', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username: username, email: email, password: password, postCode: postCode  }),
