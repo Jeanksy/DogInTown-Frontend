@@ -9,21 +9,26 @@ export default function SignInScreen({ navigation }) {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [emailError, setEmailError] = useState(false);
 
   const handleSignIn = () => {
-    if (EMAIL_REGEX.test(email)) {
-      
-      navigation.navigate('TabNavigator', { screen: MapScreen });
-      setEmail("");
-      setPassword("")
-  
-         } else {
-            setEmailError(true);
-          }
-  }
+   fetch('http://172.20.10.6:3000/users/connection', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ email: email, password: password }),
+		}).then(response => response.json())
+			.then(data => {
+        if (data.result) {
+          console.log(data)
+          // setEmail("");
+          // setPassword("")
+          navigation.navigate('TabNavigator', { screen: 'MapScreen' });
+				}
+			});
+	};
 
-    const handleSignUp = () => {
+
+  const handleSignUp = () => {
+      
       navigation.navigate('SignUp');
     }
 
@@ -56,9 +61,8 @@ export default function SignInScreen({ navigation }) {
             
           <Text style={styles.clickableBtn}>Connexion</Text>
           </TouchableOpacity>
-          {emailError && <Text style={styles.error}>Invalid email address</Text>}
         </View>
-         <TouchableOpacity onPress={() => handleSignUp()} style={styles.signUpBtn} activeOpacity={0.8}>>
+         <TouchableOpacity onPress={() => handleSignUp()} style={styles.signUpBtn} activeOpacity={0.8}>
            <Text style={styles.clickableBtn}>Inscription</Text>
          </TouchableOpacity>
          <StatusBar style="auto" />
