@@ -8,7 +8,7 @@ export default function MapScreen() {
   // etat du input recherches
   const [recherches, setRecherches] = useState('');
   // etat modal
-  const [modalVisible, setModalVisible] = useState(true);
+  const [modalVisible, setModalVisible] = useState(false);
 
     return (
       <View style={styles.container}>
