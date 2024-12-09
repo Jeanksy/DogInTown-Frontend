@@ -16,12 +16,32 @@ import { Picker } from '@react-native-picker/picker';
 
 export default function DogSignUpScreen({ navigation }) {
 
+  const userToken = 'RL01aqaWnQNXi24mX3fPzEIONIMIMx6H';
+  const photo = 'photo.png';
+
   const [dogName, setDogName] = useState('');
+  const [dogSize, setDogSize] = useState('')
   const [selectedRace, setSelectedRace] = useState();
 
   // Fonction pour naviguer vers le Tab menu
-  const handleDogSignup = () => {
-    navigation.navigate('TabNavigator');
+  const handleDogSignup = async (dogResiter) => {
+    if (!dogResiter) {
+      navigation.navigate('TabNavigator');
+    } else {
+      console.log('yo')
+      const response = await fetch(`http://192.168.4.153:3000/users/dog`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userToken: userToken, name: dogName, race: selectedRace, photo: photo, size: dogSize }),
+      })
+      const result = response.json();
+      navigation.navigate('TabNavigator');
+    }
+  }
+
+  //Fonction pour sélectionner la taille du chien et changé la couleur de l'image selectionné
+  const handleDogSize = (size) => {
+    setDogSize(size);
   }
 
   return (
@@ -32,7 +52,7 @@ export default function DogSignUpScreen({ navigation }) {
       <View style={styles.inner}>
         <View style={styles.upperContent}>
           <View style={styles.leaveContainer}>
-            <Pressable onPress={() => handleDogSignup()}>
+            <Pressable onPress={() => handleDogSignup(false)}>
               <View style={styles.textContainer}>
                 <Text style={styles.leaveText}>Plus tard</Text>
               </View>
@@ -69,18 +89,24 @@ export default function DogSignUpScreen({ navigation }) {
             <Text style={styles.dogSizeText}>Taille:</Text>
           </View>
           <View style={styles.dogSizeCardContainer}>
-            <View style={styles.dogSizeCard}>
-              <Image style={styles.imageSmall} source={require('../assets/Images/petit.png')} />
-              <Text>Petit</Text>
-            </View>
-            <View style={styles.dogSizeCard}>
-              <Image style={styles.imageMid} source={require('../assets/Images/moyen.png')} />
-              <Text>Moyen</Text>
-            </View>
-            <View style={styles.dogSizeCard}>
-              <Image style={styles.imageBig} source={require('../assets/Images/grand.png')} />
-              <Text>Grand</Text>
-            </View>
+            <Pressable style={styles.dogSizeCard} onPress={() => handleDogSize('petit')}>
+              <View style={styles.dogSizeCard}>
+                <Image style={styles.imageSmall} source={require('../assets/Images/petit.png')} />
+                <Text>Petit</Text>
+              </View>
+            </Pressable>
+            <Pressable style={styles.dogSizeCard} onPress={() => handleDogSize('moyen')}>
+              <View style={styles.dogSizeCard}>
+                <Image style={styles.imageMid} source={require('../assets/Images/moyen.png')} />
+                <Text>Moyen</Text>
+              </View>
+            </Pressable>
+            <Pressable style={styles.dogSizeCard} onPress={() => handleDogSize('grand')}>
+              <View style={styles.dogSizeCard}>
+                <Image style={styles.imageBig} source={require('../assets/Images/grand.png')} />
+                <Text>Grand</Text>
+              </View>
+            </Pressable>
           </View>
         </View>
         <View style={styles.dogPicture}>
@@ -88,7 +114,7 @@ export default function DogSignUpScreen({ navigation }) {
           <View style={styles.dogAvatar}>
             <FontAwesome name='camera' size={40} color='#A23D42' />
           </View>
-          <TouchableOpacity style={styles.button} onPress={() => handleDogSignup()}>
+          <TouchableOpacity style={styles.button} onPress={() => handleDogSignup(true)}>
             <Text style={styles.buttonText}>OK</Text>
           </TouchableOpacity>
         </View>
@@ -101,7 +127,6 @@ export default function DogSignUpScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
   },
   inner: {
     flex: 1,
@@ -166,7 +191,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   dogSize: {
-    height: 120,
+    height: 130,
     // backgroundColor: 'orange',
     marginVertical: 10,
   },

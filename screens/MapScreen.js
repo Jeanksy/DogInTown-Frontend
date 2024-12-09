@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { Button, StyleSheet, Text, View, TouchableOpacity, Image, TextInput, Modal } from 'react-native';
+import { Button, StyleSheet, Text, View, TouchableOpacity, Image, TextInput, Modal, Alert } from 'react-native';
 import { useState } from 'react';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
