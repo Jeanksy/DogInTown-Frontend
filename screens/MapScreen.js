@@ -10,8 +10,6 @@ export default function MapScreen() {
   // etat modal
   const [modalVisible, setModalVisible] = useState(true);
 
-// <FontAwesomeIcon icon={faMagnifyingGlass} />
-
     return (
       <View style={styles.container}>
       <View style={styles.blocRecherches}>
