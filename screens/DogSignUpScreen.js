@@ -32,7 +32,7 @@ export default function DogSignUpScreen({ navigation }) {
 	// Permission hooks
 	const [hasPermission, setHasPermission] = useState(false);
 	const [facing, setFacing] = useState("back");
-	const [flashStatus, setFlashStatus] = useState("off");
+	const [flashStatus, setFlashStatus] = useState(false);
 
   
   const handlePhoto = () => {
@@ -46,7 +46,7 @@ export default function DogSignUpScreen({ navigation }) {
 	};
 
 	const toggleFlashStatus = () => {
-		setFlashStatus((current) => (current === "off" ? "on" : "off"));
+		setFlashStatus((current) => (current === false ? true : false));
 	};
 
 	// Function to take a picture and save it to the reducer store
@@ -65,8 +65,8 @@ export default function DogSignUpScreen({ navigation }) {
   const user = useSelector((state) => state.user.value.username);
 
   // Fonction pour naviguer vers le Tab menu
-  const handleDogSignup = async (dogResiter) => {
-    if (!dogResiter) {
+  const handleDogSignup = async (dogRegister) => {
+    if (!dogRegister) {
       navigation.navigate('TabNavigator');
     } else {
       const response = await fetch(`https://dog-in-town-backend.vercel.app/users/dog`, {

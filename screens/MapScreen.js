@@ -1,7 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 import {KeyboardAvoidingView, Platform, Dimensions, Pressable,  StyleSheet, Text, View, TouchableOpacity, Image, TextInput, Modal, Alert } from 'react-native';
 import { useState, useEffect } from 'react';
-import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import MapView, { Marker, } from 'react-native-maps';
 import * as Location from 'expo-location';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
@@ -71,7 +71,7 @@ export default function MapScreen() {
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
-      <MapView provider={PROVIDER_GOOGLE} mapType="standard" style={styles.map} initialRegion={{
+      <MapView mapType="standard" style={styles.map} initialRegion={{
         latitude: 45.75,
         longitude: 4.85,
         latitudeDelta: 1.0,
