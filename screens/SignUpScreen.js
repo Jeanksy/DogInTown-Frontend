@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useDispatch, useSelector } from 'react-redux';
 import { login, logout } from '../reducers/user';
 import { StatusBar } from "expo-status-bar";
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {
 	StyleSheet,
 	Text,
@@ -9,7 +10,11 @@ import {
 	TouchableOpacity,
 	KeyboardAvoidingView,
 	TextInput,
+	Image,
 } from "react-native";
+// picker pour telechargement photos depuis téléphone
+import * as ImagePicker from 'expo-image-picker';
+
 
 // Regex email only for input email
 const EMAIL_REGEX =
@@ -36,6 +41,26 @@ export default function SignUpScreen({ navigation }) {
 	// REDUCER
 	const dispatch = useDispatch();
 	const user = useSelector((state) => state.user.value);
+
+	//PICKER telechargement d'images depuis téléphone
+	const placeHolderImage = require('../assets/Images/background.jpg')
+	const [image, setImage] = useState(null);
+	const pickImage = async () => {
+		// No permissions request is necessary for launching the image library
+		let result = await ImagePicker.launchImageLibraryAsync({
+			mediaTypes: ['images'],
+			allowsEditing: true,
+			aspect: [4, 3],
+			quality: 1,
+		});
+	
+		console.log(result);
+		console.log('icii image', image)
+	
+		if (!result.canceled) {
+			setImage(result.assets[0].uri);
+		}
+	};
 
 	// check if passwords are empty, doesn't match or match
 	const passwordCheck = () => {
@@ -92,8 +117,8 @@ export default function SignUpScreen({ navigation }) {
 
 	return (
 		<KeyboardAvoidingView style={styles.container}>
-			<Text style={styles.head}>Inscrivez-vous</Text>
 			<View style={styles.connexionCont}>
+				<Text style={styles.head}>Inscrivez-vous</Text>
 				<TextInput
 					placeholder="Username"
 					onChangeText={(value) => setUserName(value)}
@@ -143,6 +168,16 @@ export default function SignUpScreen({ navigation }) {
 				)}
 				{postCodeError && <Text style={styles.error}>Invalid postal code</Text>}
 			</View>
+			<View style={styles.pictureConteneur}>
+				<TouchableOpacity>
+					<FontAwesome name='camera' size={38} color='#A23D42' />
+				</TouchableOpacity>
+ 				<Image style={styles.avatar} source={{uri : image || placeHolderImage}}/>
+				<TouchableOpacity onPress={pickImage}>
+					<FontAwesome name='download' size={40} color='#A23D42'/>
+				</TouchableOpacity>
+			</View>
+			<Text style={styles.option}>(photo optionnelle)</Text>
 			<TouchableOpacity
 				onPress={() => {
 					handleSignUp();
@@ -157,27 +192,21 @@ export default function SignUpScreen({ navigation }) {
 	);
 }
 
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     backgroundColor: '#fff',
-//     alignItems: 'center',
-//     justifyContent: 'center',
-//   },
+
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		backgroundColor: "#97C7DE",
 		alignItems: "center",
-		justifyContent: "space-evenly",
+		justifyContent: 'center',
 	},
 	head: {
 		color: "#fff",
 		fontSize: 40,
+		marginBottom: '2%',
 	},
 	connexionCont: {
-		marginTop: "-15%",
-		flex: 0,
+		flex: 4,
 		gap: 10,
 		justifyContent: "center",
 		alignItems: "center",
@@ -223,7 +252,6 @@ const styles = StyleSheet.create({
 	signUpBtn: {
 		flex: 0,
 		flexDirection: "row",
-		marginTop: "-15%",
 		alignItems: "center",
 		justifyContent: "center",
 		backgroundColor: "#A23D42",
@@ -236,6 +264,8 @@ const styles = StyleSheet.create({
 		shadowRadius: 1,
 		shadowOffset: { width: 1, height: 4 },
 		borderWidth: 0,
+		marginBottom: '10%',
+		marginTop: '5%',
 	},
 	textButton: {
 		fontFamily: "Futura",
@@ -247,4 +277,31 @@ const styles = StyleSheet.create({
 		marginTop: 10,
 		color: "red",
 	},
+// bouton ajouter photo
+	pictureConteneur: {
+		height: '15%',
+		width: '80%',
+		alignItems: 'center',
+		justifyContent: 'center',
+		gap: 20,
+		flex: 1,
+		flexDirection: 'row',
+		marginBottom: '2%',
+	},
+	avatar: {
+		height: 130,
+		width: 130,
+		borderRadius: '100%',
+		justifyContent: 'center',
+		alignItems: 'center',
+		borderWidth: 3,
+		borderColor: '#A23D42',
+		backgroundColor: 'white',
+	},
+	option: {
+		alignSelf: 'left',
+		color: '#525252',
+		marginLeft: '12%',
+		
+	}
 });

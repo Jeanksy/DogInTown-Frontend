@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { login } from '../reducers/user';
+import { login, logout } from '../reducers/user';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, TextInput , View, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
 
@@ -36,6 +36,7 @@ export default function SignInScreen({ navigation }) {
       
       navigation.navigate('SignUp');
     }
+
 
 
 
