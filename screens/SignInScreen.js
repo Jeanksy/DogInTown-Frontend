@@ -10,6 +10,10 @@ export default function SignInScreen({ navigation }) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
+  	// REDUCER *******
+	const dispatch = useDispatch();
+	const user = useSelector((state) => state.user.value);
+
   const handleSignIn = () => {
    fetch('http://192.168.1.60:3000/users/connection', {
 			method: 'POST',
