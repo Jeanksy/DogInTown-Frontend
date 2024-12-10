@@ -1,4 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
+import { CameraView, Camera } from 'expo-camera';
 import {
   StyleSheet,
   Text,
@@ -8,22 +9,57 @@ import {
   Platform,
   KeyboardAvoidingView,
   Image,
-  Pressable
+  Pressable,
+  Modal,
+  SafeAreaView
 } from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { login, logout } from '../reducers/user';
 import { Picker } from '@react-native-picker/picker';
+import { useIsFocused } from "@react-navigation/native";
 
 export default function DogSignUpScreen({ navigation }) {
 
   const userToken = 'RL01aqaWnQNXi24mX3fPzEIONIMIMx6H';
+
   const photo = 'photo.png';
+  	// Reference to the camera
+  const cameraRef = useRef(null);
+  const isFocused = useIsFocused();
+
+	// Permission hooks
+	const [hasPermission, setHasPermission] = useState(false);
+	const [facing, setFacing] = useState("back");
+	const [flashStatus, setFlashStatus] = useState("off");
+
+  
+  const handlePhoto = () => {
+    setModalIsVisible(true)
+
+  };
+
+	// Functions to toggle camera facing and flash status
+	const toggleCameraFacing = () => {
+		setFacing((current) => (current === "back" ? "front" : "back"));
+	};
+
+	const toggleFlashStatus = () => {
+		setFlashStatus((current) => (current === "off" ? "on" : "off"));
+	};
+
+	// Function to take a picture and save it to the reducer store
+  const takePicture = async () => {
+    const photo = await cameraRef.current?.takePictureAsync({ quality: 0.3 });
+    (photo)
+  }
+
 
   const [dogName, setDogName] = useState('');
   const [dogSize, setDogSize] = useState(false)
   const [selectedRace, setSelectedRace] = useState();
+  const [modalIsVisible, setModalIsVisible] = useState(false);
 
   //REDUCER
   const user = useSelector((state) => state.user.value.username);
@@ -42,6 +78,17 @@ export default function DogSignUpScreen({ navigation }) {
     }
   }
 
+  useEffect(() => {
+    (async () => {
+      const result = await Camera.requestCameraPermissionsAsync();
+      setHasPermission(result && result?.status === "granted");
+    })();
+  }, []);
+  // Conditions to prevent more than 1 camera component to run in the bg
+  if (!hasPermission || !isFocused) {
+    return <View />;
+  }
+
   //Fonction pour sélectionner la taille du chien et changé la couleur de l'image selectionné
   const handleDogSize = () => {
     if(dogSize === true) {
@@ -58,6 +105,40 @@ export default function DogSignUpScreen({ navigation }) {
     >
       <View style={styles.inner}>
         <View style={styles.upperContent}>
+        <Modal
+          animationType="fade"
+          transparent={true}
+          visible={modalIsVisible}
+          onRequestClose={() => {
+            setModalIsVisible(!modalIsVisible);
+            }}>
+          <View style={styles.centeredView}>
+              <View style={styles.modalView}>
+              <CameraView style={styles.camera} facing={facing} enableTorch={flashStatus} ref={(ref) => (cameraRef.current = ref)}>
+			          {/* Top container with the setting buttons */}
+
+	          		<SafeAreaView style={styles.settingContainer}>
+	          			<TouchableOpacity style={styles.settingButton} onPress={toggleFlashStatus}>
+	          				<FontAwesome name="flash" size={25} color={flashStatus === "on" ? "#e8be4b" : "white"} />
+	          			</TouchableOpacity>
+	          			<TouchableOpacity style={styles.settingButton} onPress={toggleCameraFacing}>
+	          				<FontAwesome name="rotate-right" size={25} color="white" />
+	          			</TouchableOpacity>
+	          		</SafeAreaView>
+
+	          		{/* Bottom container with the snap button */}
+	          		<View style={styles.snapContainer}>
+	          			<TouchableOpacity style={styles.snapButton} onPress={takePicture}>
+	          				<FontAwesome name="circle-thin" size={95} color="white" />
+	          			</TouchableOpacity>
+	          		</View>
+	          	</CameraView>
+                <TouchableOpacity style={styles.closeModal} onPress={() => setModalIsVisible(false)}>
+                  <FontAwesome name='times' size={40} color='#A23D42' />
+                </TouchableOpacity>
+              </View>
+          </View>
+        </Modal>
           <View style={styles.leaveContainer}>
             <Pressable onPress={() => handleDogSignup(false)}>
               <View style={styles.textContainer}>
@@ -119,7 +200,9 @@ export default function DogSignUpScreen({ navigation }) {
         <View style={styles.dogPicture}>
           <Text style={styles.dogPictureText}>Voulez-vous rajouter une photo ?</Text>
           <View style={styles.dogAvatar}>
-            <FontAwesome name='camera' size={40} color='#A23D42' />
+            <TouchableOpacity style={styles.photoPressable} onPress={() => handlePhoto()}>
+              <FontAwesome name='camera' size={40} color='#A23D42' />
+            </TouchableOpacity>
           </View>
           <TouchableOpacity style={styles.button} onPress={() => handleDogSignup(true)}>
             <Text style={styles.buttonText}>OK</Text>
@@ -272,5 +355,77 @@ const styles = StyleSheet.create({
     color: '#5B1A10',
     fontSize: 18,
     // fontWeight: 600,
-  }
+  },
+  photoPressable: {
+    backgroundColor: 'red',
+    width: '100%',
+    height: '100%',
+    borderRadius: 100,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  // MODAL STYLE
+  centeredView: {
+    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalView: {
+    flex: 0,
+    margin: 20,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 35,
+    height: '70%',
+    width: '90%',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  button: {
+    borderRadius: 10,
+    padding: 10,
+    elevation: 2,
+    width: '100%',
+    backgroundColor: '#e66351'
+  },
+  // Camera 
+  camera: {
+    width: '100%',
+    height: '100%',
+    justifyContent: "space-between",
+	},
+	settingContainer: {
+		flexDirection: "row",
+		justifyContent: "space-between",
+		alignItems: "center",
+		marginHorizontal: 20,
+	},
+	settingButton: {
+		width: 40,
+		aspectRatio: 1,
+		alignItems: "center",
+		justifyContent: "center",
+	},
+	snapContainer: {
+		flexDirection: "row",
+		justifyContent: "center",
+		alignItems: "center",
+		marginBottom: 20,
+	},
+	snapButton: {
+		width: 100,
+		aspectRatio: 1,
+		alignItems: "center",
+		justifyContent: "center",
+	},
+ 
 });
