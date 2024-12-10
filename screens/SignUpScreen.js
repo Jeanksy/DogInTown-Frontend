@@ -172,7 +172,7 @@ export default function SignUpScreen({ navigation }) {
 				<TouchableOpacity>
 					<FontAwesome name='camera' size={38} color='#A23D42' />
 				</TouchableOpacity>
- 				<Image style={styles.avatar} source={{uri : image || placeHolderImage}}/>
+ 				<Image style={styles.avatar} source={{uri : image}}/>
 				<TouchableOpacity onPress={pickImage}>
 					<FontAwesome name='download' size={40} color='#A23D42'/>
 				</TouchableOpacity>
@@ -291,7 +291,7 @@ const styles = StyleSheet.create({
 	avatar: {
 		height: 130,
 		width: 130,
-		borderRadius: '100%',
+		borderRadius: 100,
 		justifyContent: 'center',
 		alignItems: 'center',
 		borderWidth: 3,
