@@ -64,7 +64,7 @@ export default function SignUpScreen({ navigation }) {
 	//on press check if email is valid email structure, if both passwords match and post code is valid
 	const handleSignUp = () => {
 		if (isFormValid()) {
-			fetch("http://192.168.1.60:3000/users/inscription", {
+			fetch("https://dog-in-town-backend.vercel.app/users/inscription", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({
@@ -77,7 +77,6 @@ export default function SignUpScreen({ navigation }) {
 			.then((response) => response.json())
 			.then((data) => {
 				if (data.result) {
-					console.log(data);
 					navigation.navigate("DogSignUp");
 				}
 			});

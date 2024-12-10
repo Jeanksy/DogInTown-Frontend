@@ -15,7 +15,7 @@ export default function SignInScreen({ navigation }) {
 	const user = useSelector((state) => state.user.value);
 
   const handleSignIn = () => {
-   fetch('http://192.168.1.60:3000/users/connection', {
+   fetch('https://dog-in-town-backend.vercel.app/users/connection', {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({ email: email, password: password }),
