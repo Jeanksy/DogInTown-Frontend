@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import {
 	StyleSheet,
@@ -13,76 +13,82 @@ import {
 const EMAIL_REGEX =
 	/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
+const POST_CODE_REGEX = /^[0-9]{5}$/;
+
+//To set password with different status/values
+const PASSWORD_UNSET = -1;
+const PASSWORD_EMPTY = 0;
+const PASSWORD_MISMATCH = 1;
+const PASSWORD_MATCH = 2;
+
 export default function SignUpScreen({ navigation }) {
-  const [email, setEmail] = useState("");
-  const [username, setUserName] = useState("");
-  const [postCode, setPostCode] = useState("");
+	const [email, setEmail] = useState("");
+	const [username, setUserName] = useState("");
+	const [postCode, setPostCode] = useState("");
 	const [password, setPassword] = useState("");
 	const [passwordVal, setPasswordVal] = useState("");
 	const [emailError, setEmailError] = useState(false);
-	const [passwordError, setPasswordError] = useState(false);
-	const [emailOk, setEmailok] = useState(false);
-	const [passOk, setPassok] = useState(false);
-	const [allGood, setAllGood] = useState(false);
+	const [postCodeError, setPostCodeError] = useState(false);
+	const [passwordStatus, setpasswordStatus] = useState(PASSWORD_UNSET);
 
-  
-	const passCheck = () => {
-		if (
-			password !== passwordVal ||
-			password === null ||
-			password !== passwordVal ||
-			passwordVal === null
-		) {
-			setPasswordError(true);
+
+	// check if passwords are empty, doesn't match or match
+	const passwordCheck = () => {
+		if (password === "" || passwordVal === "") {
+			setpasswordStatus(PASSWORD_EMPTY);
+		} else if (password !== passwordVal) {
+			setpasswordStatus(PASSWORD_MISMATCH);
 		} else {
-			setPassok(true);
-			setPasswordError(false);
+			setpasswordStatus(PASSWORD_MATCH);
 		}
 	};
 
+	//check if postCode is 5 digits
+	const postCodeCheck = () => {
+		setPostCodeError(!POST_CODE_REGEX.test(postCode));
+	};
+
+	//check is email format is valid
 	const emailCheck = () => {
-		if (EMAIL_REGEX.test(email)) {
-			setEmailok(true);
-			setEmailError(false);
-		} else {
-			setEmailError(true);
+		setEmailError(!EMAIL_REGEX.test(email));
+	};
+
+	// check if all conditions above are validated
+	const isFormValid = () => {
+		passwordCheck();
+		emailCheck();
+		postCodeCheck();
+		return emailError === false && passwordStatus === PASSWORD_MATCH && postCodeError === false;
+	};
+
+	//on press check if email is valid email structure, if both passwords match and post code is valid
+	const handleSignUp = () => {
+		if (isFormValid()) {
+			fetch("http://192.168.1.60:3000/users/inscription", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({
+					username: username,
+					email: email,
+					password: password,
+					postCode: postCode,
+				}),
+			})
+			.then((response) => response.json())
+			.then((data) => {
+				if (data.result) {
+					console.log(data);
+					navigation.navigate("DogSignUp");
+				}
+			});
 		}
-  };
-  
-  const isAllGood = () => {
-    if (emailOk === true && passOk === true) {
-      setAllGood(true);
-    }
-  };
-
-	//on press check if email is valid email structure and if both passwords match
-  const handleSignUp = () => {
-    passCheck(),
-    emailCheck(),
-    isAllGood();
-    if (allGood === true) {
-    fetch('https://dog-in-town-backend.vercel.app/users/inscription', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username: username, email: email, password: password, postCode: postCode  }),
-    }).then(response => response.json())
-      .then(data => {
-        if (data.result) {
-          console.log(data)
-          
-            navigation.navigate("DogSignUp");
-          }
-        })
-      };
-  }
-
-		
+	};
 
 	return (
 		<KeyboardAvoidingView style={styles.container}>
 			<Text style={styles.head}>Inscrivez-vous</Text>
-      <View style={styles.connexionCont}>
-        <TextInput
+			<View style={styles.connexionCont}>
+				<TextInput
 					placeholder="Username"
 					onChangeText={(value) => setUserName(value)}
 					value={username}
@@ -95,6 +101,7 @@ export default function SignUpScreen({ navigation }) {
 					textContentType="emailAddress" // https://reactnative.dev/docs/textinput#textcontenttype-ios
 					autoComplete="email" // https://reactnative.dev/docs/textinput#autocomplete-android
 					onChangeText={(value) => setEmail(value)}
+					onBlur={() => emailCheck()}
 					value={email}
 					style={styles.input}
 				/>
@@ -102,6 +109,7 @@ export default function SignUpScreen({ navigation }) {
 					placeholder="Mot de passe"
 					autoCapitalize="none" // https://reactnative.dev/docs/textinput#autocapitalize
 					onChangeText={(value) => setPassword(value)}
+					onBlur={() => passwordCheck()}
 					value={password}
 					style={styles.input}
 				/>
@@ -109,24 +117,29 @@ export default function SignUpScreen({ navigation }) {
 					placeholder="Validation mot de passe"
 					autoCapitalize="none" // https://reactnative.dev/docs/textinput#autocapitalize
 					onChangeText={(value) => setPasswordVal(value)}
+					onBlur={() => passwordCheck()}
 					value={passwordVal}
 					style={styles.input}
-        />
-        <TextInput
+				/>
+				<TextInput
 					placeholder="Code postal"
 					onChangeText={(value) => setPostCode(value)}
+					onBlur={() => postCodeCheck()}
 					value={postCode}
 					style={styles.input}
 				/>
 				{emailError && <Text style={styles.error}>Invalid email address</Text>}
-				{passwordError && (
+				{passwordStatus === PASSWORD_MISMATCH && (
 					<Text style={styles.error}>Passwords don't match</Text>
-        )}
-        
+				)}
+				{passwordStatus === PASSWORD_EMPTY && (
+					<Text style={styles.error}>Passwords required</Text>
+				)}
+				{postCodeError && <Text style={styles.error}>Invalid postal code</Text>}
 			</View>
 			<TouchableOpacity
 				onPress={() => {
-				handleSignUp()
+					handleSignUp();
 				}}
 				style={styles.signUpBtn}
 				activeOpacity={0.8}
