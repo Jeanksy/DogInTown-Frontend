@@ -28,7 +28,7 @@ export default function DogSignUpScreen({ navigation }) {
     if (!dogResiter) {
       navigation.navigate('TabNavigator');
     } else {
-      const response = await fetch(`http://192.168.4.153:3000/users/dog`, {
+      const response = await fetch(`https://dog-in-town-backend.vercel.app/users/dog`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userToken: userToken, name: dogName, race: selectedRace, photo: photo, size: dogSize }),

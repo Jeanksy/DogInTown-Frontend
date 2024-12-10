@@ -61,18 +61,18 @@ const TabNavigator = () => {
 export default function App() {
   return (
     <Provider store={store}>
-    <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="Home" component={HomeScreen}/>
-        <Stack.Screen name="SignIn" component={SignInScreen}/>
-        <Stack.Screen name="SignUp" component={SignUpScreen}/>
-        <Stack.Screen name="DogSignUp" component={DogSignUpScreen}/>
-        <Stack.Screen name="DogsInfo" component={DogsInfoScreen}/>
-        <Stack.Screen name="User" component={UserScreen}/>
-        <Stack.Screen name="Contact" component={ContactScreen}/>
-        <Stack.Screen name="TabNavigator" component={TabNavigator} />
-      </Stack.Navigator>
-    </NavigationContainer>
+      <NavigationContainer>
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="Home" component={HomeScreen} />
+          <Stack.Screen name="SignIn" component={SignInScreen} />
+          <Stack.Screen name="SignUp" component={SignUpScreen} />
+          <Stack.Screen name="DogSignUp" component={DogSignUpScreen} />
+          <Stack.Screen name="DogsInfo" component={DogsInfoScreen} />
+          <Stack.Screen name="User" component={UserScreen} />
+          <Stack.Screen name="Contact" component={ContactScreen} />
+          <Stack.Screen name="TabNavigator" component={TabNavigator} />
+        </Stack.Navigator>
+      </NavigationContainer>
     </Provider>
   );
 }
