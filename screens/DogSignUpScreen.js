@@ -22,7 +22,7 @@ export default function DogSignUpScreen({ navigation }) {
   const photo = 'photo.png';
 
   const [dogName, setDogName] = useState('');
-  const [dogSize, setDogSize] = useState(false)
+  const [dogSize, setDogSize] = useState('');
   const [selectedRace, setSelectedRace] = useState();
 
   //REDUCER
@@ -43,12 +43,8 @@ export default function DogSignUpScreen({ navigation }) {
   }
 
   //Fonction pour sélectionner la taille du chien et changé la couleur de l'image selectionné
-  const handleDogSize = () => {
-    if(dogSize === true) {
-      setDogSize(false)
-    } else {
-      setDogSize(true)
-    }
+  const handleDogSize = (size) => {
+    setDogSize(size);
   }
 
   return (
@@ -104,7 +100,7 @@ export default function DogSignUpScreen({ navigation }) {
             </Pressable>
             <Pressable style={styles.dogSizeCard} onPress={() => handleDogSize('moyen')}>
               <View style={styles.dogSizeCard}>
-                <Image style={styles.imageMid} source={dogSize ? require('../assets/Images/chien-qui-court.jaune.png') : require('../assets/Images/moyen.png')} />
+                <Image style={styles.imageMid} source={require('../assets/Images/moyen.png')} />
                 <Text>Moyen</Text>
               </View>
             </Pressable>
