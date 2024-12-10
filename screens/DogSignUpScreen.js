@@ -12,6 +12,8 @@ import {
 } from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { login, logout } from '../reducers/user';
 import { Picker } from '@react-native-picker/picker';
 
 export default function DogSignUpScreen({ navigation }) {
@@ -20,8 +22,11 @@ export default function DogSignUpScreen({ navigation }) {
   const photo = 'photo.png';
 
   const [dogName, setDogName] = useState('');
-  const [dogSize, setDogSize] = useState('')
+  const [dogSize, setDogSize] = useState(false)
   const [selectedRace, setSelectedRace] = useState();
+
+  //REDUCER
+  const user = useSelector((state) => state.user.value.username);
 
   // Fonction pour naviguer vers le Tab menu
   const handleDogSignup = async (dogResiter) => {
@@ -38,8 +43,12 @@ export default function DogSignUpScreen({ navigation }) {
   }
 
   //Fonction pour sélectionner la taille du chien et changé la couleur de l'image selectionné
-  const handleDogSize = (size) => {
-    setDogSize(size);
+  const handleDogSize = () => {
+    if(dogSize === true) {
+      setDogSize(false)
+    } else {
+      setDogSize(true)
+    }
   }
 
   return (
@@ -57,7 +66,7 @@ export default function DogSignUpScreen({ navigation }) {
             </Pressable>
           </View>
           <View style={styles.titleContainer}>
-            <Text style={styles.title}>Et si vous nous parliez de votre chien ?</Text>
+            <Text style={styles.title}>Bonjour {user}, et si vous nous parliez de votre chien ?</Text>
           </View>
         </View>
         <View style={styles.dogsInfo}>
@@ -95,7 +104,7 @@ export default function DogSignUpScreen({ navigation }) {
             </Pressable>
             <Pressable style={styles.dogSizeCard} onPress={() => handleDogSize('moyen')}>
               <View style={styles.dogSizeCard}>
-                <Image style={styles.imageMid} source={require('../assets/Images/moyen.png')} />
+                <Image style={styles.imageMid} source={dogSize ? require('../assets/Images/chien-qui-court.jaune.png') : require('../assets/Images/moyen.png')} />
                 <Text>Moyen</Text>
               </View>
             </Pressable>

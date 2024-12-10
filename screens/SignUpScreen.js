@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { useDispatch, useSelector } from 'react-redux';
+import { login, logout } from '../reducers/user';
 import { StatusBar } from "expo-status-bar";
 import {
 	StyleSheet,
@@ -31,6 +33,9 @@ export default function SignUpScreen({ navigation }) {
 	const [postCodeError, setPostCodeError] = useState(false);
 	const [passwordStatus, setpasswordStatus] = useState(PASSWORD_UNSET);
 
+	// REDUCER
+	const dispatch = useDispatch();
+	const user = useSelector((state) => state.user.value);
 
 	// check if passwords are empty, doesn't match or match
 	const passwordCheck = () => {
@@ -78,6 +83,8 @@ export default function SignUpScreen({ navigation }) {
 			.then((data) => {
 				if (data.result) {
 					navigation.navigate("DogSignUp");
+					dispatch(login({username: username, token: data.token}));
+					console.log('ici user', user)
 				}
 			});
 		}

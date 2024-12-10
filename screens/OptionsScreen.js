@@ -1,8 +1,17 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, TouchableOpacity, Image } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Image, Modal } from 'react-native';
+import { logout } from '../reducers/user';
+import React, { useState} from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 export default function OptionsScreen({navigation}) {
+
+  // REDUCER
+	const dispatch = useDispatch();
+	const user = useSelector((state) => state.user.value);
+  // etat modal
+  const [modalVisible, setModalVisible] = useState(false);
 
   const handleDog = () => {
     navigation.navigate('DogsInfo');
@@ -17,30 +26,55 @@ export default function OptionsScreen({navigation}) {
   }
 
   const handleLogout = () => {
-    navigation.navigate('SignIn');
+    setModalVisible(true)
   }
 
+  const handleDeconnection = () => {
+    dispatch(logout(user))
+    navigation.navigate('SignIn');
+    console.log(user.token)
+  }
+
+  
 
   return (
     <View style={styles.container}>
-      <Text style={styles.titre}>Options</Text>
-      <TouchableOpacity style={styles.blocSelection1} onPress={() => handleDog()}>
-        <Image style={styles.image} source={require('../assets/Images/moyen.png')} />
-        <Text>Votre/vos chien(s)</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.blocSelection2} onPress={() => handleUser()}>
-        <FontAwesome name='gears' color='white' size={50}/>
-        <Text>Parametres du compte</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.blocSelection3} onPress={() => handleContact()}>
-        <FontAwesome name='envelope' color='#97C7DE' size={50}/>
-        <Text>Nous contacter</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.blocSelection4} onPress={() => handleLogout()}>
-        <FontAwesome name='go' color='white' size={50}/>
-        <Text>Deconnection</Text>
-      </TouchableOpacity>
-      <StatusBar style="auto" />
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => {
+            Alert.alert('Modal has been closed.');
+            setModalVisible(!modalVisible);
+          }}> 
+            <View style={styles.modalConteneur}>
+                <View style={styles.modalLogout}>
+                    <Image style={styles.imagemodal} source={require('../assets/Images/Frame8.png')}/>
+                    <Text style={styles.textedeco}>Souhaitez-vous vraiment vous deconnecter ?</Text>
+                    <TouchableOpacity style={styles.ouiB} onPress={() => handleDeconnection()}><Text style={styles.texteBlanc}>Oui</Text></TouchableOpacity>
+                    <TouchableOpacity style={styles.nonB} onPress={() => setModalVisible(false)}><Text style={styles.texteB}>Non</Text></TouchableOpacity>
+                </View>
+            </View>
+        </Modal>
+
+        <Text style={styles.titre}>Options</Text>
+        <TouchableOpacity style={styles.blocSelection1} onPress={() => handleDog()}>
+            <Image style={styles.image} source={require('../assets/Images/moyen.png')} />
+            <Text>Votre/vos chien(s)</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.blocSelection2} onPress={() => handleUser()}>
+            <FontAwesome name='gears' color='white' size={50}/>
+            <Text>Parametres du compte</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.blocSelection3} onPress={() => handleContact()}>
+            <FontAwesome name='envelope' color='#97C7DE' size={50}/>
+            <Text>Nous contacter</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.blocSelection4} onPress={() => handleLogout()}>
+            <Image style={styles.image} source={require('../assets/Images/Frame8.png')}/>
+            <Text>Deconnection</Text>
+        </TouchableOpacity>
+        <StatusBar style="auto" />
     </View>
   );
 }
@@ -108,5 +142,59 @@ const styles = StyleSheet.create({
     width: '25%',
     height: '65%',
     marginRight: '10%',
+  },
+  ////// Modal ////
+  modalConteneur: {
+    flex: 1,
+    height:'100%',
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: '20%',
+    marginBottom: '2%',
+  },
+  modalLogout: {
+    backgroundColor: '#A23D43',
+    borderRadius: 30,
+    height: '76%',
+    width: '80%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingBottom: '10%',
+  },
+  textedeco: {
+    color: 'white',
+    fontSize: 25,
+    textAlign: 'center',
+    marginBottom: '5%',
+  },
+  ouiB: {
+    width: '30%',
+    height: '10%',
+    marginBottom: '5%',
+    borderWidth: 3,
+    borderColor: "white",
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  nonB: {
+    width: '30%',
+    height: '10%',
+    backgroundColor: 'white',
+    marginBottom: '5%',
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  texteB: {
+    fontSize: 20,
+    fontWeight: 400,
+    color: '#525252',
+  },
+  texteBlanc: {
+    fontSize: 20,
+    fontWeight: 400,
+    color: 'white',
   },
 });
