@@ -312,7 +312,7 @@ const styles = StyleSheet.create({
     color: '#5B1A10',
   },
   dogPicture: {
-    height: '40%',
+    height: '35%',
     alignItems: 'center',
     justifyContent: 'space-around',
     // backgroundColor: 'red',
