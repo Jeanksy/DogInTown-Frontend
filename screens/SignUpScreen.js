@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { CameraView, Camera } from 'expo-camera';
 import { useIsFocused } from "@react-navigation/native";
 import { useDispatch, useSelector } from 'react-redux';
-import { login } from '../reducers/user';
+import { login, addPhoto } from '../reducers/user';
 import { StatusBar } from "expo-status-bar";
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {
@@ -57,24 +57,42 @@ const [modalIsVisible, setModalIsVisible] = useState(false);
 
 
 const handlePhoto = () => {
-  setModalIsVisible(true)
+    setModalIsVisible(true)
 
 };
 
   // Functions to toggle camera facing and flash status
-  const toggleCameraFacing = () => {
-	  setFacing((current) => (current === "front" ? "back" : "front"));
-  };
+const toggleCameraFacing = () => {
+	setFacing((current) => (current === "front" ? "back" : "front"));
+};
 
-  const toggleFlashStatus = () => {
-	  setFlashStatus((current) => (current === false ? true : false));
-  };
+const toggleFlashStatus = () => {
+	setFlashStatus((current) => (current === false ? true : false));
+};
 
-  // Function to take a picture and save it to the reducer store
+// Function to take a picture and save it to the reducer store
 const takePicture = async () => {
-  const photo = await cameraRef.current?.takePictureAsync({ quality: 0.5 });
-  (photo && console.log(photo.uri))
-  
+	const photo = await cameraRef.current?.takePictureAsync({ quality: 0.5});
+	const formData = new FormData();
+	const uri = photo?.uri;
+	setImage(uri);
+
+	formData.append("photoFromFront", {
+		uri: uri,
+		name: "photo.jpg",
+		type: "image/jpeg",
+	});
+
+	fetch('https://dog-in-town-backend.vercel.app/users/upload', {
+		method: "POST",
+		body: formData,
+	})
+		.then((response) => response.json())
+		.then((data) => { console.log(data)
+			data.result && dispatch(addPhoto(data.url));
+		});
+	setModalIsVisible(false)
+	
 }
 
 	// REDUCER
@@ -82,7 +100,6 @@ const takePicture = async () => {
 	const user = useSelector((state) => state.user.value);
 
 	//PICKER telechargement d'images depuis téléphone
-	const placeHolderImage = require('../assets/Images/background.jpg')
 	const [image, setImage] = useState(null);
 	const pickImage = async () => {
 		// No permissions request is necessary for launching the image library
@@ -139,6 +156,7 @@ const takePicture = async () => {
 					username: username,
 					email: email,
 					password: password,
+					avatar: image,
 					postCode: postCode,
 				}),
 			})
