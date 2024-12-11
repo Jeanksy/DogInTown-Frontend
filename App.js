@@ -70,7 +70,7 @@ export default function App() {
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           <Stack.Screen name="Home" component={HomeScreen} />
           <Stack.Screen name="SignIn" component={SignInScreen} />
-          <Stack.Screen name="SignUp" component={SignUpScreen} />
+          <Stack.Screen name="SignUp" component={SignUpScreen} /> 
           <Stack.Screen name="DogSignUp" component={DogSignUpScreen} />
           <Stack.Screen name="DogsInfo" component={DogsInfoScreen} />
           <Stack.Screen name="User" component={UserScreen} />
