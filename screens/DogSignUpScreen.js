@@ -22,6 +22,8 @@ import { login, logout } from '../reducers/user';
 import { Picker } from '@react-native-picker/picker';
 import { useIsFocused } from "@react-navigation/native";
 import DropDownPicker from 'react-native-dropdown-picker';
+// imagepicker expo pour telechargement photos depuis téléphone
+import * as ImagePicker from 'expo-image-picker';
 
 const DOG_SIZE_S= 'petit';
 const DOG_SIZE_M = 'moyen';
@@ -88,6 +90,25 @@ export default function DogSignUpScreen({ navigation }) {
 
   //REDUCER
   const user = useSelector((state) => state.user.value.username);
+  const dispatch = useDispatch();
+
+  //PICKER telechargement d'images depuis téléphone
+	const [image, setImage] = useState(null);
+	const pickImage = async () => {
+		// No permissions request is necessary for launching the image library
+		let result = await ImagePicker.launchImageLibraryAsync({
+			mediaTypes: ['images'],
+			allowsEditing: true,
+			aspect: [4, 3],
+			quality: 1,
+		});
+	
+		console.log(result);
+	
+		if (!result.canceled) {
+			setImage(result.assets[0].uri);
+		}
+	};
 
   // Fonction pour naviguer vers le Tab menu
   const handleDogSignup = async (dogRegister) => {
@@ -124,15 +145,15 @@ export default function DogSignUpScreen({ navigation }) {
       <SafeAreaView style={{paddingTop: Platform.OS === 'android' ? 30 : 0}}>
         <View style={styles.upperContent}>
         <Modal
-          animationType="fade"
-          transparent={true}
-          visible={modalIsVisible}
-          onRequestClose={() => {
-            setModalIsVisible(!modalIsVisible);
-            }}>
-              <View style={styles.centeredView}>
-                  <LinearGradient colors={['#8034eb', '#8034eb', '#8034eb', '#8034eb', '#ebcc34']} style={styles.modalView}>
-                     <CameraView style={styles.camera} facing={facing} enableTorch={flashStatus} ref={(ref) => (cameraRef.current = ref)}>
+			animationType="fade"
+			transparent={true}
+			visible={modalIsVisible}
+			onRequestClose={() => {
+				setModalIsVisible(!modalIsVisible);
+				}}>
+            	<View style={styles.centeredView}>
+                	<View style={styles.modalView}>
+                    	<CameraView style={styles.camera} facing={facing} enableTorch={flashStatus} ref={(ref) => (cameraRef.current = ref)}>
 	                   	<SafeAreaView style={styles.settingContainer}>
 	                   		<TouchableOpacity style={styles.settingButton} onPress={toggleFlashStatus}>
 	                   			<FontAwesome name="flash" size={25} color={flashStatus === true ? "#e8be4b" : "white"} />
@@ -141,24 +162,25 @@ export default function DogSignUpScreen({ navigation }) {
 	                   			<FontAwesome name="rotate-right" size={25} color="white" />
 	                   		</TouchableOpacity>
 	                   	</SafeAreaView>
-
-	                   	{/* Bottom container with the snap button */}
-	                   	<View style={styles.snapContainer}>
-	                   		<TouchableOpacity style={styles.snapButton} onPress={takePicture}>
-	                   			<FontAwesome name="circle-thin" size={50} color="white" />
-	                   		</TouchableOpacity>
-	                   	</View>
 	                   </CameraView>
-                     <TouchableOpacity style={styles.closeModal} onPress={() => setModalIsVisible(false)}>
-                       <FontAwesome name='times' size={35} color="white" />
-                     </TouchableOpacity>
-                  </LinearGradient>
-              </View>
-        </Modal>
+					    {/* Bottom container with the snap button */}
+						<View style={styles.snapContainer}>
+							<View style={styles.espace}></View>
+								<TouchableOpacity style={styles.snapButton} onPress={takePicture}>
+									<FontAwesome name="circle-thin" size={80} color="gray" />
+								</TouchableOpacity>
+								<TouchableOpacity style={styles.closeModal} onPress={() => setModalIsVisible(false)}>
+								<FontAwesome name='times' size={35} color="gray" marginBottom={15}/>
+								</TouchableOpacity>
+					    	</View>
+                    </View>
+                </View>
+        	</Modal>
           <View style={styles.leaveContainer}>
             <Pressable onPress={() => handleDogSignup(false)}>
               <View style={styles.textContainer}>
-                <Text style={styles.leaveText}>Plus tard</Text>
+                <Text style={styles.leaveText}>Plus tard </Text>
+                <FontAwesome name="close" size={25} color="#5B1A10" />
               </View>
             </Pressable>
           </View>
@@ -205,7 +227,7 @@ export default function DogSignUpScreen({ navigation }) {
           <View style={styles.dogSizeCardContainer}>
             <Pressable style={styles.dogSizeCard} onPress={() => setDogSize(DOG_SIZE_S)}>
               <View style={styles.dogSizeCard}>
-                <Image style={{maxHeight: 40, maxWidth: 40, tintColor: dogSize === DOG_SIZE_S ? "#F1AF5A" : "#5B1A10"}} source={require('../assets/Images/petit.png')} />
+                <Image style={{maxHeight: 40, marginTop: 8, maxWidth: 40, tintColor: dogSize === DOG_SIZE_S ? "#F1AF5A" : "#5B1A10"}} source={require('../assets/Images/petit.png')} />
                 <Text>Petit</Text>
               </View>
             </Pressable>
@@ -224,12 +246,16 @@ export default function DogSignUpScreen({ navigation }) {
           </View>
         </View>
         <View style={styles.dogPicture}>
-          <Text style={styles.dogPictureText}>Voulez-vous rajouter une photo ?</Text>
-          <View style={styles.dogAvatar}>
-            <TouchableOpacity style={styles.photoPressable} onPress={() => handlePhoto()}>
-              <FontAwesome name='camera' size={40} color='#A23D42' />
-            </TouchableOpacity>
-          </View>
+          <Text style={styles.dogPictureText}>Souhaitez-vous rajouter sa photo ?</Text>
+          <View style={styles.pictureConteneur}>
+              <TouchableOpacity onPress={() => handlePhoto()}>
+                <FontAwesome name='camera' size={38} color='#A23D42' />
+              </TouchableOpacity>
+              <Image style={styles.avatar} source={{uri : image}}/>
+              <TouchableOpacity onPress={pickImage}>
+                <FontAwesome name='download' size={40} color='#A23D42'/>
+              </TouchableOpacity>
+			    </View>
           <TouchableOpacity style={styles.button} onPress={() => handleDogSignup(true)}>
             <Text style={styles.buttonText}>OK</Text>
           </TouchableOpacity>
@@ -255,18 +281,22 @@ const styles = StyleSheet.create({
   textContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-evenly',
-    // backgroundColor: '#5B1A10',
-    width: 80,
+    justifyContent: 'end',
+    width: '100%',
+    marginRight: '1%',
   },
   titleContainer: {
     width: '100%',
 
   },
   title: {
-    fontSize: 35,
+    fontSize: 25,
     color: '#5B1A10',
     textAlign: 'center',
+    lineHeight: 28,
+    marginLeft: '2%',
+    marginRight: '2%',
+    marginTop: '2%',
   },
   dogsInfo: {
     width: '100%',
@@ -277,13 +307,14 @@ const styles = StyleSheet.create({
   textInputContainer: {
     width: '80%',
     height: 60,
+    borderWidth: 1,
     backgroundColor: '#F5F5F5',
     borderRadius: 12,
     marginBottom: 20,
   },
   textInput: {
     width: '100%',
-    height: 55,
+    height: '100%',
     borderRadius: 12,
     fontSize: 18,
     paddingHorizontal: 15,
@@ -302,9 +333,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#F5F5F5',
   },
   dogSize: {
-    height: 130,
-    // backgroundColor: 'orange',
-    marginVertical: 10,
+    height: '15%',
+    marginLeft: '2%',
+    marginRight: '2%',
   },
   dogSizeText: {
     marginLeft: 8,
@@ -315,8 +346,8 @@ const styles = StyleSheet.create({
     height: '35%',
     alignItems: 'center',
     justifyContent: 'space-around',
-    // backgroundColor: 'red',
-    marginTop: 20,
+    marginTop: '10%',
+    marginBottom: '3%',
   },
   sizeTextContainer: {
     height: 50,
@@ -324,36 +355,19 @@ const styles = StyleSheet.create({
     backgroundColor: 'puprle',
   },
   dogSizeCardContainer: {
-    height: 100,
+    height: "40%",
     width: '100%',
     alignItems: 'center',
     justifyContent: 'space-evenly',
     flexDirection: 'row',
-    // backgroundColor: 'yellow',
   },
   dogSizeCard: {
     alignItems: 'center',
   },
-  dogAvatar: {
-    height: 150,
-    width: 150,
-    borderRadius: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 3,
-    borderColor: '#5B1A10',
-  },
   dogPictureText: {
-    fontSize: 25,
+    fontSize: 20,
     color: '#5B1A10',
-  },
-  button: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '80%',
-    height: 50,
-    backgroundColor: '#A23D42',
-    borderRadius: 18,
+    marginBottom: '2%',
   },
   buttonText: {
     textAlign: 'center',
@@ -366,80 +380,102 @@ const styles = StyleSheet.create({
     fontSize: 18,
     // fontWeight: 600,
   },
-  photoPressable: {
-    width: '100%',
-    height: '100%',
-    borderRadius: 100,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
+  // bouton ajouter photo
+	pictureConteneur: {
+		height: '15%',
+		width: '80%',
+		alignItems: 'center',
+		justifyContent: 'center',
+		gap: 20,
+		flex: 1,
+		flexDirection: 'row',
+		marginBottom: '2%',
+	},
+	avatar: {
+		height: 130,
+		width: 130,
+		borderRadius: 100,
+		justifyContent: 'center',
+		alignItems: 'center',
+		borderWidth: 3,
+		borderColor: '#A23D42',
+		backgroundColor: 'white',
+	},
+	option: {
+		alignSelf: 'left',
+		color: '#525252',
+		marginLeft: '12%',
+		
+	},
   // MODAL STYLE
-  centeredView: {
-    backgroundColor: 'rgba(0, 0, 0, 0.8)',
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  modalView: {
-    flex: 0,
-    margin: 20,
-    backgroundColor: 'white',
-    paddingBottom: 25,
-    borderColor: 'rgba(255, 255, 255, 1)',
-    borderRadius: 20,
-    height: '60%',
-    width: '90%',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    shadowColor: '#000',
-    overflow: 'hidden',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-  modalBtn: {
-    borderRadius: 10,
-    padding: 10,
-    elevation: 2,
-    width: '100%',
-    backgroundColor: '#e66351'
-  },
-  // Camera 
-  camera: {
-    width: '120%',
-    aspectRatio: 1 / 1,
-    paddingTop: 5,
-    justifyContent: "space-between",
-    overflow: 'hidden',
+	centeredView: {
+		backgroundColor: 'rgba(0, 0, 0, 0.8)',
+		flex: 1,
+		justifyContent: 'center',
+		alignItems: 'center',
 	},
-	settingContainer: {
-		flexDirection: "row",
+	modalView: {
+		margin: 20,
+		backgroundColor: 'white',
+		paddingBottom: 25,
+		borderColor: 'rgba(255, 255, 255, 1)',
+		borderRadius: 20,
+		height: '70%',
+		width: '90%',
+		alignItems: 'center',
+		justifyContent: 'space-between',
+		shadowColor: '#000',
+		overflow: 'hidden',
+		shadowOffset: {
+		width: 0,
+		height: 2,
+		},
+		shadowOpacity: 0.25,
+		shadowRadius: 4,
+		elevation: 5,
+	},
+	button: {
+		borderRadius: 10,
+		padding: 10,
+		elevation: 2,
+		width: '80%',
+		backgroundColor: '#e66351'
+	},
+	// Camera 
+	camera: {
+		width: '120%',
+		height: '85%',
+		aspectRatio: 1 / 1,
+		paddingTop: 5,
 		justifyContent: "space-between",
-		alignItems: "center",
-		marginHorizontal: 40,
-	},
-	settingButton: {
-		width: 40,
-		aspectRatio: 1,
-		alignItems: "center",
-		justifyContent: "center",
-	},
-	snapContainer: {
-		flexDirection: "row",
-		justifyContent: "center",
-		alignItems: "center",
-		marginBottom: 20,
-	},
-	snapButton: {
-		width: 100,
-		aspectRatio: 1,
-		alignItems: "center",
-    justifyContent: "flex-end",
-    opacity: 0.8,
-	},
- 
+		overflow: 'hidden',
+		},
+		settingContainer: {
+			flexDirection: "row",
+			justifyContent: "space-between",
+			alignItems: "center",
+			marginHorizontal: 40,
+		},
+		settingButton: {
+			width: 40,
+			aspectRatio: 1,
+			alignItems: "center",
+			justifyContent: "center",
+		},
+		snapContainer: {
+			flexDirection: "row",
+			justifyContent: "center",
+			alignItems: "center",
+			marginBottom: 20,
+			gap: 60,
+		},
+		snapButton: {
+			width: 100,
+			aspectRatio: 1,
+			alignItems: "center",
+			opacity: 0.8,
+		},
+		espace: {
+			width: '10%',
+		}
 });
