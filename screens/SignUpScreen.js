@@ -88,7 +88,7 @@ const takePicture = async () => {
 		body: formData,
 	})
 		.then((response) => response.json())
-		.then((data) => {
+		.then((data) => { console.log(data)
 			data.result && dispatch(addPhoto(data.url));
 		});
 	setModalIsVisible(false)
