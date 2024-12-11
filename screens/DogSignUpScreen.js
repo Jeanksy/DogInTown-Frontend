@@ -21,6 +21,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { login, logout } from '../reducers/user';
 import { Picker } from '@react-native-picker/picker';
 import { useIsFocused } from "@react-navigation/native";
+import DropDownPicker from 'react-native-dropdown-picker';
 
 const DOG_SIZE_S= 'petit';
 const DOG_SIZE_M = 'moyen';
@@ -29,6 +30,23 @@ const DOG_SIZE_L = 'grand';
 export default function DogSignUpScreen({ navigation }) {
 
   const userToken = 'RL01aqaWnQNXi24mX3fPzEIONIMIMx6H';
+
+  // DropDown Picker
+  const [open, setOpen] = useState(false);
+  const [value, setValue] = useState(null);
+  const [raceList, setRaceList] = useState([
+      {label: 'Pincher', value: 'pincher'},
+      {label: 'Labrador', value: 'labrador'},
+      {label: 'Caniche', value: 'caniche' },
+      {label: 'Berger Allemand', value: 'bergerAll'},
+      {label: 'Saint Bernard', value: 'saintB' },
+      {label: 'Golden retriver', value: 'goldenRet'},
+      {label: 'Bulldog français', value: 'bulldogFr' },
+      {label: 'Chihuahua', value: 'chihuahua'},
+      {label: 'Beagle', value: 'beagle'},
+  ]);
+  
+
 
   const photo = 'photo.png';
   	// Reference to the camera
@@ -96,14 +114,14 @@ export default function DogSignUpScreen({ navigation }) {
   if (!hasPermission || !isFocused) {
     return <View />;
   }
-  
+
 
   return (
     <KeyboardAvoidingView
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
-      <ScrollView style={styles.inner}>
+      <SafeAreaView style={{paddingTop: Platform.OS === 'android' ? 30 : 0}}>
         <View style={styles.upperContent}>
         <Modal
           animationType="fade"
@@ -156,8 +174,18 @@ export default function DogSignUpScreen({ navigation }) {
               onChangeText={(value) => setDogName(value)}
               value={dogName} />
           </View>
-          <View style={styles.pickerContainer} elevation={5}>
-            <Picker
+          <View style={styles.pickerContainer}>
+            <DropDownPicker
+              style={styles.picker}
+                    open={open}
+                    value={value}
+                    items={raceList}
+                    setOpen={setOpen}
+                    setValue={setValue}
+                    setItems={setRaceList}
+                    placeholder={'Race'}
+                />
+            {/* <Picker
               selectedValue={selectedRace}
               style={styles.pickerInput}
               mode='dropdown'
@@ -167,7 +195,7 @@ export default function DogSignUpScreen({ navigation }) {
               <Picker.Item label="Race" value="Race" />
               <Picker.Item label="Labrador" value="Labrador" />
               <Picker.Item label="Golden Retriever" value="Golden" />
-            </Picker>
+            </Picker> */}
           </View>
         </View>
         <View style={styles.dogSize}>
@@ -207,7 +235,7 @@ export default function DogSignUpScreen({ navigation }) {
           </TouchableOpacity>
         </View>
         <StatusBar style="auto" />
-      </ScrollView >
+      </SafeAreaView >
     </KeyboardAvoidingView>
   );
 }
@@ -216,18 +244,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  inner: {
-    flex: 1,
-    padding: 15,
-  },
   upperContent: {
     width: '100%',
-    paddingTop: 30,
   },
   leaveContainer: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
-    marginBottom: 20,
+
   },
   textContainer: {
     flexDirection: 'row',
@@ -238,7 +261,7 @@ const styles = StyleSheet.create({
   },
   titleContainer: {
     width: '100%',
-    marginBottom: 20,
+
   },
   title: {
     fontSize: 35,
@@ -268,15 +291,15 @@ const styles = StyleSheet.create({
   pickerContainer: {
     width: '80%',
     height: 60,
-    backgroundColor: '#F5F5F5',
     justifyContent: 'center',
     borderRadius: 12,
   },
-  pickerInput: {
+  picker: {
     width: '100%',
-    height: 50,
+    height: 60,
     borderRadius: 12,
     fontSize: 18,
+    backgroundColor: '#F5F5F5',
   },
   dogSize: {
     height: 130,
@@ -289,9 +312,9 @@ const styles = StyleSheet.create({
     color: '#5B1A10',
   },
   dogPicture: {
-    height: 310,
+    height: '40%',
     alignItems: 'center',
-    justifyContent: 'space-evenly',
+    justifyContent: 'space-around',
     // backgroundColor: 'red',
     marginTop: 20,
   },
@@ -327,7 +350,7 @@ const styles = StyleSheet.create({
   button: {
     alignItems: 'center',
     justifyContent: 'center',
-    width: '70%',
+    width: '80%',
     height: 50,
     backgroundColor: '#A23D42',
     borderRadius: 18,
@@ -378,7 +401,7 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
   },
-  button: {
+  modalBtn: {
     borderRadius: 10,
     padding: 10,
     elevation: 2,
