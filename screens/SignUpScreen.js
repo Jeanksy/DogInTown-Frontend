@@ -1,6 +1,8 @@
-import React, { useState } from "react";
+import { useState, useEffect, useRef } from 'react';
+import { CameraView, Camera } from 'expo-camera';
+import { useIsFocused } from "@react-navigation/native";
 import { useDispatch, useSelector } from 'react-redux';
-import { login, logout } from '../reducers/user';
+import { login } from '../reducers/user';
 import { StatusBar } from "expo-status-bar";
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {
@@ -11,6 +13,8 @@ import {
 	KeyboardAvoidingView,
 	TextInput,
 	Image,
+	Modal,
+	SafeAreaView,
 } from "react-native";
 // picker pour telechargement photos depuis téléphone
 import * as ImagePicker from 'expo-image-picker';
@@ -38,6 +42,41 @@ export default function SignUpScreen({ navigation }) {
 	const [postCodeError, setPostCodeError] = useState(false);
 	const [passwordStatus, setpasswordStatus] = useState(PASSWORD_UNSET);
 
+//////CAMERA///////
+const photo = 'photo.png';
+// Reference to the camera
+const cameraRef = useRef(null);
+const isFocused = useIsFocused();
+
+  // Permission hooks Camera
+const [hasPermission, setHasPermission] = useState(false);
+const [facing, setFacing] = useState("front");
+const [flashStatus, setFlashStatus] = useState(false);
+// Modal ouverture photo
+const [modalIsVisible, setModalIsVisible] = useState(false);
+
+
+const handlePhoto = () => {
+  setModalIsVisible(true)
+
+};
+
+  // Functions to toggle camera facing and flash status
+  const toggleCameraFacing = () => {
+	  setFacing((current) => (current === "front" ? "back" : "front"));
+  };
+
+  const toggleFlashStatus = () => {
+	  setFlashStatus((current) => (current === false ? true : false));
+  };
+
+  // Function to take a picture and save it to the reducer store
+const takePicture = async () => {
+  const photo = await cameraRef.current?.takePictureAsync({ quality: 0.5 });
+  (photo && console.log(photo.uri))
+  
+}
+
 	// REDUCER
 	const dispatch = useDispatch();
 	const user = useSelector((state) => state.user.value);
@@ -55,7 +94,6 @@ export default function SignUpScreen({ navigation }) {
 		});
 	
 		console.log(result);
-		console.log('icii image', image)
 	
 		if (!result.canceled) {
 			setImage(result.assets[0].uri);
@@ -109,15 +147,58 @@ export default function SignUpScreen({ navigation }) {
 				if (data.result) {
 					navigation.navigate("DogSignUp");
 					dispatch(login({username: username, token: data.token}));
-					console.log('ici user', user)
 				}
 			});
 		}
 	};
 
+// Hook pour prise de photo
+useEffect(() => {
+		(async () => {
+			const result = await Camera.requestCameraPermissionsAsync();
+			setHasPermission(result && result?.status === "granted");
+		})();
+	    }, []);
+// Conditions to prevent more than 1 camera component to run in the bg
+		if (!hasPermission || !isFocused) {
+		return <View />;
+		}
+
 	return (
 		<KeyboardAvoidingView style={styles.container}>
 			<View style={styles.connexionCont}>
+			<Modal
+			animationType="fade"
+			transparent={true}
+			visible={modalIsVisible}
+			onRequestClose={() => {
+				setModalIsVisible(!modalIsVisible);
+				}}>
+            	<View style={styles.centeredView}>
+                	<View style={styles.modalView}>
+                    	<CameraView style={styles.camera} facing={facing} enableTorch={flashStatus} ref={(ref) => (cameraRef.current = ref)}>
+	                   	<SafeAreaView style={styles.settingContainer}>
+	                   		<TouchableOpacity style={styles.settingButton} onPress={toggleFlashStatus}>
+	                   			<FontAwesome name="flash" size={25} color={flashStatus === true ? "#e8be4b" : "white"} />
+	                   		</TouchableOpacity>
+	                   		<TouchableOpacity style={styles.settingButton} onPress={toggleCameraFacing}>
+	                   			<FontAwesome name="rotate-right" size={25} color="white" />
+	                   		</TouchableOpacity>
+	                   	</SafeAreaView>
+	                   </CameraView>
+					    {/* Bottom container with the snap button */}
+						<View style={styles.snapContainer}>
+							<View style={styles.espace}></View>
+								<TouchableOpacity style={styles.snapButton} onPress={takePicture}>
+									<FontAwesome name="circle-thin" size={80} color="gray" />
+								</TouchableOpacity>
+								<TouchableOpacity style={styles.closeModal} onPress={() => setModalIsVisible(false)}>
+								<FontAwesome name='times' size={35} color="gray" marginBottom={15}/>
+								</TouchableOpacity>
+					    	</View>
+                    </View>
+                </View>
+        	</Modal>
 				<Text style={styles.head}>Inscrivez-vous</Text>
 				<TextInput
 					placeholder="Username"
@@ -175,7 +256,7 @@ export default function SignUpScreen({ navigation }) {
 				{postCodeError && <Text style={styles.error}>Invalid postal code</Text>}
 			</View>
 			<View style={styles.pictureConteneur}>
-				<TouchableOpacity>
+				<TouchableOpacity onPress={() => handlePhoto()}>
 					<FontAwesome name='camera' size={38} color='#A23D42' />
 				</TouchableOpacity>
  				<Image style={styles.avatar} source={{uri : image}}/>
@@ -309,5 +390,76 @@ const styles = StyleSheet.create({
 		color: '#525252',
 		marginLeft: '12%',
 		
-	}
+	},
+ // MODAL STYLE
+	centeredView: {
+		backgroundColor: 'rgba(0, 0, 0, 0.8)',
+		flex: 1,
+		justifyContent: 'center',
+		alignItems: 'center',
+	},
+	modalView: {
+		margin: 20,
+		backgroundColor: 'white',
+		paddingBottom: 25,
+		borderColor: 'rgba(255, 255, 255, 1)',
+		borderRadius: 20,
+		height: '70%',
+		width: '90%',
+		alignItems: 'center',
+		justifyContent: 'space-between',
+		shadowColor: '#000',
+		overflow: 'hidden',
+		shadowOffset: {
+		width: 0,
+		height: 2,
+		},
+		shadowOpacity: 0.25,
+		shadowRadius: 4,
+		elevation: 5,
+	},
+	button: {
+		borderRadius: 10,
+		padding: 10,
+		elevation: 2,
+		width: '100%',
+		backgroundColor: '#e66351'
+	},
+	// Camera 
+	camera: {
+		width: '120%',
+		height: '85%',
+		aspectRatio: 1 / 1,
+		paddingTop: 5,
+		justifyContent: "space-between",
+		overflow: 'hidden',
+		},
+		settingContainer: {
+			flexDirection: "row",
+			justifyContent: "space-between",
+			alignItems: "center",
+			marginHorizontal: 40,
+		},
+		settingButton: {
+			width: 40,
+			aspectRatio: 1,
+			alignItems: "center",
+			justifyContent: "center",
+		},
+		snapContainer: {
+			flexDirection: "row",
+			justifyContent: "center",
+			alignItems: "center",
+			marginBottom: 20,
+			gap: 60,
+		},
+		snapButton: {
+			width: 100,
+			aspectRatio: 1,
+			alignItems: "center",
+			opacity: 0.8,
+		},
+		espace: {
+			width: '10%',
+		}
 });
