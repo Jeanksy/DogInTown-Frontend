@@ -88,6 +88,7 @@ export default function DogSignUpScreen({ navigation }) {
 
   //REDUCER
   const user = useSelector((state) => state.user.value.username);
+  const dispatch = useDispatch();
 
   // Fonction pour naviguer vers le Tab menu
   const handleDogSignup = async (dogRegister) => {
@@ -158,7 +159,8 @@ export default function DogSignUpScreen({ navigation }) {
           <View style={styles.leaveContainer}>
             <Pressable onPress={() => handleDogSignup(false)}>
               <View style={styles.textContainer}>
-                <Text style={styles.leaveText}>Plus tard</Text>
+                <Text style={styles.leaveText}>Plus tard </Text>
+                <FontAwesome name="close" size={25} color="#5B1A10" />
               </View>
             </Pressable>
           </View>
@@ -224,7 +226,7 @@ export default function DogSignUpScreen({ navigation }) {
           </View>
         </View>
         <View style={styles.dogPicture}>
-          <Text style={styles.dogPictureText}>Voulez-vous rajouter une photo ?</Text>
+          <Text style={styles.dogPictureText}>Souhaitez-vous rajouter sa photo ?</Text>
           <View style={styles.dogAvatar}>
             <TouchableOpacity style={styles.photoPressable} onPress={() => handlePhoto()}>
               <FontAwesome name='camera' size={40} color='#A23D42' />
@@ -255,18 +257,22 @@ const styles = StyleSheet.create({
   textContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-evenly',
-    // backgroundColor: '#5B1A10',
-    width: 80,
+    justifyContent: 'end',
+    width: '100%',
+    marginRight: '1%',
   },
   titleContainer: {
     width: '100%',
 
   },
   title: {
-    fontSize: 35,
+    fontSize: 25,
     color: '#5B1A10',
     textAlign: 'center',
+    lineHeight: 28,
+    marginLeft: '2%',
+    marginRight: '2%',
+    marginTop: '2%',
   },
   dogsInfo: {
     width: '100%',
@@ -277,13 +283,14 @@ const styles = StyleSheet.create({
   textInputContainer: {
     width: '80%',
     height: 60,
+    borderWidth: 1,
     backgroundColor: '#F5F5F5',
     borderRadius: 12,
     marginBottom: 20,
   },
   textInput: {
     width: '100%',
-    height: 55,
+    height: '100%',
     borderRadius: 12,
     fontSize: 18,
     paddingHorizontal: 15,
@@ -302,9 +309,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#F5F5F5',
   },
   dogSize: {
-    height: 130,
-    // backgroundColor: 'orange',
-    marginVertical: 10,
+    height: '15%',
+    marginLeft: '2%',
+    marginRight: '2%',
   },
   dogSizeText: {
     marginLeft: 8,
@@ -315,7 +322,6 @@ const styles = StyleSheet.create({
     height: '35%',
     alignItems: 'center',
     justifyContent: 'space-around',
-    // backgroundColor: 'red',
     marginTop: 20,
   },
   sizeTextContainer: {
@@ -324,12 +330,11 @@ const styles = StyleSheet.create({
     backgroundColor: 'puprle',
   },
   dogSizeCardContainer: {
-    height: 100,
+    height: "40%",
     width: '100%',
     alignItems: 'center',
     justifyContent: 'space-evenly',
     flexDirection: 'row',
-    // backgroundColor: 'yellow',
   },
   dogSizeCard: {
     alignItems: 'center',
@@ -344,8 +349,9 @@ const styles = StyleSheet.create({
     borderColor: '#5B1A10',
   },
   dogPictureText: {
-    fontSize: 25,
+    fontSize: 20,
     color: '#5B1A10',
+    marginBottom: '2%',
   },
   button: {
     alignItems: 'center',
@@ -441,5 +447,4 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
     opacity: 0.8,
 	},
- 
 });
