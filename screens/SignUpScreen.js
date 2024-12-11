@@ -157,7 +157,7 @@ export default function SignUpScreen({ navigation }) {
 				/>
 				<TextInput
 					placeholder="Code postal"
-					maxLength="5"
+					maxLength={5}
 					keyboardType="numeric"
 					returnKeyType="done"
 					onChangeText={(value) => setPostCode(value)}
