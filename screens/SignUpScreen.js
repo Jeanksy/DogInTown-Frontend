@@ -220,6 +220,7 @@ useEffect(() => {
 				/>
 				<TextInput
 					secureTextEntry={true}
+					textContentType="oneTimeCode"
 					placeholder="Mot de passe"
 					autoCapitalize="none" // https://reactnative.dev/docs/textinput#autocapitalize
 					onChangeText={(value) => setPassword(value)}
@@ -229,6 +230,7 @@ useEffect(() => {
 				/>
 				<TextInput
 					secureTextEntry={true}
+					textContentType="oneTimeCode"
 					placeholder="Validation mot de passe"
 					autoCapitalize="none" // https://reactnative.dev/docs/textinput#autocapitalize
 					onChangeText={(value) => setPasswordVal(value)}
