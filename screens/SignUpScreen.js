@@ -20,6 +20,12 @@ import {
 import * as ImagePicker from 'expo-image-picker';
 
 
+cloudinary.v2.config({
+	cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+	api_key: process.env.CLOUDINARY_API_KEY,
+	api_secret: process.env.CLOUDINARY_API_SECRET,
+  });
+
 // Regex email only for input email
 const EMAIL_REGEX =
 	/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -71,29 +77,30 @@ const toggleFlashStatus = () => {
 };
 
 // Function to take a picture and save it to the reducer store
-const takePicture = async () => {
-	const photo = await cameraRef.current?.takePictureAsync({ quality: 0.5});
-	const formData = new FormData();
-	const uri = photo?.uri;
-	setImage(uri);
+	const takePicture = async () => {
+		const photo = await cameraRef.current?.takePictureAsync({ quality: 0.5 });
+		(photo)
+		const formData = new FormData();
+		const uri = photo?.uri;
+		setImage(uri);
 
-	formData.append("photoFromFront", {
-		uri: uri,
-		name: "photo.jpg",
-		type: "image/jpeg",
-	});
-
-	fetch('https://dog-in-town-backend.vercel.app/users/upload', {
-		method: "POST",
-		body: formData,
-	})
-		.then((response) => response.json())
-		.then((data) => { console.log(data)
-			data.result && dispatch(addPhoto(data.url));
+		formData.append("photoFromFront", {
+			uri: uri,
+			name: "photo.jpg",
+			type: "image/jpg",
 		});
-	setModalIsVisible(false)
+
+		fetch('https://dog-in-town-backend.vercel.app/users/upload', {
+			method: "POST",
+			body: formData,
+		}).then((response) => response.json())
+			.then((data) => {
+				console.log(data.url)
+				data.result && dispatch(addPhoto(data.url));
+			});
+		setModalIsVisible(false)
 	
-}
+	};
 
 	// REDUCER
 	const dispatch = useDispatch();
@@ -211,7 +218,7 @@ useEffect(() => {
 									<FontAwesome name="circle-thin" size={80} color="gray" />
 								</TouchableOpacity>
 								<TouchableOpacity style={styles.closeModal} onPress={() => setModalIsVisible(false)}>
-								<FontAwesome name='times' size={35} color="gray" marginBottom={15}/>
+								<FontAwesome name='times' size={35} color="gray"  opacity={0.8}/>
 								</TouchableOpacity>
 					    	</View>
                     </View>
@@ -458,7 +465,7 @@ const styles = StyleSheet.create({
 			flexDirection: "row",
 			justifyContent: "space-between",
 			alignItems: "center",
-			marginHorizontal: 40,
+			marginHorizontal: '15%',
 		},
 		settingButton: {
 			width: 40,
@@ -475,8 +482,9 @@ const styles = StyleSheet.create({
 		},
 		snapButton: {
 			width: 100,
-			aspectRatio: 1,
+			aspectRatio: 1 /1,
 			alignItems: "center",
+			justifyContent: 'center',
 			opacity: 0.8,
 		},
 		espace: {
