@@ -17,32 +17,31 @@ const DOG_SIZE_L = 'grand';
 
 
 export default function MapScreen() {
-  // etat du input recherches
-  // etat modal
-  const [modalVisible, setModalVisible] = useState(false);
-  const [currentPosition, setCurrentPosition] = useState({});
-  const [places, setPlaces] = useState([]);
-  const [friendlies, setFriendlies] = useState([]);
-  const [searchText, setSearchText] = useState('');
-  const [dogSize, setDogSize] = useState('petit');
-  const [addPlaceName, setAddPlaceName] = useState('');
-  const [placeToAdd, setPlaceToAdd] = useState(null);
-  const [firstComment, setFirstComment] = useState('');
+
+  const [modalVisible, setModalVisible] = useState(false); //Modal d'ajout de lieu
+  const [currentPosition, setCurrentPosition] = useState({}); //coordonnés de notre position actuelle
+  const [places, setPlaces] = useState([]); //lieux trouvés par l'API GOOGLE
+  const [friendlies, setFriendlies] = useState([]); //lieux contenu dans notre base de donnée place
+  const [searchText, setSearchText] = useState(''); //text compris dans la bar de recherche
+  const [dogSize, setDogSize] = useState('petit'); //taille du chien
+  const [addPlaceName, setAddPlaceName] = useState(''); //nom du lieu à ajouter à la bdd
+  const [placeToAdd, setPlaceToAdd] = useState(null); //objet du lieu à ajouter à la bdd
+  const [friendlyToSee, setFriendlyToSee] = useState(null) //objet du lieu à afficher avec le pop up lieu
+  const [firstComment, setFirstComment] = useState(''); //contenu d'un premier commentaire
+  const [refreshShow, setRefreshShow] = useState(false);
+  const [modalFriendlyVisible, setModalFriendlyVisible] = useState(false) //Modal détail de lieu
   const user = useSelector((state) => state.user.value);
 
 
   const isFocused = useIsFocused();
 
-  useEffect(() =>{
-    if(isFocused){
+  useEffect(() => {
       (async () => {
-        const response = await fetch('https://dog-in-town-backend.vercel.app:3000/places')
+        const response = await fetch('https://dog-in-town-backend.vercel.app/places')
         const result = await response.json()
         setFriendlies(result.allPlaces);
-        console.log(friendlies);
       })();
-    }
-  },[isFocused])
+  }, [isFocused, modalVisible, refreshShow])
 
   // Trouver notre position actuel
   useEffect(() => {
@@ -59,14 +58,29 @@ export default function MapScreen() {
     })();
   }, [currentPosition, modalVisible]);
 
-  // FONCTION POUR TROUVER UN LIEU SUR L'API GOOGLE PLACE
+
+  // Fonction pour filtrer les friendlies en fonction de la recherche
+  const filterFriendlies = () => {
+    if (searchText.trim().length === 0) {
+      return friendlies; // Si rien n'est recherché, retourne tous les friendlies
+    }
+
+    // Filtre les friendlies dont le nom contient la recherche
+    return friendlies.filter(friendly =>
+      friendly.name.toLowerCase().includes(searchText.toLowerCase()) // Comparaison insensible à la casse
+    );
+  };
+
+
+
+  // FONCTION POUR TROUVER UN LIEU SUR L'API GOOGLE PLACE ET FILTRER L'AFFICHAGE
   const searchPlace = async () => {
     if (!searchText.trim().length) return;
 
     console.log('Recherche:', searchText);
     const radius = 10000 // 10000 metres = 10 km autour de position utilisateur
     const googleApiUrl = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${searchText}bars+cafes+restaurants&location=${currentPosition.latitude},${currentPosition.longitude}&radius=${radius}&key=${API_GOOGLE_KEY}`;
-
+    setFriendlies(filterFriendlies())
     try {
       const response = await fetch(googleApiUrl);
       const data = await response.json();
@@ -75,7 +89,6 @@ export default function MapScreen() {
       if (data.status === 'OK' && data.results.length > 0) {
         const placeData = data.results;
         setPlaces(placeData);  // enregistre la data du lieu recherché dans l'état places
-        // console.log(placeData);  // log des données pour voir la structure de la réponse
         setSearchText('');
       } else {
         console.log('Pas de résultats trouvé', data.status);
@@ -91,6 +104,15 @@ export default function MapScreen() {
     setPlaceToAdd(place); //enregistre dans placeToAdd l'objet correspondant au marker selectionné
   }
 
+  // Fonction pour vérifier si un lieu est déjà un friendlie
+  const isPlaceInFriendlies = (place) => {
+    return friendlies.some(friendly =>
+      friendly.latitude === place.geometry.location.lat &&
+      friendly.longitude === place.geometry.location.lng
+    );
+  };
+
+
   //Fonction pour ajouter à la BDD un nouveau lieu
   const handleAddingPlace = async (place) => {
 
@@ -101,7 +123,6 @@ export default function MapScreen() {
         body: JSON.stringify({ content: firstComment, token: user.token }),
       })
       const result = await responseComment.json()
-      console.log(place.types[0]);
       const responsePlace = await fetch(`https://dog-in-town-backend.vercel.app/places/addPlace`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -129,6 +150,7 @@ export default function MapScreen() {
         })
       })
     }
+    setDogSize(DOG_SIZE_S);
     setPlaces([]);
     setFirstComment('');
     setModalVisible(!modalVisible);
@@ -139,16 +161,17 @@ export default function MapScreen() {
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
-      <MapView mapType="standard" style={styles.map} initialRegion={{
+        <MapView mapType="standard" onPress={() => {setPlaces([]), setRefreshShow(!refreshShow)}} style={styles.map} initialRegion={{
         latitude: 45.75,
         longitude: 4.85,
         latitudeDelta: 1.0,
         longitudeDelta: 1.0,
-      }}>
+      }
+      }>
         {currentPosition && currentPosition.latitude && currentPosition.longitude && (
           <Marker coordinate={currentPosition} pinColor="#fecb2d" title="Vous êtes ici" />
         )}
-        {places && places.length > 0 && places.map((place, index) => (
+        {places && places.length > 0 && places.map((place, index) => !isPlaceInFriendlies(place) && (
           <Marker
             key={index}
             coordinate={{
@@ -169,7 +192,13 @@ export default function MapScreen() {
             }}
             title={place.name}
             description={place.adress}
-          />
+            style={styles.marker}
+            onPress={() => {setModalFriendlyVisible(true), setFriendlyToSee(place)}}
+          >
+            <View style={styles.markerContainer}>
+              <Image source={require('../assets/Images/patte2.png')} style={{ width: 15, height: 15, tintColor: 'white', resizeMode: 'contain' }} />
+            </View>
+          </Marker>
         ))}
       </MapView>
       <View style={styles.blocRecherches}>
@@ -231,6 +260,26 @@ export default function MapScreen() {
           </View>
         </View>
       </Modal>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalFriendlyVisible}
+        onRequestClose={() => {
+          setModalFriendlyVisible(!modalFriendlyVisible);
+        }}>
+        <View style={styles.contenuModal}>
+          <View style={styles.fenetre}>
+            <View style={styles.topContent}>
+              {friendlyToSee && <Text style={styles.addModalTitle}>{friendlyToSee.name}</Text>}
+              <View style={styles.topRightButtons}></View>
+            </View>
+            <View style={styles.placeInfo}></View>
+            <View style={styles.commentsContainer}></View>
+            <View style={styles.buttonAvis}></View>
+            <View style={styles.downButtonsContainer}></View>
+          </View>
+        </View>
+      </Modal>
       <StatusBar style="auto" />
     </KeyboardAvoidingView>
   );
@@ -257,14 +306,27 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     width: '85%',
     height: 60,
-
   },
   recherches: {
     width: '70%',
     height: '100%',
     marginLeft: '3%',
     marginRight: '3%',
-
+  },
+  // marker:{
+  //   alignItems: 'center',
+  //   justifyContent: 'center',
+  //   height: 50,
+  //   width: 50,
+  // },
+  markerContainer: {
+    height: 28,
+    width: 28,
+    borderRadius: 100,
+    backgroundColor: '#F1AF5A',
+    justifyContent: 'center',
+    alignItems: 'center',
+    resizeMode: 'contain',
   },
   icons: {
     fontSize: 22,
