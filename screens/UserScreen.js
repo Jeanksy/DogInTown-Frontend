@@ -26,15 +26,13 @@ export default function UserScreen() {
           <View style={styles.contenuModalUsername}>
               <View style={styles.close}><FontAwesome name="close" size={20} color="gray" /></View>
               <Text style={styles.petitTexte}>Pseudo actuel</Text>
-              <view style={encadreBlanc}><Text>{}</Text></view>
+              <view style={encadreBlanc}><Text>{user.username}</Text></view>
           </View>
         </Modal>
         {/*zone affichage standard page */}
         <View style={styles.container}>
-        <View style={styles.photoPincipale}>
-
-        </View>
-        <Text style={styles.nom}>Bienvenu sur votre profil {user.username} !</Text>
+        <Image style={styles.photoPincipale} source={{uri : user.photo}}/>
+        <Text style={styles.nom}>Modifiez votre profil ici !</Text>
         <TouchableOpacity style={styles.bouton}><Text style={styles.texteBouton} onpresse={setModalIsVisible(true)}>Modifier mon pseudo</Text></TouchableOpacity>
         <TouchableOpacity style={styles.bouton}><Text style={styles.texteBouton}>Modifier mon email</Text></TouchableOpacity>
         <TouchableOpacity style={styles.bouton}><Text style={styles.texteBouton}>Modifier mon mot de passe</Text></TouchableOpacity>
@@ -88,5 +86,10 @@ export default function UserScreen() {
       backgroundColor: 'white',
       width: '80%',
       height: '60%',
+    },
+    encadreBlanc: {
+      borderWidth: 1,
+      width: '70%',
+      height: '10%',
     }
   });
