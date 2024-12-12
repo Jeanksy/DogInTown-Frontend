@@ -13,9 +13,9 @@ export default function DogsInfoScreen() {
   const [nombreDoggies, setNombreDoggies] = useState("");
   
   const doggies = [
-    { name: 'Lala' },
-    { name: 'Lola' },
-    { name: 'Lolo' },
+    { id: 1, name: 'Jeannine' },
+    { id: 2, name: 'Mireille' },
+    { id: 3, name: 'Chriseutine' },
   ];
 
   const handleRetour = () => {
@@ -55,10 +55,10 @@ export default function DogsInfoScreen() {
           <View style={styles.dogListCont}>
             {doggies && doggies.length > 0 && doggies.map((doggies, index) => (
               <View style={{alignItems: 'center', gap: '5%'}}>
-              <TouchableOpacity key={index} style={[styles.dogListCircle, styles.shadow]}>
-                  <Image style={{height: '100%', borderRadius: '100%'}} source={{uri: 'https://i.imgur.com/5A0WEmE.jpeg',}}/>
+              <TouchableOpacity key={doggies.id} style={[styles.dogListCircle, styles.shadow]}>
+                  <Image style={{height: '100%', borderRadius: '100%'}} source={{uri: 'https://media.istockphoto.com/id/147694372/fr/photo/blaireau-chien.jpg?s=2048x2048&w=is&k=20&c=ZsCjVEsof4woo215avT_7IfHF1MHijLEWMdD93uJXTU=',}}/>
               </TouchableOpacity>
-              <Text style={{fontSize: 14, fontWeight: 600,}}>dog name</Text>
+                <Text style={{ fontSize: 14, fontWeight: 600, }}>{doggies.name}</Text>
               </View>
                     )
             )}
@@ -143,7 +143,7 @@ export default function DogsInfoScreen() {
       flexDirection: 'row',
       height: '20%',
       width: '100%',
-      gap: '2%',
+      gap: '3%',
       overflow: 'clip',
     },
     dogListCircle: {

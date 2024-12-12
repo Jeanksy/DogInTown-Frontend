@@ -53,7 +53,9 @@ export default function SignInScreen({ navigation }) {
               style={styles.input}
           />
              
-              <TextInput
+          <TextInput
+              secureTextEntry={true}
+				      textContentType="oneTimeCode"
               placeholder="Password"
               onChangeText={(value) => setPassword(value)}
               value={password}
