@@ -77,30 +77,47 @@ const toggleFlashStatus = () => {
 };
 
 // Function to take a picture and save it to the reducer store
-	const takePicture = async () => {
-		const photo = await cameraRef.current?.takePictureAsync({ quality: 0.5 });
-		(photo)
-		const formData = new FormData();
-		const uri = photo?.uri;
-		setImage(uri);
-
-		formData.append("photoFromFront", {
-			uri: uri,
-			name: "photo.jpg",
-			type: "image/jpg",
+const takePicture = async () => {
+	const photo = await cameraRef.current?.takePictureAsync({ quality: 0.5 });
+	console.log('Photo:', photo);
+  
+	if (!photo?.uri) {
+	  console.error('No photo URI available');
+	  return;
+	}
+  
+	const formData = new FormData();
+	formData.append("photoFromFront", {
+	  uri: photo.uri,
+	  name: "photo.jpg",
+	  type: "image/jpeg",
+	});
+  
+	console.log('FormData:', formData);
+  
+	try {
+	  fetch('https://dog-in-town-backend.vercel.app/users/upload', {
+		method: "POST",
+		body: formData,
+	  })
+		.then((response) => response.json())
+		.then((data) => {
+		  console.log('Response Data:', data);
+		  if (data.result) {
+			dispatch(addPhoto(data.url));
+		  } else {
+			console.error('Upload failed:', data.error);
+		  }
+		})
+		.catch((error) => {
+		  console.error('An error occurred:', error);
 		});
-
-		fetch('https://dog-in-town-backend.vercel.app/users/upload', {
-			method: "POST",
-			body: formData,
-		}).then((response) => response.json())
-			.then((data) => {
-				console.log(data.url)
-				data.result && dispatch(addPhoto(data.url));
-			});
-		setModalIsVisible(false)
-	
-	};
+	} catch (error) {
+	  console.error('Unexpected error:', error);
+	}
+  
+	setModalIsVisible(false);
+  };
 
 	// REDUCER
 	const dispatch = useDispatch();
