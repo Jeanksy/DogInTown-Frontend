@@ -78,8 +78,11 @@ export default function DogSignUpScreen({ navigation }) {
 	// Function to take a picture and save it to the reducer store
   const takePicture = async () => {
     const photo = await cameraRef.current?.takePictureAsync({ quality: 0.3 });
-    (photo && console.log(photo.uri))
-    
+    (photo)
+		// const formData = new FormData();
+		const uri = photo?.uri;
+		setImage(uri);
+    setModalIsVisible(false)
   }
 
 
@@ -170,7 +173,7 @@ export default function DogSignUpScreen({ navigation }) {
 									<FontAwesome name="circle-thin" size={80} color="gray" />
 								</TouchableOpacity>
 								<TouchableOpacity style={styles.closeModal} onPress={() => setModalIsVisible(false)}>
-								<FontAwesome name='times' size={35} color="gray" marginBottom={15}/>
+								<FontAwesome name='times' size={35} color="gray" opacity={0.8}/>
 								</TouchableOpacity>
 					    	</View>
                     </View>
@@ -207,17 +210,7 @@ export default function DogSignUpScreen({ navigation }) {
                     setItems={setRaceList}
                     placeholder={'Race'}
                 />
-            {/* <Picker
-              selectedValue={selectedRace}
-              style={styles.pickerInput}
-              mode='dropdown'
-              onValueChange={(itemValue, itemIndex) =>
-                setSelectedRace(itemValue)
-              }>
-              <Picker.Item label="Race" value="Race" />
-              <Picker.Item label="Labrador" value="Labrador" />
-              <Picker.Item label="Golden Retriever" value="Golden" />
-            </Picker> */}
+           
           </View>
         </View>
         <View style={styles.dogSize}>
@@ -343,11 +336,11 @@ const styles = StyleSheet.create({
     color: '#5B1A10',
   },
   dogPicture: {
-    height: '35%',
+    padding: '4%',
+    height: '40%',
     alignItems: 'center',
     justifyContent: 'space-around',
     marginTop: '10%',
-    marginBottom: '3%',
   },
   sizeTextContainer: {
     height: 50,
@@ -435,11 +428,21 @@ const styles = StyleSheet.create({
 		elevation: 5,
 	},
 	button: {
-		borderRadius: 10,
-		padding: 10,
+    flex: 0,
+		flexDirection: "row",
+		alignItems: "center",
+		justifyContent: "center",
+		backgroundColor: "#A23D42",
+		width: "90%",
+		height: 50,
+		borderRadius: 20,
+		shadowColor: "black",
+		shadowOpacity: 0.4,
 		elevation: 2,
-		width: '80%',
-		backgroundColor: '#e66351'
+		shadowRadius: 1,
+		shadowOffset: { width: 1, height: 4 },
+		borderWidth: 0,
+
 	},
 	// Camera 
 	camera: {
@@ -450,11 +453,11 @@ const styles = StyleSheet.create({
 		justifyContent: "space-between",
 		overflow: 'hidden',
 		},
-		settingContainer: {
+    settingContainer: {
 			flexDirection: "row",
 			justifyContent: "space-between",
 			alignItems: "center",
-			marginHorizontal: 40,
+			marginHorizontal: '15%',
 		},
 		settingButton: {
 			width: 40,
@@ -471,8 +474,9 @@ const styles = StyleSheet.create({
 		},
 		snapButton: {
 			width: 100,
-			aspectRatio: 1,
+      aspectRatio: 1 / 1,
 			alignItems: "center",
+			justifyContent: 'center',
 			opacity: 0.8,
 		},
 		espace: {

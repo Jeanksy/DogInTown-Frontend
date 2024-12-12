@@ -20,11 +20,11 @@ import {
 import * as ImagePicker from 'expo-image-picker';
 
 
-cloudinary.v2.config({
-	cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-	api_key: process.env.CLOUDINARY_API_KEY,
-	api_secret: process.env.CLOUDINARY_API_SECRET,
-  });
+// cloudinary.v2.config({
+// 	cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+// 	api_key: process.env.CLOUDINARY_API_KEY,
+// 	api_secret: process.env.CLOUDINARY_API_SECRET,
+//   });
 
 // Regex email only for input email
 const EMAIL_REGEX =
@@ -218,7 +218,7 @@ useEffect(() => {
 									<FontAwesome name="circle-thin" size={80} color="gray" />
 								</TouchableOpacity>
 								<TouchableOpacity style={styles.closeModal} onPress={() => setModalIsVisible(false)}>
-								<FontAwesome name='times' size={35} color="gray"  opacity={0.8}/>
+								<FontAwesome name='times' size={35} color="gray" opacity={0.8}/>
 								</TouchableOpacity>
 					    	</View>
                     </View>
@@ -482,7 +482,7 @@ const styles = StyleSheet.create({
 		},
 		snapButton: {
 			width: 100,
-			aspectRatio: 1 /1,
+			aspectRatio: 1 / 1,
 			alignItems: "center",
 			justifyContent: 'center',
 			opacity: 0.8,
