@@ -1,7 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 import { ImageBackground, StyleSheet, Text, View } from 'react-native';
 import { useSelector } from 'react-redux';
-import { upDateUser } from '../reducers/user';
+import { login, AddPhotoChien } from '../reducers/user';
 
 
 export default function DogsInfoScreen() {

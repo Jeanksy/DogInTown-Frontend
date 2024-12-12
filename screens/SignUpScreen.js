@@ -20,11 +20,11 @@ import {
 import * as ImagePicker from 'expo-image-picker';
 
 
-cloudinary.v2.config({
-	cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-	api_key: process.env.CLOUDINARY_API_KEY,
-	api_secret: process.env.CLOUDINARY_API_SECRET,
-  });
+// cloudinary.v2.config({
+// 	cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+// 	api_key: process.env.CLOUDINARY_API_KEY,
+// 	api_secret: process.env.CLOUDINARY_API_SECRET,
+//   });
 
 // Regex email only for input email
 const EMAIL_REGEX =
@@ -169,9 +169,10 @@ const toggleFlashStatus = () => {
 			})
 			.then((response) => response.json())
 			.then((data) => {
-				if (data.result) {
+				if (data.result) { console.log('consolelog de data ===>',data)
+					dispatch(login({username: data.username, token: data.token}));
 					navigation.navigate("DogSignUp");
-					dispatch(login({username: username, token: data.token}));
+					
 				}
 			});
 		}
