@@ -35,12 +35,14 @@ export default function MapScreen() {
 
   const isFocused = useIsFocused();
 
+
+  //Use effect fetch des lieux présent dans la bdd
   useEffect(() => {
-      (async () => {
-        const response = await fetch('https://dog-in-town-backend.vercel.app/places')
-        const result = await response.json()
-        setFriendlies(result.allPlaces);
-      })();
+    (async () => {
+      const response = await fetch('https://dog-in-town-backend.vercel.app/places')
+      const result = await response.json()
+      setFriendlies(result.allPlaces);
+    })();
   }, [isFocused, modalVisible, refreshShow])
 
   // Trouver notre position actuel
@@ -156,12 +158,14 @@ export default function MapScreen() {
     setModalVisible(!modalVisible);
   }
 
+
+
   return (
     <KeyboardAvoidingView
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
-        <MapView mapType="standard" onPress={() => {setPlaces([]), setRefreshShow(!refreshShow)}} style={styles.map} initialRegion={{
+      <MapView mapType="standard" onPress={() => { setPlaces([]), setRefreshShow(!refreshShow) }} style={styles.map} initialRegion={{
         latitude: 45.75,
         longitude: 4.85,
         latitudeDelta: 1.0,
@@ -193,7 +197,7 @@ export default function MapScreen() {
             title={place.name}
             description={place.adress}
             style={styles.marker}
-            onPress={() => {setModalFriendlyVisible(true), setFriendlyToSee(place)}}
+            onPress={() => { setModalFriendlyVisible(true), setFriendlyToSee(place) }}
           >
             <View style={styles.markerContainer}>
               <Image source={require('../assets/Images/patte2.png')} style={{ width: 15, height: 15, tintColor: 'white', resizeMode: 'contain' }} />
@@ -267,18 +271,29 @@ export default function MapScreen() {
         onRequestClose={() => {
           setModalFriendlyVisible(!modalFriendlyVisible);
         }}>
-        <View style={styles.contenuModal}>
-          <View style={styles.fenetre}>
-            <View style={styles.topContent}>
-              {friendlyToSee && <Text style={styles.addModalTitle}>{friendlyToSee.name}</Text>}
-              <View style={styles.topRightButtons}></View>
+        {friendlyToSee &&
+          <View style={styles.contenuModal}>
+            <View style={styles.fenetreInfo}>
+              <View style={styles.topContent}>
+                <Text style={styles.friendlyModalTitle}>{friendlyToSee.name}</Text>
+                <Pressable style={styles.leaveContainer}>
+                  <FontAwesome name='times-circle' size={30} color='black' />
+                </Pressable>
+              </View>
+              <View style={styles.placeInfo}>
+                <View style={styles.ratingContainer}>
+                  <View style={styles.cercleAvis} backgroundColor={friendlyToSee.feedback > 10 ? 'black' : '#F7CC99'}></View>
+                  <Text>{friendlyToSee.feedback} Avis</Text>
+                </View>
+                <Text>Chiens de {friendlyToSee.sizeAccepted}{friendlyToSee.sizeAccepted === 'moyen' ? 'ne' : 'e'} taille acceptés.</Text>
+              </View>
+              <View style={styles.commentsContainer} >
+              </View>
+              <View style={styles.downButtonsContainer}></View>
             </View>
-            <View style={styles.placeInfo}></View>
-            <View style={styles.commentsContainer}></View>
-            <View style={styles.buttonAvis}></View>
-            <View style={styles.downButtonsContainer}></View>
           </View>
-        </View>
+        }
+
       </Modal>
       <StatusBar style="auto" />
     </KeyboardAvoidingView>
@@ -313,12 +328,6 @@ const styles = StyleSheet.create({
     marginLeft: '3%',
     marginRight: '3%',
   },
-  // marker:{
-  //   alignItems: 'center',
-  //   justifyContent: 'center',
-  //   height: 50,
-  //   width: 50,
-  // },
   markerContainer: {
     height: 28,
     width: 28,
@@ -440,5 +449,70 @@ const styles = StyleSheet.create({
   searchBoxField: {
     fontSize: 22,
     fontWeight: 700,
+  },
+
+  //STYLE MODAL INFOS DE LIEU
+  fenetreInfo: {
+    backgroundColor: '#FCE9D8',
+    width: '90%',
+    height: '75%',
+    minHeight: '75%',
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'space-evenly',
+  },
+  topContent: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    height: '10%',
+    paddingLeft: '5%',
+    paddingRight: '3%',
+    width: '100%',
+  },
+  leaveContainer: {
+    height: 60,
+    width: 60,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 100,
+    // backgroundColor: 'red',
+  },
+  friendlyModalTitle: {
+    width: '75%',
+    fontSize: 22,
+    fontWeight: 700,
+    color: '#5B1A10',
+  },
+  placeInfo: {
+    width: '100%',
+    height: '15%',
+    // backgroundColor: 'orange',
+    justifyContent: 'center',
+    paddingLeft: '5%',
+  },
+  ratingContainer: {
+    flexDirection: 'row',
+    width: '22%',
+    height: '20%',
+    justifyContent: 'space-between',
+    marginBottom: '2%',
+    alignItems: 'center',
+  },
+  cercleAvis: {
+    width: 30,
+    height: 30,
+    borderRadius: 100,
+  },
+  commentsContainer: {
+    width: '88%',
+    borderRadius: 15,
+    height: '40%',
+    backgroundColor: 'white',
+  },
+  downButtonsContainer:{
+    width: '100%',
+    height: '20%',
+    // backgroundColor: 'blue',
   }
 });
