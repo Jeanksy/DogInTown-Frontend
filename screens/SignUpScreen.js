@@ -105,6 +105,7 @@ const takePicture = async () => {
 		  console.log('Response Data:', data);
 		  if (data.result) {
 			dispatch(addPhoto(data.url));
+			setImage(user.photo)
 		  } else {
 			console.error('Upload failed:', data.error);
 		  }
@@ -134,11 +135,39 @@ const takePicture = async () => {
 			quality: 1,
 		});
 	
-		console.log(result);
-	
 		if (!result.canceled) {
 			setImage(result.assets[0].uri);
-		}
+			const formData = new FormData();
+			formData.append("photoFromFront", {
+			uri: result.assets[0].uri,
+			name: "photo.jpg",
+			type: "image/jpeg",
+			});
+		
+			console.log('FormData:', formData);
+		
+			try {
+			fetch('https://dog-in-town-backend.vercel.app/users/upload', {
+				method: "POST",
+				body: formData,
+			})
+				.then((response) => response.json())
+				.then((data) => {
+				console.log('Response Data:', data);
+				if (data.result) {
+					dispatch(addPhoto(data.url));
+					setImage(user.photo)
+				} else {
+					console.error('Upload failed:', data.error);
+				}
+				})
+				.catch((error) => {
+				console.error('An error occurred:', error);
+				});
+			} catch (error) {
+			console.error('Unexpected error:', error);
+			}
+				}
 	};
 
 	// check if passwords are empty, doesn't match or match
@@ -189,12 +218,12 @@ const takePicture = async () => {
 				if (data.result) { console.log('consolelog de data ===>',data)
 					dispatch(login({username: data.username, token: data.token, id: data.id}));
 					navigation.navigate("DogSignUp");
-					
 				}
 			});
 		}
 	};
 
+	console.log('user ici', user.photo, 'image ici', image)
 // Hook pour prise de photo
 useEffect(() => {
 		(async () => {
