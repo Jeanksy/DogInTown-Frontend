@@ -277,7 +277,7 @@ export default function MapScreen() {
               <View style={styles.topContent}>
                 <Text style={styles.friendlyModalTitle}>{friendlyToSee.name}</Text>
                 <Pressable style={styles.leaveContainer}>
-                  <FontAwesome name='times-circle' size={30} color='black' />
+                  <FontAwesome name='times-circle' size={30} color='black' onPress={() => setModalFriendlyVisible(false)} />
                 </Pressable>
               </View>
               <View style={styles.placeInfo}>

@@ -58,19 +58,19 @@ export default function OptionsScreen({navigation}) {
         </Modal>
 
         <Text style={styles.titre}>Options</Text>
-        <TouchableOpacity style={styles.blocSelection1} onPress={() => handleDog()}>
+        <TouchableOpacity style={[styles.blocSelection1, styles.shadowBtn]} onPress={() => handleDog()}>
             <Image style={styles.image} source={require('../assets/Images/moyen.png')} />
             <Text>Votre/vos chien(s)</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.blocSelection2} onPress={() => handleUser()}>
+        <TouchableOpacity style={[styles.blocSelection2, styles.shadowBtn]} onPress={() => handleUser()}>
             <FontAwesome name='gears' color='white' size={50}/>
             <Text>Parametres du compte</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.blocSelection3} onPress={() => handleContact()}>
+        <TouchableOpacity style={[styles.blocSelection3, styles.shadowBtn]} onPress={() => handleContact()}>
             <FontAwesome name='envelope' color='#97C7DE' size={50}/>
             <Text>Nous contacter</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.blocSelection4} onPress={() => handleLogout()}>
+        <TouchableOpacity style={[styles.blocSelection4, styles.shadowBtn]} onPress={() => handleLogout()}>
             <Image style={styles.image} source={require('../assets/Images/Frame8.png')}/>
             <Text>Deconnection</Text>
         </TouchableOpacity>
@@ -85,6 +85,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  shadowBtn: {
+    shadowColor: "black",
+    shadowOpacity: 0.5,
+    elevation: 2,
+    shadowRadius: 1,
+    shadowOffset: { width: 1, height: 4 },
+    borderWidth: 0,
   },
   titre: {
     flex: 1,
@@ -104,6 +112,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginBottom: '4%',
     backgroundColor: '#F7CC99',
+    
   },
   blocSelection2: {
     width: '75%',

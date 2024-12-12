@@ -15,6 +15,7 @@ import {
 	Image,
 	Modal,
 	SafeAreaView,
+	ActivityIndicator,
 } from "react-native";
 // picker pour telechargement photos depuis téléphone
 import * as ImagePicker from 'expo-image-picker';
@@ -47,6 +48,12 @@ export default function SignUpScreen({ navigation }) {
 	const [emailError, setEmailError] = useState(false);
 	const [postCodeError, setPostCodeError] = useState(false);
 	const [passwordStatus, setpasswordStatus] = useState(PASSWORD_UNSET);
+	const [isLoading, setIsLoading] = useState(false);
+
+
+// LOADER CHECK
+	const delay = (ms) => new Promise(res => setTimeout(res, ms));	
+
 
 //////CAMERA///////
 const photo = 'photo.png';
@@ -214,18 +221,24 @@ const takePicture = async () => {
 				}),
 			})
 			.then((response) => response.json())
-			.then((data) => {
+			.then(async (data) => {
 				if (data.result) { console.log('consolelog de data ===>',data)
-					dispatch(login({username: data.username, token: data.token, id: data.id}));
-					navigation.navigate("DogSignUp");
-				}
+					dispatch(login({ username: data.username, token: data.token, id: data.id }));
+					
+						setIsLoading(true);
+						await delay(1000);
+						setIsLoading(false);
+
+						navigation.navigate("DogSignUp");
+					}
+				
 			});
 		}
 	};
 
 	console.log('user ici', user.photo, 'image ici', image)
 // Hook pour prise de photo
-useEffect(() => {
+	useEffect(() => {
 		(async () => {
 			const result = await Camera.requestCameraPermissionsAsync();
 			setHasPermission(result && result?.status === "granted");
@@ -234,7 +247,8 @@ useEffect(() => {
 // Conditions to prevent more than 1 camera component to run in the bg
 		if (!hasPermission || !isFocused) {
 		return <View />;
-		}
+	};
+
 
 	return (
 		<KeyboardAvoidingView style={styles.container}>
@@ -346,7 +360,8 @@ useEffect(() => {
 				style={styles.signUpBtn}
 				activeOpacity={0.8}
 			>
-				<Text style={styles.clickableBtn}>Let's Go !</Text>
+				{(isLoading) ? <ActivityIndicator style={{ size: 'large', color: '#F1AF5A' }} />
+					: <Text style={styles.clickableBtn}>Let's Go !</Text>}
 			</TouchableOpacity>
 			<StatusBar style="auto" />
 		</KeyboardAvoidingView>
@@ -404,7 +419,7 @@ const styles = StyleSheet.create({
 		height: 50,
 		borderRadius: 20,
 		shadowColor: "black",
-		shadowOpacity: 0.4,
+		shadowOpacity: 0.5,
 		elevation: 1,
 		shadowRadius: 1,
 		shadowOffset: { width: 1, height: 4 },
@@ -420,7 +435,7 @@ const styles = StyleSheet.create({
 		height: 50,
 		borderRadius: 20,
 		shadowColor: "black",
-		shadowOpacity: 0.4,
+		shadowOpacity: 0.5,
 		elevation: 1,
 		shadowRadius: 1,
 		shadowOffset: { width: 1, height: 4 },
