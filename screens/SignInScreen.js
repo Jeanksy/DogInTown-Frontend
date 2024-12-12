@@ -26,7 +26,7 @@ export default function SignInScreen({ navigation }) {
 			.then(data => {
         if (data.result) {
           navigation.navigate('TabNavigator', { screen: 'MapScreen' });
-          dispatch(login({username: data.username, token: data.token}));
+          dispatch(login({username: data.username, token: data.token, id: data.id}));
 				}
 			});
 	};
@@ -36,8 +36,6 @@ export default function SignInScreen({ navigation }) {
       
       navigation.navigate('SignUp');
     }
-
-
 
 
     return (

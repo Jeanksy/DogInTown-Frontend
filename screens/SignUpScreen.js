@@ -170,7 +170,7 @@ const toggleFlashStatus = () => {
 			.then((response) => response.json())
 			.then((data) => {
 				if (data.result) { console.log('consolelog de data ===>',data)
-					dispatch(login({username: data.username, token: data.token}));
+					dispatch(login({username: data.username, token: data.token, id: data.id}));
 					navigation.navigate("DogSignUp");
 					
 				}
