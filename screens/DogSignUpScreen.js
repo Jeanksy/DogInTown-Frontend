@@ -30,7 +30,9 @@ const DOG_SIZE_S= 'petit';
 const DOG_SIZE_M = 'moyen';
 const DOG_SIZE_L = 'grand';
 
+
 export default function DogSignUpScreen({ navigation }) {
+
 
 
   // DropDown Picker
@@ -124,6 +126,8 @@ export default function DogSignUpScreen({ navigation }) {
 
   //REDUCER
   const user = useSelector((state) => state.user.value);
+  const userToken = user.token;
+  const dispatch = useDispatch();
 
   //PICKER telechargement d'images depuis téléphone ***********************************************
   const pickImage = async () => {
@@ -185,13 +189,15 @@ export default function DogSignUpScreen({ navigation }) {
     if (!dogRegister) {
       navigation.navigate('TabNavigator');
       return;
-    }
+    };
     
       await fetch(`https://dog-in-town-backend.vercel.app/users/dog`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ userToken: user.token, name: dogName, race: selectedRace, photo: image, size: dogSize }),
     })
+    const result = response.json()
+    console.log(result)
     navigation.navigate('TabNavigator');
   }
 
