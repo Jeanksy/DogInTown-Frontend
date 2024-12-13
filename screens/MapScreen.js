@@ -7,14 +7,10 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { API_GOOGLE_KEY } from '@env';
 import { useSelector } from 'react-redux';
 import { useIsFocused } from '@react-navigation/native';
-
-
+import PopUpInfoPlace from '../components/PopUpInfoPlace'
+import PopUpAddPlace from '../components/PopUpAddPlace';
 
 const { width, height } = Dimensions.get('window'); //dimension de l'écran
-const DOG_SIZE_S = 'petit';
-const DOG_SIZE_M = 'moyen';
-const DOG_SIZE_L = 'grand';
-
 
 export default function MapScreen() {
 
@@ -23,16 +19,12 @@ export default function MapScreen() {
   const [places, setPlaces] = useState([]); //lieux trouvés par l'API GOOGLE
   const [friendlies, setFriendlies] = useState([]); //lieux contenu dans notre base de donnée place
   const [searchText, setSearchText] = useState(''); //text compris dans la bar de recherche
-  const [dogSize, setDogSize] = useState('petit'); //taille du chien
   const [addPlaceName, setAddPlaceName] = useState(''); //nom du lieu à ajouter à la bdd
   const [placeToAdd, setPlaceToAdd] = useState(null); //objet du lieu à ajouter à la bdd
   const [friendlyToSee, setFriendlyToSee] = useState(null) //objet du lieu à afficher avec le pop up lieu
-  const [firstComment, setFirstComment] = useState(''); //contenu d'un premier commentaire
   const [refreshShow, setRefreshShow] = useState(false);
   const [modalFriendlyVisible, setModalFriendlyVisible] = useState(false) //Modal détail de lieu
   const user = useSelector((state) => state.user.value);
-
-
   const isFocused = useIsFocused();
 
 
@@ -73,8 +65,6 @@ export default function MapScreen() {
     );
   };
 
-
-
   // FONCTION POUR TROUVER UN LIEU SUR L'API GOOGLE PLACE ET FILTRER L'AFFICHAGE
   const searchPlace = async () => {
     if (!searchText.trim().length) return;
@@ -113,52 +103,6 @@ export default function MapScreen() {
       friendly.longitude === place.geometry.location.lng
     );
   };
-
-
-  //Fonction pour ajouter à la BDD un nouveau lieu
-  const handleAddingPlace = async (place) => {
-
-    if (firstComment !== '') { //si commentaire rempli ajout du commentaire dans la bdd
-      const responseComment = await fetch(`https://dog-in-town-backend.vercel.app/comments`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content: firstComment, token: user.token }),
-      })
-      const result = await responseComment.json()
-      const responsePlace = await fetch(`https://dog-in-town-backend.vercel.app/places/addPlace`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: place.name,
-          token: result.comment.token,
-          type: place.types[0],
-          adress: place.formatted_address,
-          size: dogSize,
-          latitude: place.geometry.location.lat,
-          longitude: place.geometry.location.lng,
-        })
-      })
-    } else { //pas de premier commentaire rempli
-      const responsePlace = await fetch(`https://dog-in-town-backend.vercel.app/places/addPlace`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: place.name,
-          type: place.types[0],
-          adress: place.formatted_address,
-          size: dogSize,
-          latitude: place.geometry.location.lat,
-          longitude: place.geometry.location.lng,
-        })
-      })
-    }
-    setDogSize(DOG_SIZE_S);
-    setPlaces([]);
-    setFirstComment('');
-    setModalVisible(!modalVisible);
-  }
-
-
 
   return (
     <KeyboardAvoidingView
@@ -223,77 +167,21 @@ export default function MapScreen() {
           setModalVisible(!modalVisible);
         }}>
         <View style={styles.contenuModal}>
-          <View style={styles.fenetre}>
-            <Text style={styles.addModalTitle}>Ce lieu est un espace dog friendly ?</Text>
-            <View style={styles.searchBox}>
-              <Text style={styles.searchBoxField}>{addPlaceName}</Text>
-            </View>
-            <View style={styles.dogSize}>
-              <View style={styles.sizeTextContainer}>
-                <Text style={styles.dogSizeText}>Taille de chien accepté:</Text>
-              </View>
-              <View style={styles.dogSizeCardContainer}>
-                <Pressable style={styles.dogSizeCard} onPress={() => setDogSize(DOG_SIZE_S)}>
-                  <View style={styles.dogSizeCard}>
-                    <Image style={{ maxHeight: 40, maxWidth: 40, tintColor: dogSize === DOG_SIZE_S ? "#A23D42" : "#5B1A10" }} source={require('../assets/Images/petit.png')} />
-                    <Text>Petit</Text>
-                  </View>
-                </Pressable>
-                <Pressable style={styles.dogSizeCard} onPress={() => setDogSize(DOG_SIZE_M)}>
-                  <View style={styles.dogSizeCard}>
-                    <Image style={{ maxHeight: 50, maxWidth: 50, tintColor: dogSize === DOG_SIZE_M ? "#A23D42" : "#5B1A10" }} source={require('../assets/Images/moyen.png')} />
-                    <Text>Moyen</Text>
-                  </View>
-                </Pressable>
-                <Pressable style={styles.dogSizeCard} onPress={() => setDogSize(DOG_SIZE_L)}>
-                  <View style={styles.dogSizeCard}>
-                    <Image style={{ maxHeight: 100, maxWidth: 100, tintColor: dogSize === DOG_SIZE_L ? "#A23D42" : "#5B1A10" }} source={require('../assets/Images/grand.png')} />
-                    <Text>Grand</Text>
-                  </View>
-                </Pressable>
-              </View>
-            </View>
-            <View style={styles.firstCommentContainer}>
-              <TextInput placeholder='Laissez un premier avis sur ce lieu!' onChangeText={(value) => setFirstComment(value)} value={firstComment} autoCapitalize="sentences" style={styles.firstCommentTextInput}></TextInput>
-            </View>
-            <TouchableOpacity style={styles.buttonContainer} onPress={() => handleAddingPlace(placeToAdd)}>
-              <View >
-                <Text style={styles.buttonLabel}>Ajouter</Text>
-              </View>
-            </TouchableOpacity>
-          </View>
+          <PopUpAddPlace addPlaceName={addPlaceName} placeToAdd={placeToAdd} setModalVisible={setModalVisible} setPlaces={setPlaces} userToken={user.token}/>
         </View>
       </Modal>
-      <Modal
+      <Modal // Modal info de lieu
         animationType="slide"
         transparent={true}
         visible={modalFriendlyVisible}
         onRequestClose={() => {
           setModalFriendlyVisible(!modalFriendlyVisible);
         }}>
-        {friendlyToSee &&
-          <View style={styles.contenuModal}>
-            <View style={styles.fenetreInfo}>
-              <View style={styles.topContent}>
-                <Text style={styles.friendlyModalTitle}>{friendlyToSee.name}</Text>
-                <Pressable style={styles.leaveContainer}>
-                  <FontAwesome name='times-circle' size={30} color='black' onPress={() => setModalFriendlyVisible(false)} />
-                </Pressable>
-              </View>
-              <View style={styles.placeInfo}>
-                <View style={styles.ratingContainer}>
-                  <View style={styles.cercleAvis} backgroundColor={friendlyToSee.feedback > 10 ? 'black' : '#F7CC99'}></View>
-                  <Text>{friendlyToSee.feedback} Avis</Text>
-                </View>
-                <Text>Chiens de {friendlyToSee.sizeAccepted}{friendlyToSee.sizeAccepted === 'moyen' ? 'ne' : 'e'} taille acceptés.</Text>
-              </View>
-              <View style={styles.commentsContainer} >
-              </View>
-              <View style={styles.downButtonsContainer}></View>
-            </View>
-          </View>
-        }
-
+        <View style={styles.contenuModal}>
+          {friendlyToSee &&
+            <PopUpInfoPlace friendlyToSee={friendlyToSee} setModalFriendlyVisible={setModalFriendlyVisible} userLocation={currentPosition} user={user}/>
+          }
+        </View>
       </Modal>
       <StatusBar style="auto" />
     </KeyboardAvoidingView>
@@ -359,160 +247,10 @@ const styles = StyleSheet.create({
     height: 150,
     width: 150,
   },
-  /// STYLE MODAL AJOUT DE LIEU ////
   contenuModal: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: '10%',
   },
-  fenetre: {
-    backgroundColor: '#F1AF5A',
-    width: '90%',
-    height: '75%',
-    minHeight: '75%',
-    borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'space-evenly',
-  },
-  searchBox: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  addSearchInput: {
-    marginLeft: 20,
-    height: 40,
-    width: 200,
-    backgroundColor: 'white',
-    borderRadius: 10,
-  },
-  buttonContainer: {
-    width: '80%',
-    height: 60,
-    backgroundColor: '#FCE9D8',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  dogSize: {
-    height: 140,
-    // backgroundColor: 'orange',
-    justifyContent: 'center',
-    alignItems: 'center',
-
-  },
-  dogSizeText: {
-    marginLeft: 8,
-    fontSize: 20,
-    color: '#5B1A10',
-  },
-  dogPicture: {
-    height: 310,
-    alignItems: 'center',
-    justifyContent: 'space-evenly',
-    // backgroundColor: 'red',
-    marginTop: 20,
-  },
-  sizeTextContainer: {
-    height: 50,
-    width: '100%',
-    backgroundColor: 'puprle',
-  },
-  dogSizeCardContainer: {
-    height: 100,
-    width: '100%',
-    alignItems: 'center',
-    justifyContent: 'space-evenly',
-    flexDirection: 'row',
-    marginRight: '12%',
-  },
-  dogSizeCard: {
-    alignItems: 'center',
-  },
-  firstCommentContainer: {
-    backgroundColor: 'white',
-    height: '20%',
-    width: '80%',
-    borderRadius: 15,
-  },
-  firstCommentTextInput: {
-  },
-  addModalTitle: {
-    fontSize: 22,
-    fontWeight: 700,
-    color: '#5B1A10',
-  },
-  buttonLabel: {
-    fontSize: 18,
-    fontWeight: 600,
-    color: '#5B1A10',
-  },
-  searchBoxField: {
-    fontSize: 22,
-    fontWeight: 700,
-  },
-
-  //STYLE MODAL INFOS DE LIEU
-  fenetreInfo: {
-    backgroundColor: '#FCE9D8',
-    width: '90%',
-    height: '75%',
-    minHeight: '75%',
-    borderRadius: 20,
-    alignItems: 'center',
-    justifyContent: 'space-evenly',
-  },
-  topContent: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    height: '10%',
-    paddingLeft: '5%',
-    paddingRight: '3%',
-    width: '100%',
-  },
-  leaveContainer: {
-    height: 60,
-    width: 60,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 100,
-    // backgroundColor: 'red',
-  },
-  friendlyModalTitle: {
-    width: '75%',
-    fontSize: 22,
-    fontWeight: 700,
-    color: '#5B1A10',
-  },
-  placeInfo: {
-    width: '100%',
-    height: '15%',
-    // backgroundColor: 'orange',
-    justifyContent: 'center',
-    paddingLeft: '5%',
-  },
-  ratingContainer: {
-    flexDirection: 'row',
-    width: '22%',
-    height: '20%',
-    justifyContent: 'space-between',
-    marginBottom: '2%',
-    alignItems: 'center',
-  },
-  cercleAvis: {
-    width: 30,
-    height: 30,
-    borderRadius: 100,
-  },
-  commentsContainer: {
-    width: '88%',
-    borderRadius: 15,
-    height: '40%',
-    backgroundColor: 'white',
-  },
-  downButtonsContainer:{
-    width: '100%',
-    height: '20%',
-    // backgroundColor: 'blue',
-  }
-});
+})
