@@ -92,7 +92,6 @@ const toggleFlashStatus = () => {
 // Function to take a picture and save it to the reducer store
 const takePicture = async () => {
 	const photo = await cameraRef.current?.takePictureAsync({ quality: 0.5 });
-	console.log('Photo:', photo);
   
 	if (!photo?.uri) {
 	  console.error('No photo URI available');
@@ -113,7 +112,7 @@ const takePicture = async () => {
 	  })
 		.then((response) => response.json())
 		.then((data) => {
-		  console.log('Response Data:', data);
+		
 		  if (data.result) {
 			setImage(data.url)
 		  } else {
@@ -165,9 +164,9 @@ const takePicture = async () => {
 			  })
 				.then((response) => response.json()) 
 				.then((data) => {
-				  console.log('Response Data:', data);
+
 				  if (data.result) {
-					console.log('Data URL:', data.url);
+				
 					setImage(data.url);  // Mise à jour de l'URL de l'image après l'upload
 				  } else {
 					console.error('Upload failed:', data.error);
@@ -213,7 +212,7 @@ const takePicture = async () => {
 		return emailError === false && passwordStatus === PASSWORD_MATCH && postCodeError === false;
 	};
 
-	console.log(image)
+	
 	//on press check if email is valid email structure, if both passwords match and post code is valid
 	const handleSignUp = () => {
 		if (isFormValid()) {
@@ -230,7 +229,7 @@ const takePicture = async () => {
 			})
 			.then((response) => response.json())
 			.then(async (data) => {
-				if (data.result) { console.log('consolelog de data ===>',data)
+				if (data.result) {
 					dispatch(login({ username: data.username, token: data.token }));
 					
 						setIsLoading(true);
@@ -305,7 +304,7 @@ const takePicture = async () => {
 					keyboardType="email-address" // https://reactnative.dev/docs/textinput#keyboardtype
 					textContentType="emailAddress" // https://reactnative.dev/docs/textinput#textcontenttype-ios
 					autoComplete="email" // https://reactnative.dev/docs/textinput#autocomplete-android
-					onChangeText={(value) => setEmail(value)}
+					onChangeText={(value) => setEmail(value.trim())}
 					onBlur={() => emailCheck()}
 					value={email}
 					style={styles.input}

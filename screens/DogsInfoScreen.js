@@ -66,9 +66,10 @@ export default function DogsInfoScreen() {
         .then(response => response.json())
         .then(data => {
           if (data) {
-            console.log(data.dogs.shift())
-            setDoggies(data.dogs)
-            console.log(doggies)
+            console.log('data recue:', data);
+            console.log(data.dogs.shift());
+            setDoggies(data.dogs);
+            console.log(doggies);
           }
         })
   }, []);
@@ -102,7 +103,7 @@ export default function DogsInfoScreen() {
 						{doggies &&
 							doggies.length > 0 &&
 							doggies.map((dog, index) => (
-								<View style={{ alignItems: "center", gap: "5%" }}>
+								<View key={index} style={{ alignItems: "center", gap: "5%" }}>
 									<TouchableOpacity
 										key={index}
 										style={[styles.dogListCircle, styles.shadow]}
@@ -114,20 +115,16 @@ export default function DogsInfoScreen() {
 											source={{ uri: dog.photo }}
 										/>
 									</TouchableOpacity>
-									<Text style={styles.textsDogs}>
+									<Text key={index} style={styles.textsDogs}>
 										{dog.name}
 									</Text>
 								</View>
-							))}
+							))};
 
 						{doggies && doggies.length < 4 && (
 							<View style={{ alignItems: "center", gap: "5%" }}>
 								<TouchableOpacity style={[styles.dogListAdd, styles.shadow]}>
-									<Text
-										style={{ fontSize: 40, fontWeight: 600, color: "white" }}
-									>
-										+
-									</Text>
+									<Text style={{ fontSize: 40, fontWeight: 600, color: "white" }}>+</Text>
 								</TouchableOpacity>
 								<Text style={styles.textsDogs}>Add a dog</Text>
 							</View>
