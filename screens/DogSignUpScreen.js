@@ -182,7 +182,7 @@ export default function DogSignUpScreen({ navigation }) {
         console.error('Unexpected error:', error);
         }
       }
-      };
+  };
 
   // Fonction pour naviguer vers le Tab menu
   const handleDogSignup = async (dogRegister) => {
@@ -191,15 +191,13 @@ export default function DogSignUpScreen({ navigation }) {
       return;
     };
     
-      await fetch(`https://dog-in-town-backend.vercel.app/users/dog`, {
+    await fetch(`https://dog-in-town-backend.vercel.app/users/dog`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ userToken: user.token, name: dogName, race: selectedRace, photo: image, size: dogSize }),
-    })
-    const result = response.json()
-    console.log(result)
+    });
     navigation.navigate('TabNavigator');
-  }
+  };
 
   useEffect(() => {
     (async () => {
@@ -278,7 +276,7 @@ export default function DogSignUpScreen({ navigation }) {
                     value={value}
                     items={raceList}
                     setOpen={setOpen}
-                    setValue={setValue}
+                    setValue={setSelectedRace}
                     setItems={setRaceList}
                     placeholder={'Race'}
                 />
