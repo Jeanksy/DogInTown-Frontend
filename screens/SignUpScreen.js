@@ -19,6 +19,7 @@ import {
 } from "react-native";
 // picker pour telechargement photos depuis téléphone
 import * as ImagePicker from 'expo-image-picker';
+import * as FileSystem from 'expo-file-system'; // pour convertir le fichier en format adapté pour Cloudinary
 
 
 // cloudinary.v2.config({
@@ -54,8 +55,12 @@ export default function SignUpScreen({ navigation }) {
 // LOADER CHECK
 	const delay = (ms) => new Promise(res => setTimeout(res, ms));	
 
+// REDUCER
+	const dispatch = useDispatch();
+	const user = useSelector((state) => state.user.value);
 
-//////CAMERA///////
+
+//////CAMERA/////// ********************************************************* CAMERA ***************************************
 const photo = 'photo.png';
 // Reference to the camera
 const cameraRef = useRef(null);
@@ -68,7 +73,7 @@ const [flashStatus, setFlashStatus] = useState(false);
 // Modal ouverture photo
 const [modalIsVisible, setModalIsVisible] = useState(false);
 
-
+// Activation de l'affichage photo
 const handlePhoto = () => {
     setModalIsVisible(true)
 
@@ -112,7 +117,7 @@ const takePicture = async () => {
 		  console.log('Response Data:', data);
 		  if (data.result) {
 			dispatch(addPhoto(data.url));
-			setImage(user.photo)
+			setImage(data.url)
 		  } else {
 			console.error('Upload failed:', data.error);
 		  }
@@ -127,11 +132,7 @@ const takePicture = async () => {
 	setModalIsVisible(false);
   };
 
-	// REDUCER
-	const dispatch = useDispatch();
-	const user = useSelector((state) => state.user.value);
-
-	//PICKER telechargement d'images depuis téléphone
+	//PICKER telechargement d'images depuis téléphone ************************** PICKER ******************************
 	const [image, setImage] = useState(null);
 	const pickImage = async () => {
 		// No permissions request is necessary for launching the image library
@@ -143,17 +144,24 @@ const takePicture = async () => {
 		});
 	
 		if (!result.canceled) {
-			setImage(result.assets[0].uri);
-			const formData = new FormData();
-			formData.append("photoFromFront", {
-			uri: result.assets[0].uri,
-			name: "photo.jpg",
-			type: "image/jpeg",
-			});
-		
-			console.log('FormData:', formData);
-		
+			const imageUri = result.assets[0].uri;
+			setImage(imageUri);
+		}
+
+		//Convertion du fichier en format utilisable pour FormData
 			try {
+				const fileInfo = await FileSystem.readAsStringAsync(imageUri, {
+					encoding: FileSystem.EncodingType.Base64,
+				});
+
+				const formData = new FormData();
+				formData.append("photoFromFront", {
+					uri: imageUri,
+					name: "photo.jpg",  // Le nom du fichier
+					type: "image/jpeg",  // Le type MIME du fichier
+					base64: fileInfo,  // pour ajouter le fichier encodé en base64
+				});
+			
 			fetch('https://dog-in-town-backend.vercel.app/users/upload', {
 				method: "POST",
 				body: formData,
@@ -161,20 +169,20 @@ const takePicture = async () => {
 				.then((response) => response.json())
 				.then((data) => {
 				console.log('Response Data:', data);
-				if (data.result) {
+				if (data.result) { (console.log('ceci est le data.url',data.url))
 					dispatch(addPhoto(data.url));
-					setImage(user.photo)
+					//setImage(user.photo)
 				} else {
 					console.error('Upload failed:', data.error);
 				}
 				})
-				.catch((error) => {
+			.catch((error) => {
 				console.error('An error occurred:', error);
 				});
 			} catch (error) {
 			console.error('Unexpected error:', error);
 			}
-				}
+				
 	};
 
 	// check if passwords are empty, doesn't match or match
@@ -235,8 +243,7 @@ const takePicture = async () => {
 			});
 		}
 	};
-
-	console.log('user ici', user.photo, 'image ici', image)
+	
 // Hook pour prise de photo
 	useEffect(() => {
 		(async () => {
@@ -249,7 +256,7 @@ const takePicture = async () => {
 		return <View />;
 	};
 
-
+	console.log('user.photo ici', user.photo, 'image ici', image)
 	return (
 		<KeyboardAvoidingView style={styles.container}>
 			<View style={styles.connexionCont}>
@@ -347,7 +354,7 @@ const takePicture = async () => {
 				<TouchableOpacity onPress={() => handlePhoto()}>
 					<FontAwesome name='camera' size={38} color='#A23D42' />
 				</TouchableOpacity>
- 				<Image style={styles.avatar} source={{uri : image}}/>
+ 				<Image style={styles.avatar} source={{uri: image}}/>
 				<TouchableOpacity onPress={pickImage}>
 					<FontAwesome name='download' size={40} color='#A23D42'/>
 				</TouchableOpacity>
