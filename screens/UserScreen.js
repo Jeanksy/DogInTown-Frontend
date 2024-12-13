@@ -2,29 +2,54 @@ import {
 	StyleSheet,
 	Text,
 	View,
-	ImageBackground,
+	TextInput,
 	TouchableOpacity,
 	Modal,
 	Image,
+	Pressable,
 } from "react-native";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import { login, AddPhotoChien } from "../reducers/user";
+import { login } from "../reducers/user";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 
-export default function UserScreen() {
+export default function UserScreen({navigation}) {
 	// Etat de la modal
 	const [modalIsVisible, setModalIsVisible] = useState(false);
-	// Etat changement de pseudo
+	// Etat changement de pseudo/ email/ mdp/ photo
 	const [newUser, setnewUser] = useState("");
+	const [newmail, setNewmail] = useState("");
+	const [newpassword, setNewpassword] = useState("");
+	const [newphoto, setNewPhoto] = useState("");
 	// REDUCER
 	const user = useSelector((state) => state.user.value);
 
+	//Reccupération des infos du user avec le fetch de la route get
+	useEffect(() => {	
+	fetch(`https://dog-in-town-backend.vercel.app/users/${user.token}`)
+		  .then((response) => response.json())
+		  .then((data) => {
+			if(data.result) {
+				setnewUser(data.profilUser[0].username)
+				setNewmail(data.profilUser[0].email)
+				setNewpassword(data.profilUser[0].password)
+				setNewPhoto(data.profilUser[0].avatar)
+			}
+		  });
+	  }, []);
+
+	  console.log(newphoto)
+
+	  const handleReturn = () => {
+		navigation.navigate('Options');
+	  }
+
 	return (
 		<View style={styles.background}>
+			<Pressable style={styles.fleche} onPress={() => handleReturn()}><FontAwesome name="arrow-left" size={30} color="#A23D42" textAlign='right'></FontAwesome></Pressable>
 			{/* Zone d'affichage standard page */}
 			<View style={styles.container}>
-				<Image style={styles.photoPincipale} source={{ uri: user.photo }} />
+				<Image style={styles.photoPincipale} source={{ uri: newphoto }} />
 				<Text style={styles.nom}>Modifiez votre profil ici !</Text>
 				<TouchableOpacity
 					style={styles.bouton}
@@ -41,20 +66,47 @@ export default function UserScreen() {
 			</View>
 
 			{/* Zone des modales */}
+			{/* ****** MODALE PSEUDO - USERNAME ************/}
 			<Modal
 				style={styles.modal}
 				animationType="fade"
 				transparent={true}
 				visible={modalIsVisible}
 			>
-				<View style={styles.contenuModalUsername}>
+				<View style={styles.contenuModal}>
 					<View style={styles.close} onPress={() => setModalIsVisible(false)}>
 						<FontAwesome name="close" size={20} color="gray" onPress={() => setModalIsVisible(false)}/>
 					</View>
-					<Text style={styles.petitTexte}>Pseudo actuel : {user.username}</Text>
-					<View style={styles.encadreBlanc}>
-						<Text>{user.username}</Text>
+					<Text style={styles.petitTexte}>Pseudo actuel : {newUser}</Text>
+					<TextInput
+						placeholder="Nouveau Pseudo"
+						autoFocus = {true}
+						onChangeText={(value) => setnewUser(value.trim())}
+						value={newUser}
+						style={styles.encadreBlanc}/>
+				</View>
+			</Modal>
+			{/* *********** MODALE Email ************/}
+			<Modal
+				style={styles.modal}
+				animationType="fade"
+				transparent={true}
+				visible={modalIsVisible}
+			>
+				<View style={styles.contenuModal}>
+					<View style={styles.close} onPress={() => setModalIsVisible(false)}>
+						<FontAwesome name="close" size={20} color="gray" onPress={() => setModalIsVisible(false)}/>
 					</View>
+					<Text style={styles.petitTexte}>Mail actuel : {newmail}</Text>
+					<TextInput
+						placeholder="Nouveau mail"
+						autoCapitalize="none" // https://reactnative.dev/docs/textinput#autocapitalize
+						keyboardType="email-address" // https://reactnative.dev/docs/textinput#keyboardtype
+						textContentType="emailAddress" // https://reactnative.dev/docs/textinput#textcontenttype-ios
+						autoComplete="email" // https://reactnative.dev/docs/textinput#autocomplete-android
+						onChangeText={(value) => setNewmail(value)}
+						value={newmail}
+						style={styles.encadreBlanc}/>
 				</View>
 			</Modal>
 		</View>
@@ -71,6 +123,10 @@ const styles = StyleSheet.create({
 		flex: 1,
 		alignItems: "center",
 		justifyContent: "center",
+	},
+	fleche: {
+		marginTop: '5%',
+		marginLeft: '5%',
 	},
 	photoPincipale: {
 		backgroundColor: "gray",
@@ -98,7 +154,7 @@ const styles = StyleSheet.create({
 		marginTop: "4%",
 	},
 	// MODAL
-	contenuModalUsername: {
+	contenuModal: {
 		backgroundColor: "white",
 		borderRadius: 20,
 		width: "80%",
@@ -110,6 +166,7 @@ const styles = StyleSheet.create({
 	},
 	encadreBlanc: {
 		borderWidth: 1,
+		borderRadius: 20,
 		width: "70%",
 		height: "10%",
 	},

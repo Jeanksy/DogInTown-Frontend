@@ -92,7 +92,7 @@ const toggleFlashStatus = () => {
 // Function to take a picture and save it to the reducer store
 const takePicture = async () => {
 	const photo = await cameraRef.current?.takePictureAsync({ quality: 0.5 });
-	console.log('Photo:', photo);
+	//console.log('Photo:', photo);
   
 	if (!photo?.uri) {
 	  console.error('No photo URI available');
@@ -115,6 +115,7 @@ const takePicture = async () => {
 		.then((data) => {
 		  console.log('Response Data:', data);
 		  if (data.result) {
+			console.log(data.url)
 			setImage(data.url)
 		  } else {
 			console.error('Upload failed:', data.error);
@@ -142,7 +143,7 @@ const takePicture = async () => {
 	  
 		if (!result.canceled) {
 		  const imageUri = result.assets[0].uri;
-		  setImage(imageUri);  // On enregistre l'URI dans l'état
+		  //setImage(imageUri);  // On enregistre l'URI dans l'état
 	  
 		  // Conversion de l'image en base64, uniquement si l'URI est valide
 		  try {
@@ -163,7 +164,7 @@ const takePicture = async () => {
 				method: "POST",
 				body: formData,
 			  })
-				.then((response) => response.json()) 
+				.then((response) => response.json())
 				.then((data) => {
 				  console.log('Response Data:', data);
 				  if (data.result) {
@@ -184,6 +185,7 @@ const takePicture = async () => {
 		  }
 		}
 	  };
+
 	// check if passwords are empty, doesn't match or match
 	const passwordCheck = () => {
 		if (password === "" || passwordVal === "") {
@@ -213,7 +215,6 @@ const takePicture = async () => {
 		return emailError === false && passwordStatus === PASSWORD_MATCH && postCodeError === false;
 	};
 
-	console.log(image)
 	//on press check if email is valid email structure, if both passwords match and post code is valid
 	const handleSignUp = () => {
 		if (isFormValid()) {
