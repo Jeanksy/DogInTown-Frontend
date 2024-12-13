@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { CameraView, Camera } from 'expo-camera';
 import { useIsFocused } from "@react-navigation/native";
 import { useDispatch, useSelector } from 'react-redux';
-import { login, addPhoto } from '../reducers/user';
+import { login } from '../reducers/user';
 import { StatusBar } from "expo-status-bar";
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {
@@ -50,6 +50,8 @@ export default function SignUpScreen({ navigation }) {
 	const [postCodeError, setPostCodeError] = useState(false);
 	const [passwordStatus, setpasswordStatus] = useState(PASSWORD_UNSET);
 	const [isLoading, setIsLoading] = useState(false);
+	// etat de l'image pour la visualisation à l'écran
+	const [image, setImage] = useState(null);
 
 
 // LOADER CHECK
@@ -57,7 +59,6 @@ export default function SignUpScreen({ navigation }) {
 
 // REDUCER
 	const dispatch = useDispatch();
-	const user = useSelector((state) => state.user.value);
 
 
 //////CAMERA/////// ********************************************************* CAMERA ***************************************
@@ -105,8 +106,6 @@ const takePicture = async () => {
 	  type: "image/jpeg",
 	});
   
-	console.log('FormData:', formData);
-  
 	try {
 	  fetch('https://dog-in-town-backend.vercel.app/users/upload', {
 		method: "POST",
@@ -116,7 +115,6 @@ const takePicture = async () => {
 		.then((data) => {
 		  console.log('Response Data:', data);
 		  if (data.result) {
-			dispatch(addPhoto(data.url));
 			setImage(data.url)
 		  } else {
 			console.error('Upload failed:', data.error);
@@ -133,58 +131,59 @@ const takePicture = async () => {
   };
 
 	//PICKER telechargement d'images depuis téléphone ************************** PICKER ******************************
-	const [image, setImage] = useState(null);
 	const pickImage = async () => {
 		// No permissions request is necessary for launching the image library
 		let result = await ImagePicker.launchImageLibraryAsync({
-			mediaTypes: ['images'],
-			allowsEditing: true,
-			aspect: [4, 3],
-			quality: 1,
+		  mediaTypes: ['images'],
+		  allowsEditing: true,
+		  aspect: [4, 3],
+		  quality: 1,
 		});
-	
+	  
 		if (!result.canceled) {
-			const imageUri = result.assets[0].uri;
-			setImage(imageUri);
-		}
-
-		//Convertion du fichier en format utilisable pour FormData
-			try {
-				const fileInfo = await FileSystem.readAsStringAsync(imageUri, {
-					encoding: FileSystem.EncodingType.Base64,
-				});
-
-				const formData = new FormData();
-				formData.append("photoFromFront", {
-					uri: imageUri,
-					name: "photo.jpg",  // Le nom du fichier
-					type: "image/jpeg",  // Le type MIME du fichier
-					base64: fileInfo,  // pour ajouter le fichier encodé en base64
-				});
-			
-			fetch('https://dog-in-town-backend.vercel.app/users/upload', {
+		  const imageUri = result.assets[0].uri;
+		  setImage(imageUri);  // On enregistre l'URI dans l'état
+	  
+		  // Conversion de l'image en base64, uniquement si l'URI est valide
+		  try {
+			if (imageUri) {
+			  const fileInfo = await FileSystem.readAsStringAsync(imageUri, {
+				encoding: FileSystem.EncodingType.Base64,
+			  });
+	  
+			  const formData = new FormData();
+			  formData.append("photoFromFront", {
+				uri: imageUri,  // Utilisation de l'URI de l'image
+				name: "photo.jpg",  // Le nom du fichier
+				type: "image/jpeg",  // Le type MIME du fichier
+				base64: fileInfo,  // Ajout du fichier encodé en base64
+			  });
+	  
+			  fetch('https://dog-in-town-backend.vercel.app/users/upload', {
 				method: "POST",
 				body: formData,
-			})
-				.then((response) => response.json())
+			  })
+				.then((response) => response.json()) 
 				.then((data) => {
-				console.log('Response Data:', data);
-				if (data.result) { (console.log('ceci est le data.url',data.url))
-					dispatch(addPhoto(data.url));
-					//setImage(user.photo)
-				} else {
+				  console.log('Response Data:', data);
+				  if (data.result) {
+					console.log('Data URL:', data.url);
+					setImage(data.url);  // Mise à jour de l'URL de l'image après l'upload
+				  } else {
 					console.error('Upload failed:', data.error);
-				}
+				  }
 				})
-			.catch((error) => {
-				console.error('An error occurred:', error);
+				.catch((error) => {
+				  console.error('An error occurred:', error);
 				});
-			} catch (error) {
-			console.error('Unexpected error:', error);
+			} else {
+			  console.error("No valid image URI provided");
 			}
-				
-	};
-
+		  } catch (error) {
+			console.error('Unexpected error:', error);
+		  }
+		}
+	  };
 	// check if passwords are empty, doesn't match or match
 	const passwordCheck = () => {
 		if (password === "" || passwordVal === "") {
@@ -214,6 +213,7 @@ const takePicture = async () => {
 		return emailError === false && passwordStatus === PASSWORD_MATCH && postCodeError === false;
 	};
 
+	console.log(image)
 	//on press check if email is valid email structure, if both passwords match and post code is valid
 	const handleSignUp = () => {
 		if (isFormValid()) {
@@ -231,7 +231,7 @@ const takePicture = async () => {
 			.then((response) => response.json())
 			.then(async (data) => {
 				if (data.result) { console.log('consolelog de data ===>',data)
-					dispatch(login({ username: data.username, token: data.token, id: data.id }));
+					dispatch(login({ username: data.username, token: data.token }));
 					
 						setIsLoading(true);
 						await delay(1000);
@@ -256,7 +256,6 @@ const takePicture = async () => {
 		return <View />;
 	};
 
-	console.log('user.photo ici', user.photo, 'image ici', image)
 	return (
 		<KeyboardAvoidingView style={styles.container}>
 			<View style={styles.connexionCont}>

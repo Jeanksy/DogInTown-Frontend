@@ -24,6 +24,7 @@ import { useIsFocused } from "@react-navigation/native";
 import DropDownPicker from 'react-native-dropdown-picker';
 // imagepicker expo pour telechargement photos depuis téléphone
 import * as ImagePicker from 'expo-image-picker';
+import * as FileSystem from 'expo-file-system'; // pour convertir le fichier en format adapté pour Cloudinary
 
 const DOG_SIZE_S= 'petit';
 const DOG_SIZE_M = 'moyen';
@@ -31,7 +32,6 @@ const DOG_SIZE_L = 'grand';
 
 export default function DogSignUpScreen({ navigation }) {
 
-  const userToken = 'RL01aqaWnQNXi24mX3fPzEIONIMIMx6H';
 
   // DropDown Picker
   const [open, setOpen] = useState(false);
@@ -48,17 +48,18 @@ export default function DogSignUpScreen({ navigation }) {
       {label: 'Beagle', value: 'beagle'},
   ]);
   
-
+// Etat image pour affichage écran
+  const [image, setImage] = useState(null);
 
   const photo = 'photo.png';
-  	// Reference to the camera
+    // Reference to the camera
   const cameraRef = useRef(null);
   const isFocused = useIsFocused();
 
-	// Permission hooks
-	const [hasPermission, setHasPermission] = useState(false);
-	const [facing, setFacing] = useState("back");
-	const [flashStatus, setFlashStatus] = useState(false);
+  // Permission hooks
+  const [hasPermission, setHasPermission] = useState(false);
+  const [facing, setFacing] = useState("back");
+  const [flashStatus, setFlashStatus] = useState(false);
 
   
   const handlePhoto = () => {
@@ -66,25 +67,55 @@ export default function DogSignUpScreen({ navigation }) {
 
   };
 
-	// Functions to toggle camera facing and flash status
-	const toggleCameraFacing = () => {
-		setFacing((current) => (current === "back" ? "front" : "back"));
-	};
+  // Functions to toggle camera facing and flash status
+  const toggleCameraFacing = () => {
+    setFacing((current) => (current === "back" ? "front" : "back"));
+  };
 
-	const toggleFlashStatus = () => {
-		setFlashStatus((current) => (current === false ? true : false));
-	};
+  const toggleFlashStatus = () => {
+    setFlashStatus((current) => (current === false ? true : false));
+  };
 
-	// Function to take a picture and save it to the reducer store
+  // Function to take a picture and save it to the reducer store
   const takePicture = async () => {
-    const photo = await cameraRef.current?.takePictureAsync({ quality: 0.3 });
-    (photo)
-		// const formData = new FormData();
-		const uri = photo?.uri;
-		setImage(uri);
-    setModalIsVisible(false)
-  }
-
+    const photo = await cameraRef.current?.takePictureAsync({ quality: 0.5 });
+    console.log('Photo:', photo);
+    
+    if (!photo?.uri) {
+      console.error('No photo URI available');
+      return;
+    }
+    
+    const formData = new FormData();
+    formData.append("photoFromFront", {
+      uri: photo.uri,
+      name: "photo.jpg",
+      type: "image/jpeg",
+    });
+    
+    try {
+      fetch('https://dog-in-town-backend.vercel.app/users/upload', {
+      method: "POST",
+      body: formData,
+      })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log('Response Data:', data);
+        if (data.result) {
+        setImage(data.url)
+        } else {
+        console.error('Upload failed:', data.error);
+        }
+      })
+      .catch((error) => {
+        console.error('An error occurred:', error);
+      });
+    } catch (error) {
+      console.error('Unexpected error:', error);
+    }
+    
+    setModalIsVisible(false);
+    };
 
   const [dogName, setDogName] = useState('');
   const [dogSize, setDogSize] = useState('');
@@ -92,26 +123,62 @@ export default function DogSignUpScreen({ navigation }) {
   const [modalIsVisible, setModalIsVisible] = useState(false);
 
   //REDUCER
-  const user = useSelector((state) => state.user.value.username);
-  const dispatch = useDispatch();
+  const user = useSelector((state) => state.user.value);
 
-  //PICKER telechargement d'images depuis téléphone
-	const [image, setImage] = useState(null);
-	const pickImage = async () => {
-		// No permissions request is necessary for launching the image library
-		let result = await ImagePicker.launchImageLibraryAsync({
-			mediaTypes: ['images'],
-			allowsEditing: true,
-			aspect: [4, 3],
-			quality: 1,
-		});
-	
-		console.log(result);
-	
-		if (!result.canceled) {
-			setImage(result.assets[0].uri);
-		}
-	};
+  //PICKER telechargement d'images depuis téléphone ***********************************************
+  const pickImage = async () => {
+      // No permissions request is necessary for launching the image library
+      let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ['images'],
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
+      });
+      
+      if (!result.canceled) {
+        const imageUri = result.assets[0].uri;
+        setImage(imageUri);  // On enregistre l'URI dans l'état
+      
+        // Conversion de l'image en base64, uniquement si l'URI est valide
+        try {
+        if (imageUri) {
+          const fileInfo = await FileSystem.readAsStringAsync(imageUri, {
+          encoding: FileSystem.EncodingType.Base64,
+          });
+      
+          const formData = new FormData();
+          formData.append("photoFromFront", {
+          uri: imageUri,  // Utilisation de l'URI de l'image
+          name: "photo.jpg",  // Le nom du fichier
+          type: "image/jpeg",  // Le type MIME du fichier
+          base64: fileInfo,  // Ajout du fichier encodé en base64
+          });
+      
+          fetch('https://dog-in-town-backend.vercel.app/users/upload', {
+          method: "POST",
+          body: formData,
+          })
+          .then((response) => response.json()) 
+          .then((data) => {
+            console.log('Response Data:', data);
+            if (data.result) {
+            console.log('Data URL:', data.url);
+            setImage(data.url);  // Mise à jour de l'URL de l'image après l'upload
+            } else {
+            console.error('Upload failed:', data.error);
+            }
+          })
+          .catch((error) => {
+            console.error('An error occurred:', error);
+          });
+        } else {
+          console.error("No valid image URI provided");
+        }
+        } catch (error) {
+        console.error('Unexpected error:', error);
+        }
+      }
+      };
 
   // Fonction pour naviguer vers le Tab menu
   const handleDogSignup = async (dogRegister) => {
@@ -120,10 +187,10 @@ export default function DogSignUpScreen({ navigation }) {
       return;
     }
     
-    const response = await fetch(`https://dog-in-town-backend.vercel.app/users/dog`, {
+      await fetch(`https://dog-in-town-backend.vercel.app/users/dog`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ userToken: userToken, name: dogName, race: selectedRace, photo: photo, size: dogSize }),
+      body: JSON.stringify({ userToken: user.token, name: dogName, race: selectedRace, photo: image, size: dogSize }),
     })
     navigation.navigate('TabNavigator');
   }
@@ -139,7 +206,6 @@ export default function DogSignUpScreen({ navigation }) {
     return <View />;
   }
 
-
   return (
     <KeyboardAvoidingView
       style={styles.container}
@@ -148,37 +214,37 @@ export default function DogSignUpScreen({ navigation }) {
       <SafeAreaView style={{paddingTop: Platform.OS === 'android' ? 30 : 0}}>
         <View style={styles.upperContent}>
         <Modal
-			animationType="fade"
-			transparent={true}
-			visible={modalIsVisible}
-			onRequestClose={() => {
-				setModalIsVisible(!modalIsVisible);
-				}}>
-            	<View style={styles.centeredView}>
-                	<View style={styles.modalView}>
-                    	<CameraView style={styles.camera} facing={facing} enableTorch={flashStatus} ref={(ref) => (cameraRef.current = ref)}>
-	                   	<SafeAreaView style={styles.settingContainer}>
-	                   		<TouchableOpacity style={styles.settingButton} onPress={toggleFlashStatus}>
-	                   			<FontAwesome name="flash" size={25} color={flashStatus === true ? "#e8be4b" : "white"} />
-	                   		</TouchableOpacity>
-	                   		<TouchableOpacity style={styles.settingButton} onPress={toggleCameraFacing}>
-	                   			<FontAwesome name="rotate-right" size={25} color="white" />
-	                   		</TouchableOpacity>
-	                   	</SafeAreaView>
-	                   </CameraView>
-					    {/* Bottom container with the snap button */}
-						<View style={styles.snapContainer}>
-							<View style={styles.espace}></View>
-								<TouchableOpacity style={styles.snapButton} onPress={takePicture}>
-									<FontAwesome name="circle-thin" size={80} color="gray" />
-								</TouchableOpacity>
-								<TouchableOpacity style={styles.closeModal} onPress={() => setModalIsVisible(false)}>
-								<FontAwesome name='times' size={35} color="gray" opacity={0.8}/>
-								</TouchableOpacity>
-					    	</View>
+      animationType="fade"
+      transparent={true}
+      visible={modalIsVisible}
+      onRequestClose={() => {
+        setModalIsVisible(!modalIsVisible);
+        }}>
+              <View style={styles.centeredView}>
+                  <View style={styles.modalView}>
+                      <CameraView style={styles.camera} facing={facing} enableTorch={flashStatus} ref={(ref) => (cameraRef.current = ref)}>
+                      <SafeAreaView style={styles.settingContainer}>
+                        <TouchableOpacity style={styles.settingButton} onPress={toggleFlashStatus}>
+                          <FontAwesome name="flash" size={25} color={flashStatus === true ? "#e8be4b" : "white"} />
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.settingButton} onPress={toggleCameraFacing}>
+                          <FontAwesome name="rotate-right" size={25} color="white" />
+                        </TouchableOpacity>
+                      </SafeAreaView>
+                     </CameraView>
+              {/* Bottom container with the snap button */}
+            <View style={styles.snapContainer}>
+              <View style={styles.espace}></View>
+                <TouchableOpacity style={styles.snapButton} onPress={takePicture}>
+                  <FontAwesome name="circle-thin" size={80} color="gray" />
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.closeModal} onPress={() => setModalIsVisible(false)}>
+                <FontAwesome name='times' size={35} color="gray" opacity={0.8}/>
+                </TouchableOpacity>
+                </View>
                     </View>
                 </View>
-        	</Modal>
+          </Modal>
           <View style={styles.leaveContainer}>
             <Pressable onPress={() => handleDogSignup(false)}>
               <View style={styles.textContainer}>
@@ -188,7 +254,7 @@ export default function DogSignUpScreen({ navigation }) {
             </Pressable>
           </View>
           <View style={styles.titleContainer}>
-            <Text style={styles.title}>Bonjour {user}, et si vous nous parliez de votre chien ?</Text>
+            <Text style={styles.title}>Bonjour {user.username}, et si vous nous parliez de votre chien ?</Text>
           </View>
         </View>
         <View style={styles.dogsInfo}>
@@ -248,7 +314,7 @@ export default function DogSignUpScreen({ navigation }) {
               <TouchableOpacity onPress={pickImage}>
                 <FontAwesome name='download' size={40} color='#A23D42'/>
               </TouchableOpacity>
-			    </View>
+          </View>
           <TouchableOpacity style={styles.button} onPress={() => handleDogSignup(true)}>
             <Text style={styles.buttonText}>OK</Text>
           </TouchableOpacity>
@@ -374,112 +440,114 @@ const styles = StyleSheet.create({
     // fontWeight: 600,
   },
   // bouton ajouter photo
-	pictureConteneur: {
-		height: '15%',
-		width: '80%',
-		alignItems: 'center',
-		justifyContent: 'center',
-		gap: 20,
-		flex: 1,
-		flexDirection: 'row',
-		marginBottom: '2%',
-	},
-	avatar: {
-		height: 130,
-		width: 130,
-		borderRadius: 100,
-		justifyContent: 'center',
-		alignItems: 'center',
-		borderWidth: 3,
-		borderColor: '#A23D42',
-		backgroundColor: 'white',
-	},
-	option: {
-		alignSelf: 'left',
-		color: '#525252',
-		marginLeft: '12%',
-		
-	},
+  pictureConteneur: {
+    height: '15%',
+    width: '80%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 20,
+    flex: 1,
+    flexDirection: 'row',
+    marginBottom: '2%',
+  },
+  avatar: {
+    height: 130,
+    width: 130,
+    borderRadius: 100,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 3,
+    borderColor: '#A23D42',
+    backgroundColor: 'white',
+  },
+  option: {
+    alignSelf: 'left',
+    color: '#525252',
+    marginLeft: '12%',
+    
+  },
   // MODAL STYLE
-	centeredView: {
-		backgroundColor: 'rgba(0, 0, 0, 0.8)',
-		flex: 1,
-		justifyContent: 'center',
-		alignItems: 'center',
-	},
-	modalView: {
-		margin: 20,
-		backgroundColor: 'white',
-		paddingBottom: 25,
-		borderColor: 'rgba(255, 255, 255, 1)',
-		borderRadius: 20,
-		height: '70%',
-		width: '90%',
-		alignItems: 'center',
-		justifyContent: 'space-between',
-		shadowColor: '#000',
-		overflow: 'hidden',
-		shadowOffset: {
-		width: 0,
-		height: 2,
-		},
-		shadowOpacity: 0.25,
-		shadowRadius: 4,
-		elevation: 5,
-	},
-	button: {
+  centeredView: {
+    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: 'white',
+    paddingBottom: 25,
+    borderColor: 'rgba(255, 255, 255, 1)',
+    borderRadius: 20,
+    height: '70%',
+    width: '90%',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    shadowColor: '#000',
+    overflow: 'hidden',
+    shadowOffset: {
+    width: 0,
+    height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  button: {
     flex: 0,
-		flexDirection: "row",
-		alignItems: "center",
-		justifyContent: "center",
-		backgroundColor: "#A23D42",
-		width: "90%",
-		height: 50,
-		borderRadius: 20,
-		shadowColor: "black",
-		shadowOpacity: 0.4,
-		elevation: 2,
-		shadowRadius: 1,
-		shadowOffset: { width: 1, height: 4 },
-		borderWidth: 0,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#A23D42",
+    width: "90%",
+    height: 50,
+    borderRadius: 20,
+    shadowColor: "black",
+    shadowOpacity: 0.4,
+    elevation: 2,
+    shadowRadius: 1,
+    shadowOffset: { width: 1, height: 4 },
+    borderWidth: 0,
 
-	},
-	// Camera 
-	camera: {
-		width: '120%',
-		height: '85%',
-		aspectRatio: 1 / 1,
-		paddingTop: 5,
-		justifyContent: "space-between",
-		overflow: 'hidden',
-		},
+  },
+  // Camera 
+  camera: {
+    width: '120%',
+    height: '85%',
+    aspectRatio: 1 / 1,
+    paddingTop: 5,
+    justifyContent: "space-between",
+    overflow: 'hidden',
+    },
     settingContainer: {
-			flexDirection: "row",
-			justifyContent: "space-between",
-			alignItems: "center",
-			marginHorizontal: '15%',
-		},
-		settingButton: {
-			width: 40,
-			aspectRatio: 1,
-			alignItems: "center",
-			justifyContent: "center",
-		},
-		snapContainer: {
-			flexDirection: "row",
-			justifyContent: "center",
-			alignItems: "center",
-			marginBottom: 20,
-			gap: 60,
-		},
-		snapButton: {
-			width: 100,
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      marginHorizontal: '15%',
+    },
+    settingButton: {
+      width: 40,
+      aspectRatio: 1,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    snapContainer: {
+      flexDirection: "row",
+      justifyContent: "center",
+      alignItems: "center",
+      marginBottom: 20,
+      gap: 60,
+    },
+    snapButton: {
+      width: 100,
       aspectRatio: 1 / 1,
-			alignItems: "center",
-			justifyContent: 'center',
-			opacity: 0.8,
-		},
-		espace: {
-			width: '10%',
-		}
+      alignItems: "center",
+      justifyContent: 'center',
+      opacity: 0.8,
+    },
+    espace: {
+      width: '10%',
+    }
 });
+
+
