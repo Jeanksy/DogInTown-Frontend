@@ -12,7 +12,8 @@ import {
   Image,
   Pressable,
   Modal,
-  SafeAreaView
+  SafeAreaView,
+  ActivityIndicator
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient'
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -38,18 +39,22 @@ export default function DogSignUpScreen({ navigation }) {
   // DropDown Picker
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
   const [raceList, setRaceList] = useState([
-      {label: 'Pincher', value: 'pincher'},
-      {label: 'Labrador', value: 'labrador'},
-      {label: 'Caniche', value: 'caniche' },
-      {label: 'Berger Allemand', value: 'bergerAll'},
-      {label: 'Saint Bernard', value: 'saintB' },
-      {label: 'Golden retriver', value: 'goldenRet'},
-      {label: 'Bulldog français', value: 'bulldogFr' },
-      {label: 'Chihuahua', value: 'chihuahua'},
-      {label: 'Beagle', value: 'beagle'},
+      {label: 'Pincher', value: 'Pincher'},
+      {label: 'Labrador', value: 'Labrador'},
+      {label: 'Caniche', value: 'Caniche' },
+      {label: 'Berger Allemand', value: 'Berger Allemand'},
+      {label: 'Saint Bernard', value: 'Saint Bernard' },
+      {label: 'Golden Retriver', value: 'Golden Retriver'},
+      {label: 'Bulldog Français', value: 'Bulldog Français' },
+      {label: 'Chihuahua', value: 'Chihuahua'},
+      {label: 'Beagle', value: 'Beagle'},
   ]);
   
+// LOADER CHECK
+const delay = (ms) => new Promise(res => setTimeout(res, ms));	
+
 // Etat image pour affichage écran
   const [image, setImage] = useState(null);
 
@@ -62,6 +67,8 @@ export default function DogSignUpScreen({ navigation }) {
   const [hasPermission, setHasPermission] = useState(false);
   const [facing, setFacing] = useState("back");
   const [flashStatus, setFlashStatus] = useState(false);
+  const [isImageUploading, setIsImageUploading] = useState(false);
+  
 
   
   const handlePhoto = () => {
@@ -80,11 +87,14 @@ export default function DogSignUpScreen({ navigation }) {
 
   // Function to take a picture and save it to the reducer store
   const takePicture = async () => {
+    setIsImageUploading(true);
+
     const photo = await cameraRef.current?.takePictureAsync({ quality: 0.5 });
     console.log('Photo:', photo);
     
     if (!photo?.uri) {
       console.error('No photo URI available');
+      setIsImageUploading(false);
       return;
     }
     
@@ -97,32 +107,38 @@ export default function DogSignUpScreen({ navigation }) {
     
     try {
       fetch('https://dog-in-town-backend.vercel.app/users/upload', {
-      method: "POST",
-      body: formData,
+        method: "POST",
+        body: formData,
       })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log('Response Data:', data);
-        if (data.result) {
-        setImage(data.url)
-        } else {
-        console.error('Upload failed:', data.error);
-        }
-      })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log('Response Data:', data);
+          if (data.result) {
+            setImage(data.url)
+          } else {
+            console.error('Upload failed:', data.error);
+          }
+        })
       .catch((error) => {
         console.error('An error occurred:', error);
       });
     } catch (error) {
       console.error('Unexpected error:', error);
-    }
     
-    setModalIsVisible(false);
+    } finally {
+
+      setIsImageUploading(false);
+      setModalIsVisible(false);
+      
+      }
+    
     };
 
   const [dogName, setDogName] = useState('');
   const [dogSize, setDogSize] = useState('');
   const [selectedRace, setSelectedRace] = useState();
   const [modalIsVisible, setModalIsVisible] = useState(false);
+  
 
   //REDUCER
   const user = useSelector((state) => state.user.value);
@@ -131,72 +147,83 @@ export default function DogSignUpScreen({ navigation }) {
 
   //PICKER telechargement d'images depuis téléphone ***********************************************
   const pickImage = async () => {
-      // No permissions request is necessary for launching the image library
-      let result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ['images'],
-        allowsEditing: true,
-        aspect: [4, 3],
-        quality: 1,
-      });
+    setIsImageUploading(true);
+
+    // No permissions request is necessary for launching the image library
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ['images'],
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
       
-      if (!result.canceled) {
-        const imageUri = result.assets[0].uri;
-        setImage(imageUri);  // On enregistre l'URI dans l'état
+    if (!result.canceled) {
+      const imageUri = result.assets[0].uri;
+      setImage(imageUri);  // On enregistre l'URI dans l'état
       
-        // Conversion de l'image en base64, uniquement si l'URI est valide
-        try {
+      // Conversion de l'image en base64, uniquement si l'URI est valide
+      try {
         if (imageUri) {
           const fileInfo = await FileSystem.readAsStringAsync(imageUri, {
-          encoding: FileSystem.EncodingType.Base64,
+            encoding: FileSystem.EncodingType.Base64,
           });
       
           const formData = new FormData();
           formData.append("photoFromFront", {
-          uri: imageUri,  // Utilisation de l'URI de l'image
-          name: "photo.jpg",  // Le nom du fichier
-          type: "image/jpeg",  // Le type MIME du fichier
-          base64: fileInfo,  // Ajout du fichier encodé en base64
+            uri: imageUri,  // Utilisation de l'URI de l'image
+            name: "photo.jpg",  // Le nom du fichier
+            type: "image/jpeg",  // Le type MIME du fichier
+            base64: fileInfo,  // Ajout du fichier encodé en base64
           });
       
           fetch('https://dog-in-town-backend.vercel.app/users/upload', {
-          method: "POST",
-          body: formData,
+            method: "POST",
+            body: formData,
           })
-          .then((response) => response.json()) 
-          .then((data) => {
-            console.log('Response Data:', data);
-            if (data.result) {
-            console.log('Data URL:', data.url);
-            setImage(data.url);  // Mise à jour de l'URL de l'image après l'upload
-            } else {
-            console.error('Upload failed:', data.error);
-            }
-          })
-          .catch((error) => {
-            console.error('An error occurred:', error);
-          });
+            .then((response) => response.json())
+            .then((data) => {
+              console.log('Response Data:', data);
+              if (data.result) {
+                console.log('Data URL:', data.url);
+                setImage(data.url);  // Mise à jour de l'URL de l'image après l'upload
+              } else {
+                console.error('Upload failed:', data.error);
+              }
+            })
+            .catch((error) => {
+              console.error('An error occurred:', error);
+            });
         } else {
           console.error("No valid image URI provided");
         }
-        } catch (error) {
+      } catch (error) {
         console.error('Unexpected error:', error);
-        }
+      } finally {
+        setIsImageUploading(false);
       }
-  };
+    } else {
+      setIsImageUploading(false);
+    };
+  }
 
   // Fonction pour naviguer vers le Tab menu
   const handleDogSignup = async (dogRegister) => {
     if (!dogRegister) {
-      navigation.navigate('TabNavigator');
+            navigation.navigate('TabNavigator');
       return;
     };
     
     await fetch(`https://dog-in-town-backend.vercel.app/users/dog`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ userToken: user.token, name: dogName, race: selectedRace, photo: image, size: dogSize }),
+      body: JSON.stringify({ userToken: user.token, name: dogName, race: selectedRace, photo: image, size: dogSize })
+    
+    
     });
-    navigation.navigate('TabNavigator');
+        setIsLoading(true);
+			  await delay(1500);
+        setIsLoading(false);
+        navigation.navigate('TabNavigator');
   };
 
   useEffect(() => {
@@ -266,7 +293,7 @@ export default function DogSignUpScreen({ navigation }) {
             <TextInput
               style={styles.textInput}
               placeholder="Nom"
-              onChangeText={(value) => setDogName(value)}
+              onChangeText={(value) => setDogName(value.trim())}
               value={dogName} />
           </View>
           <View style={styles.pickerContainer}>
@@ -276,9 +303,16 @@ export default function DogSignUpScreen({ navigation }) {
                     value={value}
                     items={raceList}
                     setOpen={setOpen}
-                    setValue={setSelectedRace}
+                    setValue={setValue}
+                    onChangeValue={(value) => {
+                      setSelectedRace(value);
+                    }}
+                    textStyle={{
+                      fontSize: 18
+                    }}
                     setItems={setRaceList}
                     placeholder={'Race'}
+                    
                 />
            
           </View>
@@ -320,7 +354,8 @@ export default function DogSignUpScreen({ navigation }) {
               </TouchableOpacity>
           </View>
           <TouchableOpacity style={styles.button} onPress={() => handleDogSignup(true)}>
-            <Text style={styles.buttonText}>OK</Text>
+            {(isLoading) ? <ActivityIndicator style={{ size: 'large', color: '#F1AF5A' }} />
+                      : <Text style={styles.clickableBtn}>Go</Text>}
           </TouchableOpacity>
         </View>
         <StatusBar style="auto" />
@@ -431,6 +466,11 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: '#5B1A10',
     marginBottom: '2%',
+  },
+  clickableBtn: {
+    color: "#fff",
+		fontWeight: 700,
+		fontSize: 20,
   },
   buttonText: {
     textAlign: 'center',
@@ -553,5 +593,3 @@ const styles = StyleSheet.create({
       width: '10%',
     }
 });
-
-

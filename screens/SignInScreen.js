@@ -48,7 +48,7 @@ export default function SignInScreen({ navigation }) {
               keyboardType="email-address" // https://reactnative.dev/docs/textinput#keyboardtype
               textContentType="emailAddress" // https://reactnative.dev/docs/textinput#textcontenttype-ios
               autoComplete="email" // https://reactnative.dev/docs/textinput#autocomplete-android
-              onChangeText={(value) => setEmail(value.toLocaleLowerCase())}
+              onChangeText={(value) => setEmail(value.toLocaleLowerCase().trim())}
               value={email}
               style={styles.input}
           />
