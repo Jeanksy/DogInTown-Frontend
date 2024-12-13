@@ -29,9 +29,10 @@ const DOG_SIZE_S= 'petit';
 const DOG_SIZE_M = 'moyen';
 const DOG_SIZE_L = 'grand';
 
+
 export default function DogSignUpScreen({ navigation }) {
 
-  const userToken = 'RL01aqaWnQNXi24mX3fPzEIONIMIMx6H';
+
 
   // DropDown Picker
   const [open, setOpen] = useState(false);
@@ -92,7 +93,8 @@ export default function DogSignUpScreen({ navigation }) {
   const [modalIsVisible, setModalIsVisible] = useState(false);
 
   //REDUCER
-  const user = useSelector((state) => state.user.value.username);
+  const user = useSelector((state) => state.user.value);
+  const userToken = user.token;
   const dispatch = useDispatch();
 
   //PICKER telechargement d'images depuis téléphone
@@ -118,13 +120,15 @@ export default function DogSignUpScreen({ navigation }) {
     if (!dogRegister) {
       navigation.navigate('TabNavigator');
       return;
-    }
+    };
     
     const response = await fetch(`https://dog-in-town-backend.vercel.app/users/dog`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ userToken: userToken, name: dogName, race: selectedRace, photo: photo, size: dogSize }),
     })
+    const result = response.json()
+    console.log(result)
     navigation.navigate('TabNavigator');
   }
 
@@ -188,7 +192,7 @@ export default function DogSignUpScreen({ navigation }) {
             </Pressable>
           </View>
           <View style={styles.titleContainer}>
-            <Text style={styles.title}>Bonjour {user}, et si vous nous parliez de votre chien ?</Text>
+            <Text style={styles.title}>Bonjour {user.username}, et si vous nous parliez de votre chien ?</Text>
           </View>
         </View>
         <View style={styles.dogsInfo}>
