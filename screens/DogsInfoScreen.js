@@ -31,12 +31,14 @@ configureReanimatedLogger({
 	strict: false, // Reanimated runs in strict mode by default
 });
 
+
 export default function DogsInfoScreen() {
 	const user = useSelector((state) => state.user.value);
 	const navigation = useNavigation();
 	const [nombreDoggies, setNombreDoggies] = useState("");
 	const [mainDog, setMainDog] = useState({});
 	const [doggies, setDoggies] = useState([]);
+	const [update, setUpdate] = useState(0);
 	// Etat de la modal
 		const [addModalIsVisible, setAddModalIsVisible] = useState(false);
 
@@ -48,11 +50,20 @@ export default function DogsInfoScreen() {
 
 	}
 
+	const handleCloseModal = () => {
+		setAddModalIsVisible(false)
+		setUpdate((previousUpdate) => previousUpdate + 1 );
+	}
+
 	
 	const handleDogPress = (key) => {
 		setMainDog(doggies[key]);
 	};
 
+	const updateDoggies = () => {
+		setUpdate((previousUpdate) => previousUpdate + 1 );
+
+	}
 
 	// JE SAIS PLUS A QUOI OU SI CA SERT ENCORE VVVVV
 	useEffect(() => {
@@ -74,7 +85,7 @@ export default function DogsInfoScreen() {
 					setDoggies(data.dogs);
 				}
 			});
-	}, []);
+	}, [update]);
 
 	// affiche un text différent dans le JSX selon le nombre de chiens
 	useEffect(() => {
@@ -85,7 +96,7 @@ export default function DogsInfoScreen() {
 		} else {
 			setNombreDoggies(<Text style={styles.dogsTitle}>Ajouter un chien</Text>);
 		}
-	}, []);
+	}, [doggies]);
 
 	return (
 		<GestureHandlerRootView
@@ -93,7 +104,7 @@ export default function DogsInfoScreen() {
 		>
 			<SafeAreaView style={styles.safeArea}>
 			<View style={{ width: "100%", height: "100%", position: "absolute" }}>
-				<ModalAdd visible={addModalIsVisible} onClose={() => setAddModalIsVisible(false)} >
+				<ModalAdd visible={addModalIsVisible} onClose={() => handleCloseModal()} >
 				</ModalAdd>	
 			</View>
 				<View style={styles.retourContainer}>
@@ -148,7 +159,7 @@ export default function DogsInfoScreen() {
 					<View style={styles.mainDogInfo}>
 						<View style={styles.photoPincipale}>
 							{doggies && doggies.length > 0 ? (
-								<CarouselDog doggies={doggies} />
+								<CarouselDog doggies={doggies} updateDoggiesCallBack={updateDoggies} />
 							) : (
 								<View></View>
 							)}

@@ -7,6 +7,8 @@ import {
 	Modal,
 	StyleSheet,
 	TextInput,
+	Pressable,
+	Image,
 	Keyboard,
 } from "react-native";
 import Animated, {
@@ -17,57 +19,160 @@ import Animated, {
 import Carousel from "react-native-reanimated-carousel";
 import { useSelector } from "react-redux";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
+import DropDownPicker from "react-native-dropdown-picker";
 
 import { ElementsText, window } from "../constants/sizes";
 import { withAnchorPoint } from "../utils/anchor-point";
 
 const colors = ["#F1AF5A", "#FCE9D8", "#F7CC99"];
 
+const DOG_SIZE_S = "petit";
+const DOG_SIZE_M = "moyen";
+const DOG_SIZE_L = "grand";
 const PAGE_WIDTH = window.width;
 const PAGE_HEIGHT = window.width * 1.1;
 
-export const CarouselDog = ({ doggies }) => {
+export const CarouselDog = ({ doggies, updateDoggiesCallBack }) => {
 	const user = useSelector((state) => state.user.value);
 	const [selectedDog, setSelectedDog] = useState(null);
-	const [newName, setNewName] = useState([]);
+	const [newName, setNewName] = useState("");
+	const [newSize, setNewSize] = useState("");
+	const [newRace, setNewRace] = useState("");
+	const [dogSize, setDogSize] = useState("");
+	const [selectedRace, setSelectedRace] = useState();
+
+	// DropDown Picker
+	const [open, setOpen] = useState(false);
+	const [value, setValue] = useState(null);
+	const [isLoading, setIsLoading] = useState(false);
+	const [raceList, setRaceList] = useState([
+		{ label: "Pincher", value: "Pincher" },
+		{ label: "Labrador", value: "Labrador" },
+		{ label: "Caniche", value: "Caniche" },
+		{ label: "Berger Allemand", value: "Berger Allemand" },
+		{ label: "Saint Bernard", value: "Saint Bernard" },
+		{ label: "Golden Retriver", value: "Golden Retriver" },
+		{ label: "Bulldog Français", value: "Bulldog Français" },
+		{ label: "Chihuahua", value: "Chihuahua" },
+		{ label: "Beagle", value: "Beagle" },
+	]);
+
 	// Etat de la modal
-	const [modalIsVisible, setModalIsVisible] = useState(false);
+	const [modalNameIsVisible, setModalNameIsVisible] = useState(false);
+	const [modalSizeIsVisible, setModalSizeIsVisible] = useState(false);
+	const [modalRaceIsVisible, setModalRaceIsVisible] = useState(false);
 	const [isEditing, setIsEditing] = useState(false);
 	
-	const openModal = (dog) => {
-		setSelectedDog(dog);
-		setModalIsVisible(true);
-	};
-
 	const baseOptions = {
 		vertical: false,
 		width: PAGE_WIDTH,
 		height: PAGE_HEIGHT,
 	};
 
+	// Handlers for modals of editing fields(name, size, race)
+	const openModalName = (dog) => {
+		setSelectedDog(dog);
+		setModalNameIsVisible(true);
+	};
+	const openModalSize = (dog) => {
+		setSelectedDog(dog);
+		setModalSizeIsVisible(true);
+	};
+	const openModalRace = (dog) => {
+		setSelectedDog(dog);
+		setModalRaceIsVisible(true);
+	};
+
 
 	const handleChangeName = () => {
-		setModalIsVisible(true);
+		setModalNameIsVisible(true);
+		console.log('SelectedDog:', selectedDog._id)
 
-		fetch(`http://192.168.1.60:3000/users/dog/${user.token}`, {
+		// fetch(`http://192.168.1.60:3000/users/dog/${user.token}`, {
+		fetch(`http://192.168.1.60:3000/users/dog/wqUJx2Hd86ZP0nffCdC3HlouzkCnAdEj`, {
 			method: "PUT",
 			headers: {
 				"Content-Type": "application/json",
 			},
-			body: JSON.stringify({ dogName: selectedDog.name, newName: newName }),
+			body: JSON.stringify({ dogId: selectedDog._id, name: newName }),
 		})
 			.then((res) => res.json())
 			.then((data) => {
+
 				if (data.result) {
 					alert("Dog name updated!");
 					setNewName("");
-					setModalIsVisible(false);
+					setModalNameIsVisible(false);
+					updateDoggiesCallBack();
+
 				} else {
 					alert("WAF");
 					setNewName("")
 				}
 			});
 	};
+
+
+	const handleChangeSize = (dogSize) => {
+		setNewSize(dogSize);		
+		setModalSizeIsVisible(true);
+		console.log('SelectedDog:', selectedDog._id);
+	
+
+		// fetch(`http://192.168.1.60:3000/users/dog/${user.token}`, {
+		fetch(`http://192.168.1.60:3000/users/dog/wqUJx2Hd86ZP0nffCdC3HlouzkCnAdEj`, {
+			method: "PUT",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({ dogId: selectedDog._id, size: dogSize }),
+		})
+			.then((res) => res.json())
+			.then((data) => {
+
+				if (data.result) {
+					alert("Dog size updated!");
+					setNewSize("");
+					setModalSizeIsVisible(false);
+					updateDoggiesCallBack();
+
+				} else {
+					alert("WAF");
+					setNewSize("")
+				}
+			});
+	};
+
+	const handleChangeRace = (dogRace) => {
+		setNewRace(dogRace)
+		setModalRaceIsVisible(true);
+		console.log('SelectedDog:', selectedDog._id)
+
+		// fetch(`http://192.168.1.60:3000/users/dog/${user.token}`, {
+		fetch(`http://192.168.1.60:3000/users/dog/wqUJx2Hd86ZP0nffCdC3HlouzkCnAdEj`, {
+			method: "PUT",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({ dogId: selectedDog._id, race: dogRace }),
+		})
+			.then((res) => res.json())
+			.then((data) => {
+
+				if (data.result) {
+					alert("Dog Race updated!");
+					setNewRace("");
+					setModalRaceIsVisible(false);
+					updateDoggiesCallBack();
+
+				} else {
+					alert("WAF");
+					setNewRace("")
+				}
+			});
+	};
+		
+	
 
 	const Card = memo(({ index, animationValue, dog }) => {
 		const WIDTH = PAGE_WIDTH;
@@ -187,21 +292,21 @@ export const CarouselDog = ({ doggies }) => {
 						<Text style={styles.dogDetails}>Nom:</Text>
 						{isEditing ? <TouchableOpacity
 							style={styles.encadreTextCarousel}
-							onPress={() => openModal(dog)}
+							onPress={() => openModalName(dog)}
 						>
 							<Text style={styles.dogDetailsInputs}>{dog.name}</Text>
 						</TouchableOpacity> : <Text style={styles.dogDetailsLocked}>{dog.name}</Text>}
 						<Text style={styles.dogDetails}>Taille:</Text>
 						{isEditing ? <TouchableOpacity
 							style={styles.encadreTextCarousel}
-							onPress={() => handleChangeSize()}
+							onPress={() => openModalSize(dog)}
 						>
 							<Text style={styles.dogDetailsInputs}>{dog.size}</Text>
 						</TouchableOpacity> : <Text style={styles.dogDetailsLocked}>{dog.size}</Text>}
 						<Text style={styles.dogDetails}>Race:</Text>
 						{isEditing ? <TouchableOpacity
 							style={styles.encadreTextCarousel}
-							onPress={() => handleChangeRace()}
+							onPress={() => openModalRace(dog)}
 						>
 							<Text style={styles.dogDetailsInputs}>{dog.race}</Text>
 						</TouchableOpacity> : <Text style={styles.dogDetailsLocked}>{dog.race}</Text>}
@@ -259,35 +364,152 @@ export const CarouselDog = ({ doggies }) => {
 				}}
 				
 			/>
-			<Modal
-				style={styles.modal}
-				animationType="fade"
-				transparent={true}
-				visible={modalIsVisible}
-			>
-				<View style={styles.contenuModal}>
-					<View style={styles.close} onPress={() => setModalIsVisible(false)}>
-						<FontAwesome
-							alignSelf="center"
-							name="close"
-							size={20}
-							color="gray"
-							onPress={() => setModalIsVisible(false)}
+			<View style={{ width: "100%", height: "100%", position: "absolute" }}>
+
+				<Modal
+					style={styles.modal}
+					animationType="fade"
+					transparent={true}
+					visible={modalNameIsVisible}
+				>
+					<View style={styles.contenuModal}>
+						<View style={styles.close} onPress={() => setModalNameIsVisible(false)}>
+							<FontAwesome
+								alignSelf="center"
+								name="close"
+								size={20}
+								color="gray"
+								onPress={() => setModalNameIsVisible(false)}
+							/>
+						</View>
+						<Text style={styles.petitTexte}>
+							Nom actuel : {selectedDog?.name || 'Unknown'}
+						</Text>
+						<TextInput
+							placeholder="Nouveau nom"
+							autoFocus={true}
+							onChangeText={(value) => setNewName(value)}
+							value={newName}
+							onSubmitEditing={() => handleChangeName()}
+							style={styles.encadreBlanc}
 						/>
 					</View>
-					<Text style={styles.petitTexte}>
-						Nom actuel : {selectedDog?.name || 'Unknown'}
-					</Text>
-					<TextInput
-						placeholder="Nouveau nom"
-						autoFocus={true}
-						onChangeText={(value) => setNewName(value)}
-						value={newName}
-						onSubmitEditing={handleChangeName}
-						style={styles.encadreBlanc}
-					/>
-				</View>
-			</Modal>
+				</Modal>
+				<Modal
+					style={styles.modal}
+					animationType="fade"
+					transparent={true}
+					visible={modalSizeIsVisible}
+				>
+					<View style={styles.contenuModal}>
+						<View style={styles.close} onPress={() => setModalSizeIsVisible(false)}>
+							<FontAwesome
+								alignSelf="center"
+								name="close"
+								size={20}
+								color="gray"
+								onPress={() => setModalSizeIsVisible(false)}
+							/>
+						</View>
+						<Text style={styles.petitTexte}>
+							Changer la taille : {selectedDog?.size || 'Unknown'}
+						</Text>
+							<View style={styles.dogSize}>
+											<View style={styles.sizeTextContainer}>
+												<Text style={styles.dogSizeText}>Taille:</Text>
+											</View>
+											<View style={styles.dogSizeCardContainer}>
+												<Pressable
+													style={styles.dogSizeCard}
+													onPress={() => handleChangeSize(DOG_SIZE_S)}
+												>
+													<View style={styles.dogSizeCard}>
+														<Image
+															style={{
+																maxHeight: 40,
+																marginTop: 8,
+																maxWidth: 40,
+																tintColor: dogSize === DOG_SIZE_S ? "#F1AF5A" : "#5B1A10",
+															}}
+															source={require("../assets/Images/petit.png")}
+														/>
+														<Text>Petit</Text>
+													</View>
+												</Pressable>
+												<Pressable
+													style={styles.dogSizeCard}
+													onPress={() => handleChangeSize(DOG_SIZE_M)}
+												>
+													<View style={styles.dogSizeCard}>
+														<Image
+															style={{
+																maxHeight: 50,
+																maxWidth: 50,
+																tintColor: dogSize === DOG_SIZE_M ? "#F1AF5A" : "#5B1A10",
+															}}
+															source={require("../assets/Images/moyen.png")}
+														/>
+														<Text>Moyen</Text>
+													</View>
+												</Pressable>
+												<Pressable
+													style={styles.dogSizeCard}
+													onPress={() => handleChangeSize(DOG_SIZE_L)}
+												>
+													<View style={styles.dogSizeCard}>
+														<Image
+															style={{
+																maxHeight: 100,
+																maxWidth: 100,
+																tintColor: dogSize === DOG_SIZE_L ? "#F1AF5A" : "#5B1A10",
+															}}
+															source={require("../assets/Images/grand.png")}
+														/>
+														<Text>Grand</Text>
+													</View>
+												</Pressable>
+											</View>
+										</View>
+					</View>
+				</Modal>
+				<Modal
+					style={styles.modal}
+					animationType="fade"
+					transparent={true}
+					visible={modalRaceIsVisible}
+				>
+					<View style={styles.contenuModal}>
+						<View style={styles.close} onPress={() => setModalRaceIsVisible(false)}>
+							<FontAwesome
+								alignSelf="center"
+								name="close"
+								size={20}
+								color="gray"
+								onPress={() => setModalRaceIsVisible(false)}
+							/>
+						</View>
+						<Text style={styles.petitTexte}>
+							Changer la race : {selectedDog?.race || 'Unknown'}
+						</Text>
+						<View style={styles.pickerContainer}>
+							<DropDownPicker
+								style={styles.picker}
+								open={open}
+								value={value}
+								items={raceList}
+								setOpen={setOpen}
+								setValue={setValue}
+								onSelectItem={(item) => handleChangeRace(item.value)}
+								textStyle={{
+									fontSize: 18,
+								}}
+								setItems={setRaceList}
+								placeholder={"Race"}
+							/>
+						</View>
+					</View>
+				</Modal>
+			</View>
 		</View>
 	);
 };
@@ -356,6 +578,26 @@ const styles = StyleSheet.create({
 		fontWeight: 500,
 		alignSelf: "left",
 		justifyContent: "center",
+	},
+	dogSize: {
+		height: "15%",
+		marginLeft: "2%",
+		marginRight: "2%",
+	},
+	dogSizeText: {
+		marginLeft: 8,
+		fontSize: 20,
+		color: "#5B1A10",
+	},
+	dogSizeCardContainer: {
+		height: "40%",
+		width: "100%",
+		alignItems: "center",
+		justifyContent: "space-evenly",
+		flexDirection: "row",
+	},
+	dogSizeCard: {
+		alignItems: "center",
 	},
 });
 
