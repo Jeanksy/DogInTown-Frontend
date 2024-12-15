@@ -14,8 +14,10 @@ import { login } from "../reducers/user";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 
 export default function UserScreen({navigation}) {
-	// Etat de la modal
-	const [modalIsVisible, setModalIsVisible] = useState(false);
+	// Etat des modals
+	const [modalIsVisibleU, setModalIsVisibleU] = useState(false);
+	const [modalIsVisibleM, setModalIsVisibleM] = useState(false);
+	const [modalIsVisibleP, setModalIsVisibleP] = useState(false);
 	// Etat changement de pseudo/ email/ mdp/ photo
 	const [newUser, setnewUser] = useState("");
 	const [newmail, setNewmail] = useState("");
@@ -44,6 +46,48 @@ export default function UserScreen({navigation}) {
 		navigation.navigate('Options');
 	  }
 
+	  // Envoyer la mise à jour au backend
+	const handleUpdate = async (type) => {
+		const token = user.token; // token du reducer
+		let updatedData = {};
+
+		// Définir les données à envoyer en fonction de (type)
+		if (type === "username") {
+			updatedData = { username: newUser };
+		} else if (type === "email") {
+			updatedData = { email: newmail };
+		} else if (type === "password") {
+			updatedData = { password: newpassword };
+		}
+
+		// Envoyer les données au backend
+		try {
+			const response = await fetch(`https://dog-in-town-backend.vercel.app/users/${user.token}`, {
+			    method: "PUT",
+			    headers: {
+				"Content-Type": "application/json",
+			},
+			    body: JSON.stringify(updatedData),
+			});
+		
+			const data = await response.json();
+
+			if (response.ok) {
+				// Réinitialiser les champs et fermer la modal
+				setModalIsVisibleU(false);
+				setModalIsVisibleM(false);
+				setModalIsVisibleP(false);
+				// Rajouter message de succès 
+			} else {
+				// Géstion des erreurs
+				alert("Erreur lors de la mise à jour.");
+			}
+			} catch (error) {
+			    alert("Erreur de connexion.");
+			}
+		  };
+
+
 	return (
 		<View style={styles.background}>
 			<Pressable style={styles.fleche} onPress={() => handleReturn()}><FontAwesome name="arrow-left" size={30} color="#A23D42" textAlign='right'></FontAwesome></Pressable>
@@ -53,60 +97,82 @@ export default function UserScreen({navigation}) {
 				<Text style={styles.nom}>Modifiez votre profil ici !</Text>
 				<TouchableOpacity
 					style={styles.bouton}
-					onPress={() => setModalIsVisible(true)}
-				>
+					onPress={() => setModalIsVisibleU(true)}>
 					<Text style={styles.texteBouton}>Modifier mon pseudo</Text>
 				</TouchableOpacity>
-				<TouchableOpacity style={styles.bouton}>
+				<TouchableOpacity 
+					style={styles.bouton}
+					onPress={() => setModalIsVisibleM(true)}>
 					<Text style={styles.texteBouton}>Modifier mon email</Text>
 				</TouchableOpacity>
-				<TouchableOpacity style={styles.bouton}>
+				<TouchableOpacity 
+					style={styles.bouton}
+					onPress={() => setModalIsVisibleP(true)}>
 					<Text style={styles.texteBouton}>Modifier mon mot de passe</Text>
 				</TouchableOpacity>
 			</View>
 
 			{/* Zone des modales */}
-			{/* ****** MODALE PSEUDO - USERNAME ************/}
-			<Modal
-				style={styles.modal}
-				animationType="fade"
-				transparent={true}
-				visible={modalIsVisible}
-			>
+			{/* MODALE PSEUDO */}
+			<Modal style={styles.modal} animationType="fade" transparent={true} visible={modalIsVisibleU}  onRequestClose={() => setModalIsVisibleU(false)}>
 				<View style={styles.contenuModal}>
-					<View style={styles.close} onPress={() => setModalIsVisible(false)}>
-						<FontAwesome name="close" size={20} color="gray" onPress={() => setModalIsVisible(false)}/>
+					<View style={styles.close} onPress={() => setModalIsVisibleU(false)}>
+						<FontAwesome name="close" size={20} color="gray" onPress={() => setModalIsVisibleU(false)} />
 					</View>
 					<Text style={styles.petitTexte}>Pseudo actuel : {newUser}</Text>
 					<TextInput
 						placeholder="Nouveau Pseudo"
-						autoFocus = {true}
+						autoFocus={true}
 						onChangeText={(value) => setnewUser(value.trim())}
 						value={newUser}
-						style={styles.encadreBlanc}/>
+						style={styles.encadreBlanc}
+					/>
+					<TouchableOpacity onPress={() => handleUpdate("username")} style={styles.bouton}>
+						<Text style={styles.texteBouton}>Mettre à jour</Text>
+					</TouchableOpacity>
 				</View>
 			</Modal>
-			{/* *********** MODALE Email ************/}
-			<Modal
-				style={styles.modal}
-				animationType="fade"
-				transparent={true}
-				visible={modalIsVisible}
-			>
+
+			{/* MODALE Email */}
+			<Modal style={styles.modal} animationType="fade" transparent={true} visible={modalIsVisibleM}  onRequestClose={() => setModalIsVisibleM(false)}>
 				<View style={styles.contenuModal}>
-					<View style={styles.close} onPress={() => setModalIsVisible(false)}>
-						<FontAwesome name="close" size={20} color="gray" onPress={() => setModalIsVisible(false)}/>
+					<View style={styles.close} onPress={() => setModalIsVisibleM(false)}>
+						<FontAwesome name="close" size={20} color="gray" onPress={() => setModalIsVisibleM(false)} />
 					</View>
 					<Text style={styles.petitTexte}>Mail actuel : {newmail}</Text>
 					<TextInput
 						placeholder="Nouveau mail"
-						autoCapitalize="none" // https://reactnative.dev/docs/textinput#autocapitalize
-						keyboardType="email-address" // https://reactnative.dev/docs/textinput#keyboardtype
-						textContentType="emailAddress" // https://reactnative.dev/docs/textinput#textcontenttype-ios
-						autoComplete="email" // https://reactnative.dev/docs/textinput#autocomplete-android
+						autoCapitalize="none"
+						keyboardType="email-address"
+						textContentType="emailAddress"
+						autoComplete="email"
 						onChangeText={(value) => setNewmail(value)}
 						value={newmail}
-						style={styles.encadreBlanc}/>
+						style={styles.encadreBlanc}
+					/>
+					<TouchableOpacity onPress={() => handleUpdate("email")} style={styles.bouton}>
+						<Text style={styles.texteBouton}>Mettre à jour</Text>
+					</TouchableOpacity>
+				</View>
+			</Modal>
+
+			{/* MODALE Mot de Passe */}
+			<Modal style={styles.modal} animationType="fade" transparent={true} visible={modalIsVisibleP}  onRequestClose={() => setModalIsVisibleP(false)}>
+				<View style={styles.contenuModal}>
+					<View style={styles.close} onPress={() => setModalIsVisibleP(false)}>
+						<FontAwesome name="close" size={20} color="gray" onPress={() => setModalIsVisibleP(false)} />
+					</View>
+					<Text style={styles.petitTexte}>Entrez votre nouveau mot de passe</Text>
+					<TextInput
+						placeholder="Nouveau mot de passe"
+						secureTextEntry
+						onChangeText={(value) => setNewpassword(value)}
+						value={newpassword}
+						style={styles.encadreBlanc}
+					/>
+					<TouchableOpacity onPress={() => handleUpdate("password")} style={styles.bouton}>
+						<Text style={styles.texteBouton}>Mettre à jour</Text>
+					</TouchableOpacity>
 				</View>
 			</Modal>
 		</View>
@@ -171,9 +237,7 @@ const styles = StyleSheet.create({
 		height: "10%",
 	},
 	close: {
-		position: "absolute",
-		top: 10,
-		right: 10,
+		
 	},
 	petitTexte: {
 		marginTop: 10,
