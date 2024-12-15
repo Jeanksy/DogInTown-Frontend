@@ -4,6 +4,8 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+
 
 
 import HomeScreen from './screens/HomeScreen';
@@ -64,21 +66,24 @@ const TabNavigator = () => {
 };
 
 export default function App() {
+
   return (
-    <Provider store={store}>
-      <NavigationContainer>
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="Home" component={HomeScreen} />
-          <Stack.Screen name="SignIn" component={SignInScreen} />
-          <Stack.Screen name="SignUp" component={SignUpScreen} /> 
-          <Stack.Screen name="DogSignUp" component={DogSignUpScreen} />
-          <Stack.Screen name="DogsInfo" component={DogsInfoScreen} />
-          <Stack.Screen name="User" component={UserScreen} />
-          <Stack.Screen name="Contact" component={ContactScreen} />
-          <Stack.Screen name="TabNavigator" component={TabNavigator} />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </Provider>
+    <GestureHandlerRootView>
+      <Provider store={store}>
+        <NavigationContainer>
+          <Stack.Navigator screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="Home" component={DogsInfoScreen} />
+            <Stack.Screen name="SignIn" component={SignInScreen} />
+            <Stack.Screen name="SignUp" component={SignUpScreen} /> 
+            <Stack.Screen name="DogSignUp" component={DogSignUpScreen} />
+            <Stack.Screen name="DogsInfo" component={DogsInfoScreen} />
+            <Stack.Screen name="User" component={UserScreen} />
+            <Stack.Screen name="Contact" component={ContactScreen} />
+            <Stack.Screen name="TabNavigator" component={TabNavigator} />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </Provider>
+    </GestureHandlerRootView>
   );
 }
 
