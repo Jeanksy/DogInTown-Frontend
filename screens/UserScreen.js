@@ -7,10 +7,10 @@ import {
 	Modal,
 	Image,
 	Pressable,
+	SafeAreaView,
 } from "react-native";
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import { login } from "../reducers/user";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 
 export default function UserScreen({navigation}) {
@@ -89,7 +89,7 @@ export default function UserScreen({navigation}) {
 
 
 	return (
-		<View style={styles.background}>
+		<SafeAreaView style={styles.background}>
 			<Pressable style={styles.fleche} onPress={() => handleReturn()}><FontAwesome name="arrow-left" size={30} color="#A23D42" textAlign='right'></FontAwesome></Pressable>
 			{/* Zone d'affichage standard page */}
 			<View style={styles.container}>
@@ -178,7 +178,7 @@ export default function UserScreen({navigation}) {
 					</TouchableOpacity>
 				</View>
 			</Modal>
-		</View>
+		</SafeAreaView>
 	);
 }
 

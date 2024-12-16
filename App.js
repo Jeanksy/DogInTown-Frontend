@@ -46,9 +46,9 @@ const TabNavigator = () => {
         if (route.name === 'Map') {
           iconName = 'location-arrow';
         } else if (route.name === 'Favoris') {
-          iconName = 'map-pin';
+          iconName = 'bookmark';
         } else if (route.name === 'Options') {
-          iconName = 'map-pin';
+          iconName = 'gear';
         }
 
         return <FontAwesome name={iconName} size={size} color={color} />;
