@@ -6,7 +6,7 @@ import { useState, useEffect } from 'react';
 
 
 
-const PopUpInfoPlace = ({ friendlyToSee, setModalFriendlyVisible, userLocation, user }) => {
+const PopUpInfoPlace = ({ friendlyToSee, setModalFriendlyVisible, userLocation, user, navigation }) => {
 
     const [comments, setComments] = useState([]);
     const [userCommentData, setUserCommentData] = useState(null);
@@ -92,8 +92,10 @@ const PopUpInfoPlace = ({ friendlyToSee, setModalFriendlyVisible, userLocation, 
                     {comments.length === 0 && <Text style={styles.commentText}>Aucun commentaire sur ce lieu</Text>}
                 </View>
                 {comments.length >= 1 && <View style={styles.commentsOpenerContainer}>
-                    <Pressable>
+                    <Pressable onPress={() => { navigation.navigate('Comments', {name : friendlyToSee.name, comments: comments}); setModalFriendlyVisible(false) }}>
                         <Text style={styles.commentsOpenText}>lire les commentaires...</Text>
+                    </Pressable>
+                    <Pressable onPress={() => { navigation.navigate('Comments', {name : friendlyToSee.name, comments: comments}); setModalFriendlyVisible(false) }}>
                         <FontAwesome name='caret-down' size={30} color='#A23D42' onPress={() => setModalFriendlyVisible(false)} />
                     </Pressable>
                 </View>}
@@ -153,7 +155,7 @@ const styles = StyleSheet.create({
         fontWeight: 700,
         color: '#5B1A10',
     },
-    type :{
+    type: {
         marginTop: '3%',
         fontSize: 16,
         fontStyle: 'italic',
@@ -194,7 +196,7 @@ const styles = StyleSheet.create({
         height: 30,
         borderRadius: 100,
     },
-    avis:{
+    avis: {
         fontWeight: 600,
         color: '#5B1A10',
     },

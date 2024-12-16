@@ -18,6 +18,7 @@ import OptionsScreen from './screens/OptionsScreen';
 import SignUpScreen from './screens/SignUpScreen';
 import SignInScreen from './screens/SignInScreen';
 import UserScreen from './screens/UserScreen';
+import CommentsScreen from './screens/CommentsScreen';
 
 // REDUCER
 import { Provider } from 'react-redux';
@@ -78,6 +79,7 @@ export default function App() {
             <Stack.Screen name="DogSignUp" component={DogSignUpScreen} />
             <Stack.Screen name="DogsInfo" component={DogsInfoScreen} />
             <Stack.Screen name="User" component={UserScreen} />
+            <Stack.Screen name="Comments" component={CommentsScreen} />
             <Stack.Screen name="Contact" component={ContactScreen} />
             <Stack.Screen name="TabNavigator" component={TabNavigator} />
           </Stack.Navigator>
