@@ -26,9 +26,9 @@ import { withAnchorPoint } from "../utils/anchor-point";
 
 const colors = ["#F1AF5A", "#FCE9D8", "#F7CC99"];
 
-const DOG_SIZE_S = "petit";
-const DOG_SIZE_M = "moyen";
-const DOG_SIZE_L = "grand";
+const DOG_SIZE_S = "Petit";
+const DOG_SIZE_M = "Moyen";
+const DOG_SIZE_L = "Grand";
 const PAGE_WIDTH = window.width;
 const PAGE_HEIGHT = window.width * 1.1;
 
@@ -62,6 +62,7 @@ export const CarouselDog = ({ doggies, updateDoggiesCallBack }) => {
 	const [modalSizeIsVisible, setModalSizeIsVisible] = useState(false);
 	const [modalRaceIsVisible, setModalRaceIsVisible] = useState(false);
 	const [isEditing, setIsEditing] = useState(false);
+	const [modalDeleteIsVisible, setModalDeleteIsVisible] = useState(false);
 	
 	const baseOptions = {
 		vertical: false,
@@ -82,11 +83,14 @@ export const CarouselDog = ({ doggies, updateDoggiesCallBack }) => {
 		setSelectedDog(dog);
 		setModalRaceIsVisible(true);
 	};
+	const openModalDelete = (dog) => {
+		setSelectedDog(dog);
+		setModalDeleteIsVisible(true);
+	};
 
 
 	const handleChangeName = () => {
 		setModalNameIsVisible(true);
-		console.log('SelectedDog:', selectedDog._id)
 
 		fetch(`https://dog-in-town-backend.vercel.app/users/dog/${user.token}`, {
 		// fetch(`http://192.168.1.60:3000/users/dog/wqUJx2Hd86ZP0nffCdC3HlouzkCnAdEj`, {
@@ -145,8 +149,7 @@ export const CarouselDog = ({ doggies, updateDoggiesCallBack }) => {
 
 	const handleChangeRace = (dogRace) => {
 		setNewRace(dogRace)
-		setModalRaceIsVisible(true);
-		console.log('SelectedDog:', selectedDog._id)
+		setModalRaceIsVisible(true)
 
 		fetch(`https://dog-in-town-backend.vercel.app/users/dog/${user.token}`, {
 		// fetch(`http://192.168.1.60:3000/users/dog/wqUJx2Hd86ZP0nffCdC3HlouzkCnAdEj`, {
@@ -169,6 +172,34 @@ export const CarouselDog = ({ doggies, updateDoggiesCallBack }) => {
 					alert("WAF");
 					setNewRace("")
 				}
+			});
+	};
+
+	const handleDelete = (dog) => {
+		setSelectedDog(dog)
+		console.log(dog._id)
+		// fetch(`https://dog-in-town-backend.vercel.app/users/dog/${user.token}`, {
+	
+			fetch(`http://172.20.10.6:3000/users/dog/${user.token}`, {
+				method: "DELETE",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({ _id: dog._id }),
+			})
+				.then((res) => res.json())
+				.then((data) => {
+	
+					if (data.result) {
+						alert("Dog deleted");
+						setModalDeleteIsVisible(false);
+						updateDoggiesCallBack();
+						console.log("Dog list updated");
+	
+					} else {
+						alert("WAF");
+
+					}
 			});
 	};
 		
@@ -310,17 +341,28 @@ export const CarouselDog = ({ doggies, updateDoggiesCallBack }) => {
 						>
 							<Text style={styles.dogDetailsInputs}>{dog.race}</Text>
 						</TouchableOpacity> : <Text style={styles.dogDetailsLocked}>{dog.race}</Text>}
-						<TouchableOpacity
+						<View style={{flexDirection:'row', justifyContent: 'space-between', alignItems: 'flex-end'}}>
+						<TouchableOpacity style={styles.icones}
 							onPress={() => setIsEditing(!isEditing)}
 						>
 						<FontAwesome
-							alignSelf="flex-end"
 							name="pencil"
-							size={20}
+							size={25}
 							color="gray"
 							onPress={() => setIsEditing(!isEditing)}
 							/>
 						</TouchableOpacity>
+						<TouchableOpacity style={styles.icones}
+							onPress={() => openModalDelete(dog)}
+						>
+						<FontAwesome
+							name="trash-o"
+							size={25}
+							color="gray"
+							onPress={() => openModalDelete(dog)}
+							/>
+						</TouchableOpacity>
+						</View>
 					</View>
 				</Animated.View>
 				{/* Dog Picture Options */}
@@ -509,6 +551,41 @@ export const CarouselDog = ({ doggies, updateDoggiesCallBack }) => {
 						</View>
 					</View>
 				</Modal>
+				<Modal
+					style={styles.modalDelete}
+					animationType="fade"
+					transparent={true}
+					visible={modalDeleteIsVisible}
+				>
+					<View style={styles.contenuModal}>
+						<View style={styles.close} onPress={() => setModalDeleteIsVisible(false)}>
+							<FontAwesome
+								alignSelf="center"
+								name="close"
+								size={20}
+								color="gray"
+								onPress={() => setModalDeleteIsVisible(false)}
+							/>
+						</View>
+						<Text style={{fontSize:20, fontWeight: 600}}>
+							Retirer {selectedDog?.name || 'Unknown'}?
+						</Text>
+						<TouchableOpacity style={styles.deleteBtn}
+						onPress={() => handleDelete(selectedDog)}
+						>
+							<Text style={styles.deleteTexte}>
+								Oui
+							</Text>
+						</TouchableOpacity>
+						<TouchableOpacity style={styles.deleteBtn}
+							onPress={() => setModalDeleteIsVisible(false)}
+						>	
+							<Text style={styles.deleteTexte}>
+								Non
+							</Text>
+						</TouchableOpacity>
+					</View>
+				</Modal>
 			</View>
 		</View>
 	);
@@ -518,6 +595,8 @@ const styles = StyleSheet.create({
 	// MODAL
 	modal: {
 		marginTop: "20%",
+	},
+	modalDelete: {
 	},
 	contenuModal: {
 		backgroundColor: "white",
@@ -534,7 +613,7 @@ const styles = StyleSheet.create({
 		borderWidth: 1,
 		borderRadius: 10,
 		width: "70%",
-		height: 40,
+		height: 30,
 	},
 	encadreTextCarousel: {
 		justifyContent: "center",
@@ -542,7 +621,7 @@ const styles = StyleSheet.create({
 		borderWidth: 1,
 		borderRadius: 10,
 		width: "50%",
-		height: 40,
+		height: 32,
 	},
 	close: {
 		// backgroundColor: 'red',
@@ -598,6 +677,34 @@ const styles = StyleSheet.create({
 	},
 	dogSizeCard: {
 		alignItems: "center",
+	},
+	icones: {
+		// backgroundColor: 'red',
+		height: '60%',
+		width: '20%',
+		justifyContent: 'center',
+		alignItems: 'center',
+		borderRadius: 100
+	},
+	deleteBtn: {
+		flex: 0,
+		flexDirection: "row",
+		alignItems: "center",
+		justifyContent: "center",
+		backgroundColor: "#A23D42",
+		width: "70%",
+		height: 50,
+		borderRadius: 20,
+		shadowColor: "black",
+		shadowOpacity: 0.4,
+		elevation: 2,
+		shadowRadius: 1,
+		shadowOffset: { width: 1, height: 4 },
+		borderWidth: 0,
+	},
+	deleteTexte: {
+		fontSize: 20,
+		color: "#ffffff",
 	},
 });
 
