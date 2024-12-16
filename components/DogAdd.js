@@ -202,8 +202,8 @@ export const DogAdd = () => {
 			return;
 		}
 
-		// await fetch(`https://dog-in-town-backend.vercel.app/users/dog`, {
-		await fetch(`http://192.168.1.60:3000/users/dog`, {
+		await fetch(`https://dog-in-town-backend.vercel.app/users/dog`, {
+		// await fetch(`http://192.168.1.60:3000/users/dog`, {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify({

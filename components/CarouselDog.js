@@ -88,8 +88,8 @@ export const CarouselDog = ({ doggies, updateDoggiesCallBack }) => {
 		setModalNameIsVisible(true);
 		console.log('SelectedDog:', selectedDog._id)
 
-		// fetch(`http://192.168.1.60:3000/users/dog/${user.token}`, {
-		fetch(`http://192.168.1.60:3000/users/dog/wqUJx2Hd86ZP0nffCdC3HlouzkCnAdEj`, {
+		fetch(`https://dog-in-town-backend.vercel.app/users/dog/${user.token}`, {
+		// fetch(`http://192.168.1.60:3000/users/dog/wqUJx2Hd86ZP0nffCdC3HlouzkCnAdEj`, {
 			method: "PUT",
 			headers: {
 				"Content-Type": "application/json",
@@ -119,8 +119,8 @@ export const CarouselDog = ({ doggies, updateDoggiesCallBack }) => {
 		console.log('SelectedDog:', selectedDog._id);
 	
 
-		// fetch(`http://192.168.1.60:3000/users/dog/${user.token}`, {
-		fetch(`http://192.168.1.60:3000/users/dog/wqUJx2Hd86ZP0nffCdC3HlouzkCnAdEj`, {
+		fetch(`https://dog-in-town-backend.vercel.app/users/dog/${user.token}`, {
+		// fetch(`http://192.168.1.60:3000/users/dog/wqUJx2Hd86ZP0nffCdC3HlouzkCnAdEj`, {
 			method: "PUT",
 			headers: {
 				"Content-Type": "application/json",
@@ -148,8 +148,8 @@ export const CarouselDog = ({ doggies, updateDoggiesCallBack }) => {
 		setModalRaceIsVisible(true);
 		console.log('SelectedDog:', selectedDog._id)
 
-		// fetch(`http://192.168.1.60:3000/users/dog/${user.token}`, {
-		fetch(`http://192.168.1.60:3000/users/dog/wqUJx2Hd86ZP0nffCdC3HlouzkCnAdEj`, {
+		fetch(`https://dog-in-town-backend.vercel.app/users/dog/${user.token}`, {
+		// fetch(`http://192.168.1.60:3000/users/dog/wqUJx2Hd86ZP0nffCdC3HlouzkCnAdEj`, {
 			method: "PUT",
 			headers: {
 				"Content-Type": "application/json",
