@@ -176,7 +176,7 @@ export const CarouselDog = ({ doggies, updateDoggiesCallBack }) => {
 
 	const Card = memo(({ index, animationValue, dog }) => {
 		const WIDTH = PAGE_WIDTH;
-		const HEIGHT = PAGE_HEIGHT / 1.8;
+		const HEIGHT = PAGE_HEIGHT / 1.6
 
 		const cardStyle = useAnimatedStyle(() => {
 			const scale = interpolate(
@@ -353,7 +353,7 @@ export const CarouselDog = ({ doggies, updateDoggiesCallBack }) => {
 				withAnimation={{
 					type: "spring",
 					config: {
-						damping: 15,
+						damping: 10,
 					},
 				}}
 				data={doggies}

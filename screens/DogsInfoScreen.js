@@ -75,10 +75,7 @@ export default function DogsInfoScreen() {
 	};
 
 	useEffect(() => {
-		// fetch(`https://dog-in-town-backend.vercel.app/users/dog/${user.token}`)     <<<<< Token dynamique
-		fetch(
-			`https://dog-in-town-backend.vercel.app/users/dog/wqUJx2Hd86ZP0nffCdC3HlouzkCnAdEj` // <<<<<Token hardcoded
-		)
+		fetch(`https://dog-in-town-backend.vercel.app/users/dog/${user.token}`)    //  <<<<< Token dynamique
 			.then((response) => response.json())
 			.then( (data) => {
 				if (data) {
