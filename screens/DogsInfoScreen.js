@@ -100,7 +100,7 @@ export default function DogsInfoScreen() {
 			behavior={Platform.OS === "ios" ? "padding" : "height"}
 		>
 			<SafeAreaView style={styles.safeArea}>
-			<View style={{ width: "100%", height: "100%", position: "absolute" }}>
+			<View style={{ width: "100%", height: "100%", position: "absolute"}}>
 				<ModalAdd visible={addModalIsVisible} onClose={() => handleCloseModal()} >
 				</ModalAdd>	
 			</View>

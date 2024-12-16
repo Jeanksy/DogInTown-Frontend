@@ -12,7 +12,7 @@ import PopUpAddPlace from '../components/PopUpAddPlace';
 
 const { width, height } = Dimensions.get('window'); //dimension de l'écran
 
-export default function MapScreen() {
+export default function MapScreen({navigation}) {
 
   const [modalVisible, setModalVisible] = useState(false); //Modal d'ajout de lieu
   const [currentPosition, setCurrentPosition] = useState({}); //coordonnés de notre position actuelle
@@ -180,7 +180,7 @@ export default function MapScreen() {
           }}>
           <View style={styles.contenuModal}>
             {friendlyToSee &&
-              <PopUpInfoPlace friendlyToSee={friendlyToSee} setModalFriendlyVisible={setModalFriendlyVisible} userLocation={currentPosition} user={user}/>
+              <PopUpInfoPlace friendlyToSee={friendlyToSee} setModalFriendlyVisible={setModalFriendlyVisible} userLocation={currentPosition} user={user} navigation={navigation}/>
             }
           </View>
         </Modal>
