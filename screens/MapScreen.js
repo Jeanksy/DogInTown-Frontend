@@ -68,15 +68,16 @@ export default function MapScreen() {
   // FONCTION POUR TROUVER UN LIEU SUR L'API GOOGLE PLACE ET FILTRER L'AFFICHAGE
   const searchPlace = async () => {
     if (!searchText.trim().length) return;
-
+    
     console.log('Recherche:', searchText);
     const radius = 10000 // 10000 metres = 10 km autour de position utilisateur
     const googleApiUrl = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${searchText}bars+cafes+restaurants&location=${currentPosition.latitude},${currentPosition.longitude}&radius=${radius}&key=${API_GOOGLE_KEY}`;
     setFriendlies(filterFriendlies())
     try {
+      
       const response = await fetch(googleApiUrl);
       const data = await response.json();
-
+   
 
       if (data.status === 'OK' && data.results.length > 0) {
         const placeData = data.results;
@@ -105,86 +106,86 @@ export default function MapScreen() {
   };
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-    >
+      <KeyboardAvoidingView
+        style={styles.container}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      >
       <MapView mapType="standard" onPress={() => { setPlaces([]), setRefreshShow(!refreshShow) }} style={styles.map} initialRegion={{
-        latitude: 45.75,
-        longitude: 4.85,
-        latitudeDelta: 1.0,
-        longitudeDelta: 1.0,
-      }
-      }>
-        {currentPosition && currentPosition.latitude && currentPosition.longitude && (
-          <Marker coordinate={currentPosition} pinColor="#fecb2d" title="Vous êtes ici" />
-        )}
-        {places && places.length > 0 && places.map((place, index) => !isPlaceInFriendlies(place) && (
-          <Marker
-            key={index}
-            coordinate={{
-              latitude: place.geometry.location.lat,
-              longitude: place.geometry.location.lng,
-            }}
-            title={place.name}
-            description={place.formatted_address}
-            onPress={() => { addNewPlace(place), setAddPlaceName(place.name) }}
+          latitude: 45.75,
+          longitude: 4.85,
+          latitudeDelta: 1.0,
+          longitudeDelta: 1.0,
+        }
+        }>
+          {currentPosition && currentPosition.latitude && currentPosition.longitude && (
+            <Marker coordinate={currentPosition} pinColor="#fecb2d" title="Vous êtes ici" />
+          )}
+          {places && places.length > 0 && places.map((place, index) => !isPlaceInFriendlies(place) && (
+            <Marker
+              key={index}
+              coordinate={{
+                latitude: place.geometry.location.lat,
+                longitude: place.geometry.location.lng,
+              }}
+              title={place.name}
+              description={place.formatted_address}
+              onPress={() => { addNewPlace(place), setAddPlaceName(place.name) }}
+            />
+          ))}
+          {friendlies && friendlies.length > 0 && friendlies.map((place, index) => (
+            <Marker
+              key={index}
+              coordinate={{
+                latitude: place.latitude,
+                longitude: place.longitude,
+              }}
+              title={place.name}
+              description={place.adress}
+              style={styles.marker}
+              onPress={() => { setModalFriendlyVisible(true), setFriendlyToSee(place) }}
+            >
+              <View style={styles.markerContainer}>
+                <Image source={require('../assets/Images/patte2.png')} style={{ width: 15, height: 15, tintColor: 'white', resizeMode: 'contain' }} />
+              </View>
+            </Marker>
+          ))}
+        </MapView>
+        <View style={styles.blocRecherches}>
+          <FontAwesome name='sliders' color='#525252' style={styles.icons} />
+          <TextInput
+            style={styles.recherches}
+            placeholder='Rechercher'
+            onChangeText={(value) => setSearchText(value)}
+            value={searchText}
           />
-        ))}
-        {friendlies && friendlies.length > 0 && friendlies.map((place, index) => (
-          <Marker
-            key={index}
-            coordinate={{
-              latitude: place.latitude,
-              longitude: place.longitude,
-            }}
-            title={place.name}
-            description={place.adress}
-            style={styles.marker}
-            onPress={() => { setModalFriendlyVisible(true), setFriendlyToSee(place) }}
-          >
-            <View style={styles.markerContainer}>
-              <Image source={require('../assets/Images/patte2.png')} style={{ width: 15, height: 15, tintColor: 'white', resizeMode: 'contain' }} />
-            </View>
-          </Marker>
-        ))}
-      </MapView>
-      <View style={styles.blocRecherches}>
-        <FontAwesome name='sliders' color='#525252' style={styles.icons} />
-        <TextInput
-          style={styles.recherches}
-          placeholder='Rechercher'
-          onChangeText={(value) => setSearchText(value)}
-          value={searchText}
-        />
-        <FontAwesome onPress={searchPlace} name='search' color='#525252' style={styles.icons} />
-      </View>
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => {
-          setModalVisible(!modalVisible);
-        }}>
-        <View style={styles.contenuModal}>
-          <PopUpAddPlace addPlaceName={addPlaceName} placeToAdd={placeToAdd} setModalVisible={setModalVisible} setPlaces={setPlaces} userToken={user.token}/>
+          <FontAwesome onPress={searchPlace} name='search' color='#525252' style={styles.icons} />
         </View>
-      </Modal>
-      <Modal // Modal info de lieu
-        animationType="slide"
-        transparent={true}
-        visible={modalFriendlyVisible}
-        onRequestClose={() => {
-          setModalFriendlyVisible(!modalFriendlyVisible);
-        }}>
-        <View style={styles.contenuModal}>
-          {friendlyToSee &&
-            <PopUpInfoPlace friendlyToSee={friendlyToSee} setModalFriendlyVisible={setModalFriendlyVisible} userLocation={currentPosition} user={user}/>
-          }
-        </View>
-      </Modal>
-      <StatusBar style="auto" />
-    </KeyboardAvoidingView>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => {
+            setModalVisible(!modalVisible);
+          }}>
+          <View style={styles.contenuModal}>
+            <PopUpAddPlace addPlaceName={addPlaceName} placeToAdd={placeToAdd} setModalVisible={setModalVisible} setPlaces={setPlaces} userToken={user.token}/>
+          </View>
+        </Modal>
+        <Modal // Modal info de lieu
+          animationType="slide"
+          transparent={true}
+          visible={modalFriendlyVisible}
+          onRequestClose={() => {
+            setModalFriendlyVisible(!modalFriendlyVisible);
+          }}>
+          <View style={styles.contenuModal}>
+            {friendlyToSee &&
+              <PopUpInfoPlace friendlyToSee={friendlyToSee} setModalFriendlyVisible={setModalFriendlyVisible} userLocation={currentPosition} user={user}/>
+            }
+          </View>
+        </Modal>
+        <StatusBar style="auto" />
+      </KeyboardAvoidingView>
   );
 }
 
