@@ -216,7 +216,8 @@ export const DogAdd = () => {
 		});
 		setIsLoading(true);
 		await delay(1500);
-    setIsLoading(false);
+		setIsLoading(false);
+		setModalIsVisible(false)
     
 	};
 

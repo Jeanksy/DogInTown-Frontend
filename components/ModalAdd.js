@@ -41,12 +41,14 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-	close: {
-	height: 40,
-    width: 40,
+  close: {
+    justifyContent: 'center',
+    // backgroundColor: 'red',
+	  height: 60,
+    width: 60,
     borderRadius: 100,
     position: "absolute",
-    top: 10,
-    right: 5,
+    top: -10,
+    right: -5,
   },
 });
