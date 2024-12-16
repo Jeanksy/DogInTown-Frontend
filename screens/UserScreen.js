@@ -62,7 +62,7 @@ export default function UserScreen({navigation}) {
 
 		// Envoyer les données au backend
 		try {
-			const response = await fetch(`https://dog-in-town-backend.vercel.app/users/${user.token}`, {
+			const response = await fetch(`https://dog-in-town-backend.vercel.app/users/profil/${user.token}`, {
 			    method: "PUT",
 			    headers: {
 				"Content-Type": "application/json",
@@ -98,17 +98,20 @@ export default function UserScreen({navigation}) {
 				<TouchableOpacity
 					style={styles.bouton}
 					onPress={() => setModalIsVisibleU(true)}>
-					<Text style={styles.texteBouton}>Modifier mon pseudo</Text>
+					<Text style={styles.texteBouton}>Modifier mon pseudo :</Text>
+					<Text style={styles.texteBoutonB}>{newUser}</Text>
 				</TouchableOpacity>
 				<TouchableOpacity 
 					style={styles.bouton}
 					onPress={() => setModalIsVisibleM(true)}>
-					<Text style={styles.texteBouton}>Modifier mon email</Text>
+					<Text style={styles.texteBouton}>Modifier mon email :</Text>
+					<Text style={styles.texteBoutonB}>{newmail}</Text>
 				</TouchableOpacity>
 				<TouchableOpacity 
 					style={styles.bouton}
 					onPress={() => setModalIsVisibleP(true)}>
-					<Text style={styles.texteBouton}>Modifier mon mot de passe</Text>
+					<Text style={styles.texteBouton}>Modifier mon mot de passe :</Text>
+					<Text style={styles.texteBoutonB}>******</Text>
 				</TouchableOpacity>
 			</View>
 
@@ -119,7 +122,7 @@ export default function UserScreen({navigation}) {
 					<View style={styles.close} onPress={() => setModalIsVisibleU(false)}>
 						<FontAwesome name="close" size={20} color="gray" onPress={() => setModalIsVisibleU(false)} />
 					</View>
-					<Text style={styles.petitTexte}>Pseudo actuel : {newUser}</Text>
+					<Text style={styles.petitTexte}>Modifiez votre pseudo ci-dessous</Text>
 					<TextInput
 						placeholder="Nouveau Pseudo"
 						autoFocus={true}
@@ -128,7 +131,7 @@ export default function UserScreen({navigation}) {
 						style={styles.encadreBlanc}
 					/>
 					<TouchableOpacity onPress={() => handleUpdate("username")} style={styles.bouton}>
-						<Text style={styles.texteBouton}>Mettre à jour</Text>
+						<Text style={styles.texteBoutonB}>Mettre à jour</Text>
 					</TouchableOpacity>
 				</View>
 			</Modal>
@@ -139,7 +142,7 @@ export default function UserScreen({navigation}) {
 					<View style={styles.close} onPress={() => setModalIsVisibleM(false)}>
 						<FontAwesome name="close" size={20} color="gray" onPress={() => setModalIsVisibleM(false)} />
 					</View>
-					<Text style={styles.petitTexte}>Mail actuel : {newmail}</Text>
+					<Text style={styles.petitTexte}>Modifiez votre mail ci-dessous</Text>
 					<TextInput
 						placeholder="Nouveau mail"
 						autoCapitalize="none"
@@ -151,7 +154,7 @@ export default function UserScreen({navigation}) {
 						style={styles.encadreBlanc}
 					/>
 					<TouchableOpacity onPress={() => handleUpdate("email")} style={styles.bouton}>
-						<Text style={styles.texteBouton}>Mettre à jour</Text>
+						<Text style={styles.texteBoutonB}>Mettre à jour</Text>
 					</TouchableOpacity>
 				</View>
 			</Modal>
@@ -162,7 +165,7 @@ export default function UserScreen({navigation}) {
 					<View style={styles.close} onPress={() => setModalIsVisibleP(false)}>
 						<FontAwesome name="close" size={20} color="gray" onPress={() => setModalIsVisibleP(false)} />
 					</View>
-					<Text style={styles.petitTexte}>Entrez votre nouveau mot de passe</Text>
+					<Text style={styles.petitTexte}>Modifiez votre mot de passe ci-dessous</Text>
 					<TextInput
 						placeholder="Nouveau mot de passe"
 						secureTextEntry
@@ -171,7 +174,7 @@ export default function UserScreen({navigation}) {
 						style={styles.encadreBlanc}
 					/>
 					<TouchableOpacity onPress={() => handleUpdate("password")} style={styles.bouton}>
-						<Text style={styles.texteBouton}>Mettre à jour</Text>
+						<Text style={styles.texteBoutonB}>Mettre à jour</Text>
 					</TouchableOpacity>
 				</View>
 			</Modal>
@@ -209,7 +212,8 @@ const styles = StyleSheet.create({
 	bouton: {
 		backgroundColor: "#A23D42",
 		width: "80%",
-		height: "8%",
+		height: "10%",
+		justifyContent: 'center',
 		borderRadius: 20,
 		marginBottom: "3%",
 	},
@@ -217,7 +221,13 @@ const styles = StyleSheet.create({
 		color: "white",
 		textAlign: "center",
 		fontSize: 18,
-		marginTop: "4%",
+		fontWeight: 300,
+	},
+	texteBoutonB: {
+		color: "white",
+		textAlign: "center",
+		fontSize: 18,
+		fontWeight: 600,
 	},
 	// MODAL
 	contenuModal: {
@@ -235,9 +245,9 @@ const styles = StyleSheet.create({
 		borderRadius: 20,
 		width: "70%",
 		height: "10%",
+		margin: '5%',
 	},
 	close: {
-		
 	},
 	petitTexte: {
 		marginTop: 10,
