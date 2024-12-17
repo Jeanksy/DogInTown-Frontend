@@ -2,7 +2,7 @@ import React from 'react';
 import { Linking, StyleSheet, Pressable, Text, View, TouchableOpacity, Image, } from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { useState, useEffect } from 'react';
-
+import { useIsFocused } from '@react-navigation/native';
 
 
 
@@ -10,7 +10,8 @@ const PopUpInfoPlace = ({ friendlyToSee, setModalFriendlyVisible, userLocation, 
 
     const [comments, setComments] = useState([]);
     const [userCommentData, setUserCommentData] = useState(null);
-    
+    const [addFavorite, setAddFavorite] = useState(false);
+    const isFocused = useIsFocused();
 
 
     // Fonction pour récupérer tous les commentaires d'un lieu
@@ -40,20 +41,57 @@ const PopUpInfoPlace = ({ friendlyToSee, setModalFriendlyVisible, userLocation, 
             Linking.openURL(url);
         }
     };
+        // Récupérer les données depuis l'API
+        useEffect(() => {
+            if (isFocused) {
+            (async () => {
+                const response = await fetch(`https://dog-in-town-backend.vercel.app/users/favoris/${user.token}`);
+                const data = await response.json();
+                const recherche = data.allPlaces.filter((e) => e._id === friendlyToSee._id)
+                if (recherche.length > 0) {  // si le lieu existe dans les favoris
+                    setAddFavorite(true);
+                } else {
+                    setAddFavorite(false);
+                }
+            })();
+            }
+        }, [isFocused, user.token]);  // Dépendance à isFocused pour que ça s'exécute quand l'écran est focalisé
 
-//      Fetch pour  ajouter un lieu dans la base de données User *** FAVORIS
+//      Fetch pour  ajouter un lieu dans la base de données User *** AJOUTER FAVORIS
     	const handleFavorite = () => {    
         fetch(`https://dog-in-town-backend.vercel.app/users/addFavoris/${user.token}`, {
     			method: 'POST',
     			headers: { 'Content-Type': 'application/json' },
     			body: JSON.stringify({ placeId: friendlyToSee._id }),
     		}).then(response => response.json())
+            .then(data => {
+                console.log("Favoris ajoutés avec succès:", data);
+                setAddFavorite(true); // Met à jour l'état si l'ajout a réussi
+            })
+            .catch(error => {
+                console.error("Erreur lors de l'ajout aux favoris:", error);
+            });
     }
     
+    // bouton supprime favoris
+const deleteButton = () => {
+    fetch(`https://dog-in-town-backend.vercel.app/users/deleteFavoris/${user.token}`,{
+      method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ placeId: friendlyToSee._id }),
+    }).then(response => response.json())
+    .then(data => {
+        console.log("Favoris supprimés avec succès:", data);
+        setAddFavorite(false); // Met à jour l'état si la suppression a réussi
+    })
+    .catch(error => {
+        console.error("Erreur lors de la suppression des favoris:", error);
+    });
+    
+}
 
     useEffect(() => {
         getComments();
-        //console.log('friendlyToSee --->', friendlyToSee)
     }, []);
 
     useEffect(() => {
@@ -75,11 +113,16 @@ const PopUpInfoPlace = ({ friendlyToSee, setModalFriendlyVisible, userLocation, 
                 </Pressable>
             </View>
             <View style={styles.placeInfo}>
-                <TouchableOpacity style={styles.buttonLike} onPress={() => handleFavorite()}>
+                {!addFavorite ? <TouchableOpacity style={styles.buttonLike} onPress={() => handleFavorite()}>
                     <View>
                         <Text>Ajouter aux favoris</Text>
                     </View>
-                </TouchableOpacity>
+                </TouchableOpacity> : 
+                <TouchableOpacity style={styles.buttonUnlike} onPress={() => deleteButton(friendlyToSee._id)}>
+                <View>
+                    <Text>Supprimer des favoris</Text>
+                </View>
+            </TouchableOpacity>}
                 <View style={styles.ratingContainer}>
                     <View style={styles.cercleAvis} backgroundColor={friendlyToSee.feedback > 10 ? 'black' : '#F7CC99'}></View>
                     <Text style={styles.avis}>{friendlyToSee.feedback} Avis</Text>
@@ -191,6 +234,14 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         alignItems: 'center',
         backgroundColor: '#F1AF5A',
+    },
+    buttonUnlike: {
+        width: '50%',
+        height: '22%',
+        justifyContent: 'center',
+        borderRadius: 20,
+        alignItems: 'center',
+        backgroundColor: '#FFF',
     },
     ratingContainer: {
         flexDirection: 'row',
