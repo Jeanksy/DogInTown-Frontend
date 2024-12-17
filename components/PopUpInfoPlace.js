@@ -3,6 +3,7 @@ import { Linking, StyleSheet, Pressable, Text, View, TouchableOpacity, Image, } 
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { useState, useEffect } from 'react';
 import { useIsFocused } from '@react-navigation/native';
+import { useSelector } from 'react-redux';
 
 
 
@@ -12,6 +13,7 @@ const PopUpInfoPlace = ({ friendlyToSee, setModalFriendlyVisible, userLocation, 
     const [userCommentData, setUserCommentData] = useState(null);
     const [addFavorite, setAddFavorite] = useState(false);
     const isFocused = useIsFocused();
+    const user = useSelector((state) => state.user.value); // Reducer pour accéder au username et token
 
 
     // Fonction pour récupérer tous les commentaires d'un lieu
