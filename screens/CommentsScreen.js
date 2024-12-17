@@ -1,39 +1,48 @@
 import { StatusBar } from 'expo-status-bar';
-import {StyleSheet, Text, View, SafeAreaView, ScrollView, Pressable, Image, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, SafeAreaView, ScrollView, Pressable, Image, TouchableOpacity } from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import { useEffect } from 'react';
-import { Touchable } from 'react-native';
+import { useState, useEffect } from 'react';
+import Comment from '../components/Comment';
+import { useIsFocused } from '@react-navigation/native';
+
 
 
 export default function CommentsScreen({ route, navigation }) {
 
     const { name } = route.params;
-    const { comments } = route.params;
+    const [comments, setComments] = useState([]);
+    const isFocused = useIsFocused();
+    const [sorted, setSorted] = useState(false);
+
+    let commentList = [];
+
 
 
     useEffect(() => {
-        console.log(route.params);
-        console.log('les commentaires -->' + comments[0]);
-    }, []);
+        (async () => {
+            const response = await fetch(`https://dog-in-town-backend.vercel.app/places/comments/${name}`)
+            const result = await response.json()
+            setComments(result.comments)
+        })();
+    }, [isFocused])
 
-    const commentList = comments.map((data, i) => {
-        return (
-            <View key={i} style={styles.commentCard}>
-                <View style={styles.commentUserInfo}>
-                    <View style={styles.imageContainer}>
-                        <Image style={styles.userAvatar} source={require('../assets/Images/avatar.png')} />
-                    </View>
-                    <View style={styles.userInfoText}>
-                        <Text style={styles.username}>{data.user.username}</Text>
-                        <Text style={styles.userdogRace}>Propriétaire d'un carlin</Text>
-                    </View>
-                </View>
-                <View style={styles.commentsPart}>
-                    <Text style={styles.commentText}>{data.content}</Text>
-                </View>
-            </View>
-        );
-    });
+    const handleSort = () => {
+        setSorted(!sorted);
+    }
+
+    if(!sorted){
+         commentList = comments.map((data, i) => {
+            return (
+                <Comment key={i} username={data.user.username} avatar={data.user.avatar} content={data.content} race={data.user.dogs[0].race.toLowerCase()} date={data.date} />
+            );
+        });
+    }else{
+         commentList = comments.reverse().map((data, i) => {
+            return (
+                <Comment key={i} username={data.user.username} avatar={data.user.avatar} content={data.content} race={data.user.dogs[0].race.toLowerCase()} date={data.date} />
+            );
+        });
+    }
 
     return (
         <SafeAreaView style={styles.container}>
@@ -46,13 +55,21 @@ export default function CommentsScreen({ route, navigation }) {
                 </Pressable>
                 <View style={styles.titlesContainer}>
                     <Text style={styles.placeText}>{name}</Text>
-                    <Text style={styles.commentTitle}>Commentaires</Text>
+                    <View style={styles.commentTitleContainer}>
+                        <Text style={styles.commentTitle}>Commentaires</Text>
+                    </View>
                 </View>
+                <Pressable onPress={() => handleSort()}>
+                    <FontAwesome style={styles.icon} name='sort-up' size={30} color='#5B1A10' />
+                </Pressable>
             </View>
-            <ScrollView contentContainerStyle={styles.commentsContainer}>
+            <ScrollView
+                contentContainerStyle={styles.commentsContainer}
+                removeClippedSubviews={true}
+            >
                 {commentList}
             </ScrollView>
-            <TouchableOpacity style={styles.lowerContent}>
+            <TouchableOpacity onPress={() => navigation.navigate('Feedback', { name: name, comments: comments })} style={styles.lowerContent}>
                 <Text style={styles.buttonText}>Laisser un avis</Text>
             </TouchableOpacity>
             <StatusBar style="auto" />
@@ -71,7 +88,7 @@ const styles = StyleSheet.create({
     upperContent: {
         zIndex: 1,
         width: '100%',
-        height: '25%',
+        height: '20%',
     },
     leaveRow: {
         flexDirection: 'row',
@@ -84,7 +101,7 @@ const styles = StyleSheet.create({
     },
     titlesContainer: {
         width: '100%,',
-        height: '80%',
+        height: '70%',
         padding: '7%',
     },
     placeText: {
@@ -92,19 +109,31 @@ const styles = StyleSheet.create({
         color: '#5B1A10',
         fontWeight: 600,
     },
+    commentTitleContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        width: '100%',
+        height: '60%',
+    },
     commentTitle: {
         fontSize: 28,
+        marginRight: '30%',
         color: '#A23D42',
     },
+    icon: {
+        position: 'absolute',
+        top: '100%',
+        left: '98%',
+    },
     commentsContainer: {
-        flexGrow: 1, // Permet de faire défiler les recettes
-        height: '100%',
+        flexGrow: 1,
         width: '100%',
     },
     lowerContent: {
         width: '80%',
         height: '8%',
         borderRadius: 12,
+        marginTop: 20,
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: '#A23D42',
@@ -116,55 +145,5 @@ const styles = StyleSheet.create({
     },
 
 
-    //COMMENTAIRE 
-    commentCard: {
-        height: 200,
-        width: 320,
-        borderRadius: 20,
-        padding: '3%',
-        backgroundColor: 'white',
-    },
-    commentUserInfo: {
-        flexDirection: 'row',
-        width: '100%',
-        height: '30%',
-        alignItems: 'center',
-        paddingHorizontal: '1%',
-    },
-    imageContainer: {
-        height: 60,
-        width: 60,
-        borderRadius: 50,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    userAvatar: {
-        maxHeight: 60,
-        maxWidth: 60,
-    },
-    userInfoText: {
-        height: '100%',
-        width: '70%',
-        justifyContent: 'center',
-        paddingLeft: '5%',
-    },
-    username: {
-        fontSize: 22,
-        fontWeight: 600,
-        color: '#A23D42',
-    },
-    userdogRace: {
-        fontStyle: 'italic',
-        color: '#A23D42',
-    },
-    commentsPart: {
-        minHeight: '10%',
-        width: '100%',
-        padding: '3%',
-    },
-    commentText: {
-        fontSize: 16,
-        color: '#525252',
-        fontStyle: 'italic',
-    },
+
 });

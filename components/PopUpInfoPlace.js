@@ -6,25 +6,15 @@ import { useState, useEffect } from 'react';
 
 
 
-const PopUpInfoPlace = ({ friendlyToSee, setModalFriendlyVisible, userLocation, user, navigation }) => {
+const PopUpInfoPlace = ({ friendlyToSee, setModalFriendlyVisible, userLocation, navigation }) => {
 
     const [comments, setComments] = useState([]);
-    const [userCommentData, setUserCommentData] = useState(null);
-
 
     // Fonction pour récupérer tous les commentaires d'un lieu
     const getComments = async () => {
         const response = await fetch(`https://dog-in-town-backend.vercel.app/places/comments/${friendlyToSee.name}`) //appelle la route avec le nom du lieu en parametre
         const result = await response.json()
         setComments(result.comments)
-    }
-
-    // Fonction pour obtenir l'utilisateur d'un commentaire
-
-    const getUser = async (token) => {
-        const response = await fetch(`https://dog-in-town-backend.vercel.app/comments/user/${token}`)
-        const result = await response.json();
-        setUserCommentData(result.user);
     }
 
     // Fonction pour ouvrir l'itinéraire dans Google Maps
@@ -41,17 +31,9 @@ const PopUpInfoPlace = ({ friendlyToSee, setModalFriendlyVisible, userLocation, 
         }
     };
 
-
     useEffect(() => {
         getComments();
     }, []);
-
-    useEffect(() => {
-        if (comments.length > 0 && comments[0].token) {
-            getUser(comments[0].token);
-        }
-    }, [comments]); // Ce useEffect est appelé chaque fois que `comments` change
-
 
     return (
         <View style={styles.fenetreInfo}>
@@ -71,19 +53,19 @@ const PopUpInfoPlace = ({ friendlyToSee, setModalFriendlyVisible, userLocation, 
                     </View>
                 </TouchableOpacity>
                 <View style={styles.ratingContainer}>
-                    <View style={styles.cercleAvis} backgroundColor={friendlyToSee.feedback > 10 ? 'black' : '#F7CC99'}></View>
+                    <View style={styles.cercleAvis} backgroundColor={friendlyToSee.feedback > 10 ? '#D9F4B7' : '#F7CC99'}></View>
                     <Text style={styles.avis}>{friendlyToSee.feedback} Avis</Text>
                 </View>
                 <Text style={styles.sizeText}>Chiens de {friendlyToSee.sizeAccepted}{friendlyToSee.sizeAccepted === 'moyen' ? 'ne' : 'e'} taille acceptés.</Text>
             </View>
             <View style={styles.commentsContainer}>
-                {userCommentData && <View style={styles.commentUserInfo}>
-                    <View style={styles.imageContainer}>
-                        <Image style={styles.userAvatar} source={require('../assets/Images/avatar.png')} />
-                    </View>
+                {comments[0] && <View style={styles.commentUserInfo}>
+                    {comments[0].user.avatar && <View style={styles.imageContainer}>
+                        <Image style={styles.userAvatar} source={{ uri: comments[0].user.avatar }} />
+                    </View>}
                     <View style={styles.userInfoText}>
-                        <Text style={styles.username}>{userCommentData.username}</Text>
-                        <Text style={styles.userdogRace}>Propriétaire d'un carlin</Text>
+                        {comments[0].user && <Text style={styles.username}>{comments[0].user.username}</Text>}
+                        {comments[0].user.dogs && comments[0].user.dogs[0].race && <Text style={styles.userdogRace}>Propriétaire d'un {comments[0].user.dogs[0].race.toLowerCase()}</Text>}
                     </View>
                 </View>}
                 <View style={styles.commentsPart}>
@@ -92,16 +74,16 @@ const PopUpInfoPlace = ({ friendlyToSee, setModalFriendlyVisible, userLocation, 
                     {comments.length === 0 && <Text style={styles.commentText}>Aucun commentaire sur ce lieu</Text>}
                 </View>
                 {comments.length >= 1 && <View style={styles.commentsOpenerContainer}>
-                    <Pressable onPress={() => { navigation.navigate('Comments', {name : friendlyToSee.name, comments: comments}); setModalFriendlyVisible(false) }}>
+                    <Pressable onPress={() => { navigation.navigate('Comments', {name : friendlyToSee.name}); setModalFriendlyVisible(false) }}>
                         <Text style={styles.commentsOpenText}>lire les commentaires...</Text>
                     </Pressable>
-                    <Pressable onPress={() => { navigation.navigate('Comments', {name : friendlyToSee.name, comments: comments}); setModalFriendlyVisible(false) }}>
+                    <Pressable onPress={() => { navigation.navigate('Comments', {name : friendlyToSee.name}); setModalFriendlyVisible(false) }}>
                         <FontAwesome name='caret-down' size={30} color='#A23D42' onPress={() => setModalFriendlyVisible(false)} />
                     </Pressable>
                 </View>}
             </View>
             <View style={styles.downButtonsContainer}>
-                <TouchableOpacity style={styles.buttonFeedback}>
+                <TouchableOpacity onPress={() => { navigation.navigate('Feedback', {name : friendlyToSee.name}); setModalFriendlyVisible(false) }} style={styles.buttonFeedback}>
                     <View>
                         <Text style={styles.textButtonDown}>Laisser un avis</Text>
                     </View>
@@ -157,6 +139,7 @@ const styles = StyleSheet.create({
     },
     type: {
         marginTop: '3%',
+        marginBottom: '3%',
         fontSize: 16,
         fontStyle: 'italic',
         color: '#525252',
@@ -166,8 +149,8 @@ const styles = StyleSheet.create({
         height: '23%',
         justifyContent: 'center',
         paddingLeft: '5%',
+        marginTop: '1%',
         paddingBottom: '3%',
-        bottom: '2%',
     },
     sizeText: {
         fontSize: 18,
@@ -227,8 +210,9 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     userAvatar: {
-        maxHeight: 60,
-        maxWidth: 60,
+        height: 60,
+        width: 60,
+        borderRadius: 100,
     },
     userInfoText: {
         height: '100%',

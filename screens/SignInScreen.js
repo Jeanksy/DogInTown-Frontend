@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { login, logout } from '../reducers/user';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, TextInput , View, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
@@ -13,9 +13,7 @@ export default function SignInScreen({ navigation }) {
     const [password, setPassword] = useState('');
 
   	// REDUCER *******
-	const dispatch = useDispatch();
-	const user = useSelector((state) => state.user.value);
-  
+	const dispatch = useDispatch();  
 
   const handleSignIn = () => {
   fetch('https://dog-in-town-backend.vercel.app/users/connection', {
@@ -26,7 +24,7 @@ export default function SignInScreen({ navigation }) {
 			.then(data => {
         if (data.result) {
           navigation.navigate('TabNavigator', { screen: 'MapScreen' });
-          dispatch(login({username: data.username, token: data.token, id: data.id}));
+          dispatch(login({username: data.username, token: data.token}));
 				}
 			});
 	};
