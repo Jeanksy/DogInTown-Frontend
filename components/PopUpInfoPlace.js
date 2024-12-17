@@ -10,6 +10,7 @@ const PopUpInfoPlace = ({ friendlyToSee, setModalFriendlyVisible, userLocation, 
 
     const [comments, setComments] = useState([]);
     const [userCommentData, setUserCommentData] = useState(null);
+    
 
 
     // Fonction pour récupérer tous les commentaires d'un lieu

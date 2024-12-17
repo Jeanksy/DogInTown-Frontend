@@ -1,8 +1,9 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Image, Pressable, SafeAreaView, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, Pressable, SafeAreaView, TouchableOpacity } from 'react-native';
 import { useSelector } from 'react-redux';
 import { useState, useEffect } from 'react';
+import { useIsFocused } from '@react-navigation/native';
 import FontAwesome from "react-native-vector-icons/FontAwesome";
+
 
 export default function FavoritesScreen() {
   const user = useSelector((state) => state.user.value); // Reducer pour accéder au username et token
@@ -10,16 +11,19 @@ export default function FavoritesScreen() {
   const [result, setResult] = useState([]);
   // État pour gérer la visibilité du bouton pour chaque élément
   const [visibleButtons, setVisibleButtons] = useState({});
+  // lorsque l'écran devient visible, appel de la fonction de récupération des données
+  const isFocused = useIsFocused();
 
   // Récupérer les données depuis l'API
   useEffect(() => {
-    (async () => {
-      const response = await fetch(`https://dog-in-town-backend.vercel.app/users/favoris/${user.token}`);
-      const data = await response.json();
-      setResult(data.allPlaces);
-      //console.log('result----->', data.allPlaces);
-    })();
-  }, []);
+    if (isFocused) {
+      (async () => {
+        const response = await fetch(`https://dog-in-town-backend.vercel.app/users/favoris/${user.token}`);
+        const data = await response.json();
+        setResult(data.allPlaces);  // Mise à jour de l'état
+      })();
+    }
+  }, [isFocused, user.token]);  // Dépendance à isFocused pour que ça s'exécute quand l'écran est focalisé
 
   // Fonction pour gérer la visibilité du bouton pour chaque élément
   // permet de changer l'état de la visibilité d'un bouton pour un favori spécifique, en fonction de son id
@@ -34,6 +38,27 @@ export default function FavoritesScreen() {
     }));
   };
 
+// bouton supprime favoris
+const deleteButton = (idPlace) => {
+fetch(`https://dog-in-town-backend.vercel.app/users/deleteFavoris/${user.token}`,{
+  method: 'DELETE',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ placeId: idPlace }),
+}).then(response => response.json())
+.then((data) => {
+  if (data.result) {
+    // Si la suppression est réussie, met à jour l'état result pour retirer le lieu de la liste
+    setResult((prevResult) => {
+      // Filtre les lieux pour exclure celui qui a été supprimé
+      return prevResult.filter((place) => place._id !== idPlace);
+    });
+  } else {
+    // Si la suppression échoue, affiche un message d'erreur
+    alert('Erreur lors de la suppression du lieu');
+  }
+})
+}
+
   // Affichage des favoris avec logique conditionnelle pour chaque élément
   const favoris = result.map((data, i) => {
     return (
@@ -47,8 +72,10 @@ export default function FavoritesScreen() {
         {visibleButtons[data._id] && (
           <View style={styles.blocClic}>
             <Pressable style={styles.go}><Text style={styles.texteGo}>On y va ?</Text></Pressable>
-            <FontAwesome name="close" size={25} color="#525252" />
-            <Text style={styles.supp}>On supprime</Text>
+            <TouchableOpacity style={styles.boutonDelete} onPress={() => deleteButton(data._id)}>
+              <FontAwesome name="close" size={25} color="#525252" />
+              <Text style={styles.supp}>On supprime</Text>
+            </TouchableOpacity>
           </View>
         )}
       </View>
@@ -58,6 +85,7 @@ export default function FavoritesScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.titre}>Favoris</Text>
+      <Text style={styles.sousTitre}>Cliquez sur le lieu de votre choix !</Text>
       <View style={styles.favConteneur}>
         {favoris}
       </View>
@@ -77,9 +105,15 @@ const styles = StyleSheet.create({
     fontSize: 40,
     marginTop: "20%",
     marginLeft: '25%',
-    marginBottom: '5%',
     height: '10%',
     width: '100%',
+  },
+  sousTitre: {
+    color: "#A23D42",
+    marginLeft: '25%',
+    fontSize: 18,
+    width: '100%',
+    marginBottom: '5%',
   },
   favConteneur: {
     height: '90%',
@@ -134,6 +168,9 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 15,
     fontWeight: 500,
+  },
+  boutonDelete: {
+    flexDirection: 'row',
   },
   supp: {
     height: '60%',
