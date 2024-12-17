@@ -23,14 +23,13 @@ import {
 	ReanimatedLogLevel,
 } from "react-native-reanimated";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
-import { ModalAdd} from '../components/ModalAdd'
+import { ModalAdd } from "../components/ModalAdd";
 
 // This is the default configuration
 configureReanimatedLogger({
 	level: ReanimatedLogLevel.warn,
 	strict: false, // Reanimated runs in strict mode by default
 });
-
 
 export default function DogsInfoScreen() {
 	const user = useSelector((state) => state.user.value);
@@ -40,44 +39,36 @@ export default function DogsInfoScreen() {
 	const [doggies, setDoggies] = useState([]);
 	const [update, setUpdate] = useState(0);
 	// Etat de la modal
-		const [addModalIsVisible, setAddModalIsVisible] = useState(false);
+	const [addModalIsVisible, setAddModalIsVisible] = useState(false);
 
 	// LOADER CHECK
 	const delay = (ms) => new Promise((res) => setTimeout(res, ms));
 
 	const handleAdd = async () => {
 		setAddModalIsVisible(true);
-
-	}
+	};
 
 	const handleCloseModal = () => {
-		setAddModalIsVisible(false)
-		setUpdate((previousUpdate) => previousUpdate + 1 );
-	}
+		setAddModalIsVisible(false);
+		setUpdate((previousUpdate) => previousUpdate + 1);
+	};
 
-	
 	const handleDogPress = (key) => {
 		setMainDog(doggies[key]);
 	};
 
 	const updateDoggies = () => {
-		setUpdate((previousUpdate) => previousUpdate + 1 );
-
-	}
-
-	// JE SAIS PLUS A QUOI OU SI CA SERT ENCORE VVVVV
-	useEffect(() => {
-		console.log("Updated Main Dog:", mainDog);
-	}, [mainDog]);
+		setUpdate((previousUpdate) => previousUpdate + 1);
+	};
 
 	const handleRetour = () => {
 		navigation.navigate("TabNavigator", { screen: "Options" });
 	};
 
 	useEffect(() => {
-		fetch(`https://dog-in-town-backend.vercel.app/users/dog/${user.token}`)    //  <<<<< Token dynamique
+		fetch(`https://dog-in-town-backend.vercel.app/users/dog/${user.token}`) //  <<<<< Token dynamique
 			.then((response) => response.json())
-			.then( (data) => {
+			.then((data) => {
 				if (data) {
 					setDoggies(data.dogs);
 				}
@@ -100,10 +91,13 @@ export default function DogsInfoScreen() {
 			behavior={Platform.OS === "ios" ? "padding" : "height"}
 		>
 			<SafeAreaView style={styles.safeArea}>
-			<View style={{ width: "100%", height: "100%", position: "absolute"}}>
-				<ModalAdd visible={addModalIsVisible} onClose={() => handleCloseModal()} >
-				</ModalAdd>	
-			</View>
+				<View style={{ width: "100%", height: "100%", position: "absolute" }}>
+					<ModalAdd
+						visible={addModalIsVisible}
+						onClose={() => handleCloseModal()}
+						onValidate={handleCloseModal}
+					></ModalAdd>
+				</View>
 				<View style={styles.retourContainer}>
 					<TouchableOpacity
 						style={styles.retourBtn}
@@ -140,7 +134,10 @@ export default function DogsInfoScreen() {
 
 						{doggies && doggies.length < 4 ? (
 							<View style={{ alignItems: "center", gap: "5%" }}>
-								<TouchableOpacity style={[styles.dogListAdd, styles.shadow]} onPress={() => handleAdd()}>
+								<TouchableOpacity
+									style={[styles.dogListAdd, styles.shadow]}
+									onPress={() => handleAdd()}
+								>
 									<Text
 										style={{ fontSize: 40, fontWeight: 600, color: "white" }}
 									>
@@ -156,7 +153,10 @@ export default function DogsInfoScreen() {
 					<View style={styles.mainDogInfo}>
 						<View style={styles.photoPincipale}>
 							{doggies && doggies.length > 0 ? (
-								<CarouselDog doggies={doggies} updateDoggiesCallBack={updateDoggies} />
+								<CarouselDog
+									doggies={doggies}
+									updateDoggiesCallBack={updateDoggies}
+								/>
 							) : (
 								<View></View>
 							)}
@@ -264,9 +264,7 @@ const styles = StyleSheet.create({
 		width: "60%",
 	},
 	// ADD DOG MODAL
-	modal: {
-	
-	},
+	modal: {},
 	contenuModal: {
 		backgroundColor: "white",
 		borderRadius: 20,

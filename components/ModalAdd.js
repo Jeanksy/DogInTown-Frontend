@@ -3,7 +3,7 @@ import { View, Platform, KeyboardAvoidingView, Modal, StyleSheet, TouchableOpaci
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { DogAdd } from "../components/DogAdd";
 
-export const ModalAdd = ({ visible, onClose }) => {
+export const ModalAdd = ({ visible, onClose, onValidate }) => {
   return (
 	  <Modal
 	  	key={visible}
@@ -23,7 +23,7 @@ export const ModalAdd = ({ visible, onClose }) => {
           />
         </TouchableOpacity>
         <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{ flex: 1 }}>
-          <DogAdd />
+          <DogAdd added={onValidate} />
         </KeyboardAvoidingView>
       </View>
     </Modal>

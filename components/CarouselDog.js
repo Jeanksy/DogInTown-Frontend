@@ -40,6 +40,7 @@ export const CarouselDog = ({ doggies, updateDoggiesCallBack }) => {
 	const [newRace, setNewRace] = useState("");
 	const [dogSize, setDogSize] = useState("");
 	const [selectedRace, setSelectedRace] = useState();
+	
 
 	// DropDown Picker
 	const [open, setOpen] = useState(false);
@@ -63,7 +64,8 @@ export const CarouselDog = ({ doggies, updateDoggiesCallBack }) => {
 	const [modalRaceIsVisible, setModalRaceIsVisible] = useState(false);
 	const [isEditing, setIsEditing] = useState(false);
 	const [modalDeleteIsVisible, setModalDeleteIsVisible] = useState(false);
-	
+	const [activeIndex, setActiveIndex] = useState(0);
+
 	const baseOptions = {
 		vertical: false,
 		width: PAGE_WIDTH,
@@ -88,12 +90,11 @@ export const CarouselDog = ({ doggies, updateDoggiesCallBack }) => {
 		setModalDeleteIsVisible(true);
 	};
 
-
 	const handleChangeName = () => {
 		setModalNameIsVisible(true);
 
 		fetch(`https://dog-in-town-backend.vercel.app/users/dog/${user.token}`, {
-		// fetch(`http://192.168.1.60:3000/users/dog/wqUJx2Hd86ZP0nffCdC3HlouzkCnAdEj`, {
+			// fetch(`http://192.168.1.60:3000/users/dog/wqUJx2Hd86ZP0nffCdC3HlouzkCnAdEj`, {
 			method: "PUT",
 			headers: {
 				"Content-Type": "application/json",
@@ -102,29 +103,25 @@ export const CarouselDog = ({ doggies, updateDoggiesCallBack }) => {
 		})
 			.then((res) => res.json())
 			.then((data) => {
-
 				if (data.result) {
 					alert("Dog name updated!");
 					setNewName("");
 					setModalNameIsVisible(false);
 					updateDoggiesCallBack();
-
 				} else {
 					alert("WAF");
-					setNewName("")
+					setNewName("");
 				}
 			});
 	};
 
-
 	const handleChangeSize = (dogSize) => {
-		setNewSize(dogSize);		
+		setNewSize(dogSize);
 		setModalSizeIsVisible(true);
-		console.log('SelectedDog:', selectedDog._id);
-	
+		console.log("SelectedDog:", selectedDog._id);
 
 		fetch(`https://dog-in-town-backend.vercel.app/users/dog/${user.token}`, {
-		// fetch(`http://192.168.1.60:3000/users/dog/wqUJx2Hd86ZP0nffCdC3HlouzkCnAdEj`, {
+			// fetch(`http://192.168.1.60:3000/users/dog/wqUJx2Hd86ZP0nffCdC3HlouzkCnAdEj`, {
 			method: "PUT",
 			headers: {
 				"Content-Type": "application/json",
@@ -133,26 +130,24 @@ export const CarouselDog = ({ doggies, updateDoggiesCallBack }) => {
 		})
 			.then((res) => res.json())
 			.then((data) => {
-
 				if (data.result) {
 					alert("Dog size updated!");
 					setNewSize("");
 					setModalSizeIsVisible(false);
 					updateDoggiesCallBack();
-
 				} else {
 					alert("WAF");
-					setNewSize("")
+					setNewSize("");
 				}
 			});
 	};
 
 	const handleChangeRace = (dogRace) => {
-		setNewRace(dogRace)
-		setModalRaceIsVisible(true)
+		setNewRace(dogRace);
+		setModalRaceIsVisible(true);
 
 		fetch(`https://dog-in-town-backend.vercel.app/users/dog/${user.token}`, {
-		// fetch(`http://192.168.1.60:3000/users/dog/wqUJx2Hd86ZP0nffCdC3HlouzkCnAdEj`, {
+			// fetch(`http://192.168.1.60:3000/users/dog/wqUJx2Hd86ZP0nffCdC3HlouzkCnAdEj`, {
 			method: "PUT",
 			headers: {
 				"Content-Type": "application/json",
@@ -161,52 +156,49 @@ export const CarouselDog = ({ doggies, updateDoggiesCallBack }) => {
 		})
 			.then((res) => res.json())
 			.then((data) => {
-
 				if (data.result) {
 					alert("Dog Race updated!");
 					setNewRace("");
 					setModalRaceIsVisible(false);
 					updateDoggiesCallBack();
-
 				} else {
 					alert("WAF");
-					setNewRace("")
+					setNewRace("");
 				}
 			});
 	};
 
 	const handleDelete = (dog) => {
-		console.log(dog._id)
+		console.log(dog._id);
 		fetch(`https://dog-in-town-backend.vercel.app/users/dog/${user.token}`, {
-	
 			// fetch(`http://172.20.10.6:3000/users/dog/${user.token}`, {
-				method: "DELETE",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({ _id: dog._id }),
-			})
-				.then((res) => res.json())
-				.then((data) => {
-	
-					if (data.result) {
-						alert("Dog deleted");
-						setModalDeleteIsVisible(false);
-						updateDoggiesCallBack();
-						console.log("Dog list updated");
-	
-					} else {
-						alert("WAF");
+			method: "DELETE",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({ _id: dog._id }),
+		})
+			.then((res) => res.json())
+			.then((data) => {
+				if (data.result) {
+					alert("Dog deleted");
+					setModalDeleteIsVisible(false);
+					updateDoggiesCallBack();
+					console.log("Dog list updated");
 
-					}
+					if (doggies === 1) {
+						setActiveIndex(0);
+						this.carousel?.scrollTo({ index: 0 });
+					  }
+				} else {
+					alert("WAF");
+				}
 			});
 	};
-		
-	
 
 	const Card = memo(({ index, animationValue, dog }) => {
 		const WIDTH = PAGE_WIDTH;
-		const HEIGHT = PAGE_HEIGHT / 1.6
+		const HEIGHT = PAGE_HEIGHT / 1.6;
 
 		const cardStyle = useAnimatedStyle(() => {
 			const scale = interpolate(
@@ -237,7 +229,6 @@ export const CarouselDog = ({ doggies, updateDoggiesCallBack }) => {
 					},
 				],
 			};
-
 			return {
 				//will have to check and use PLateform to activate for android and not for iOS
 				// because it causes pictures to flicker at the end of animation
@@ -320,47 +311,67 @@ export const CarouselDog = ({ doggies, updateDoggiesCallBack }) => {
 						}}
 					>
 						<Text style={styles.dogDetails}>Nom:</Text>
-						{isEditing ? <TouchableOpacity
-							style={styles.encadreTextCarousel}
-							onPress={() => openModalName(dog)}
-						>
-							<Text style={styles.dogDetailsInputs}>{dog.name}</Text>
-						</TouchableOpacity> : <Text style={styles.dogDetailsLocked}>{dog.name}</Text>}
+						{isEditing ? (
+							<TouchableOpacity
+								style={styles.encadreTextCarousel}
+								onPress={() => openModalName(dog)}
+							>
+								<Text style={styles.dogDetailsInputs}>{dog.name}</Text>
+							</TouchableOpacity>
+						) : (
+							<Text style={styles.dogDetailsLocked}>{dog.name}</Text>
+						)}
 						<Text style={styles.dogDetails}>Taille:</Text>
-						{isEditing ? <TouchableOpacity
-							style={styles.encadreTextCarousel}
-							onPress={() => openModalSize(dog)}
-						>
-							<Text style={styles.dogDetailsInputs}>{dog.size}</Text>
-						</TouchableOpacity> : <Text style={styles.dogDetailsLocked}>{dog.size}</Text>}
+						{isEditing ? (
+							<TouchableOpacity
+								style={styles.encadreTextCarousel}
+								onPress={() => openModalSize(dog)}
+							>
+								<Text style={styles.dogDetailsInputs}>{dog.size}</Text>
+							</TouchableOpacity>
+						) : (
+							<Text style={styles.dogDetailsLocked}>{dog.size}</Text>
+						)}
 						<Text style={styles.dogDetails}>Race:</Text>
-						{isEditing ? <TouchableOpacity
-							style={styles.encadreTextCarousel}
-							onPress={() => openModalRace(dog)}
+						{isEditing ? (
+							<TouchableOpacity
+								style={styles.encadreTextCarousel}
+								onPress={() => openModalRace(dog)}
+							>
+								<Text style={styles.dogDetailsInputs}>{dog.race}</Text>
+							</TouchableOpacity>
+						) : (
+							<Text style={styles.dogDetailsLocked}>{dog.race}</Text>
+						)}
+						<View
+							style={{
+								flexDirection: "row",
+								justifyContent: "space-between",
+								alignItems: "flex-end",
+							}}
 						>
-							<Text style={styles.dogDetailsInputs}>{dog.race}</Text>
-						</TouchableOpacity> : <Text style={styles.dogDetailsLocked}>{dog.race}</Text>}
-						<View style={{flexDirection:'row', justifyContent: 'space-between', alignItems: 'flex-end'}}>
-						<TouchableOpacity style={styles.icones}
-							onPress={() => setIsEditing(!isEditing)}
-						>
-						<FontAwesome
-							name="pencil"
-							size={25}
-							color="gray"
-							onPress={() => setIsEditing(!isEditing)}
-							/>
-						</TouchableOpacity>
-						<TouchableOpacity style={styles.icones}
-							onPress={() => openModalDelete(dog)}
-						>
-						<FontAwesome
-							name="trash-o"
-							size={25}
-							color="gray"
-							onPress={() => openModalDelete(dog)}
-							/>
-						</TouchableOpacity>
+							<TouchableOpacity
+								style={styles.icones}
+								onPress={() => setIsEditing(!isEditing)}
+							>
+								<FontAwesome
+									name="pencil"
+									size={25}
+									color="gray"
+									onPress={() => setIsEditing(!isEditing)}
+								/>
+							</TouchableOpacity>
+							<TouchableOpacity
+								style={styles.icones}
+								onPress={() => openModalDelete(dog)}
+							>
+								<FontAwesome
+									name="trash-o"
+									size={25}
+									color="gray"
+									onPress={() => openModalDelete(dog)}
+								/>
+							</TouchableOpacity>
 						</View>
 					</View>
 				</Animated.View>
@@ -390,7 +401,8 @@ export const CarouselDog = ({ doggies, updateDoggiesCallBack }) => {
 			<Carousel
 				{...baseOptions}
 				removeClippedSubviews={false}
-				loop
+				loop={doggies.length !== 1}  // desactive la rotation si dog = 1
+				onSnapToItem={(index) => setActiveIndex(index)} // Track l'index actuel et set une valeur pour snapper la vue sur la card
 				withAnimation={{
 					type: "spring",
 					config: {
@@ -400,13 +412,18 @@ export const CarouselDog = ({ doggies, updateDoggiesCallBack }) => {
 				data={doggies}
 				renderItem={({ index, animationValue }) => {
 					const dog = doggies[index];
-					if (!dog) return null; 
-					return <Card animationValue={animationValue} key={`card${index}`} index={index} dog={dog} />;
+					if (!dog) return null;
+					return (
+						<Card
+							animationValue={animationValue}
+							key={`card${index}`}
+							index={index}
+							dog={dog}
+						/>
+					);
 				}}
-				
 			/>
 			<View style={{ width: "100%", height: "100%", position: "absolute" }}>
-
 				<Modal
 					style={styles.modal}
 					animationType="fade"
@@ -414,7 +431,10 @@ export const CarouselDog = ({ doggies, updateDoggiesCallBack }) => {
 					visible={modalNameIsVisible}
 				>
 					<View style={styles.contenuModal}>
-						<View style={styles.close} onPress={() => setModalNameIsVisible(false)}>
+						<View
+							style={styles.close}
+							onPress={() => setModalNameIsVisible(false)}
+						>
 							<FontAwesome
 								alignSelf="center"
 								name="close"
@@ -424,7 +444,7 @@ export const CarouselDog = ({ doggies, updateDoggiesCallBack }) => {
 							/>
 						</View>
 						<Text style={styles.petitTexte}>
-							Nom actuel : {selectedDog?.name || 'Unknown'}
+							Nom actuel : {selectedDog?.name || "Unknown"}
 						</Text>
 						<TextInput
 							placeholder="Nouveau nom"
@@ -443,7 +463,10 @@ export const CarouselDog = ({ doggies, updateDoggiesCallBack }) => {
 					visible={modalSizeIsVisible}
 				>
 					<View style={styles.contenuModal}>
-						<View style={styles.close} onPress={() => setModalSizeIsVisible(false)}>
+						<View
+							style={styles.close}
+							onPress={() => setModalSizeIsVisible(false)}
+						>
 							<FontAwesome
 								alignSelf="center"
 								name="close"
@@ -453,64 +476,67 @@ export const CarouselDog = ({ doggies, updateDoggiesCallBack }) => {
 							/>
 						</View>
 						<Text style={styles.petitTexte}>
-							Changer la taille : {selectedDog?.size || 'Unknown'}
+							Changer la taille : {selectedDog?.size || "Unknown"}
 						</Text>
-							<View style={styles.dogSize}>
-											<View style={styles.sizeTextContainer}>
-												<Text style={styles.dogSizeText}>Taille:</Text>
-											</View>
-											<View style={styles.dogSizeCardContainer}>
-												<Pressable
-													style={styles.dogSizeCard}
-													onPress={() => handleChangeSize(DOG_SIZE_S)}
-												>
-													<View style={styles.dogSizeCard}>
-														<Image
-															style={{
-																maxHeight: 40,
-																marginTop: 8,
-																maxWidth: 40,
-																tintColor: dogSize === DOG_SIZE_S ? "#F1AF5A" : "#5B1A10",
-															}}
-															source={require("../assets/Images/petit.png")}
-														/>
-														<Text>Petit</Text>
-													</View>
-												</Pressable>
-												<Pressable
-													style={styles.dogSizeCard}
-													onPress={() => handleChangeSize(DOG_SIZE_M)}
-												>
-													<View style={styles.dogSizeCard}>
-														<Image
-															style={{
-																maxHeight: 50,
-																maxWidth: 50,
-																tintColor: dogSize === DOG_SIZE_M ? "#F1AF5A" : "#5B1A10",
-															}}
-															source={require("../assets/Images/moyen.png")}
-														/>
-														<Text>Moyen</Text>
-													</View>
-												</Pressable>
-												<Pressable
-													style={styles.dogSizeCard}
-													onPress={() => handleChangeSize(DOG_SIZE_L)}
-												>
-													<View style={styles.dogSizeCard}>
-														<Image
-															style={{
-																maxHeight: 100,
-																maxWidth: 100,
-																tintColor: dogSize === DOG_SIZE_L ? "#F1AF5A" : "#5B1A10",
-															}}
-															source={require("../assets/Images/grand.png")}
-														/>
-														<Text>Grand</Text>
-													</View>
-												</Pressable>
-											</View>
-										</View>
+						<View style={styles.dogSize}>
+							<View style={styles.sizeTextContainer}>
+								<Text style={styles.dogSizeText}>Taille:</Text>
+							</View>
+							<View style={styles.dogSizeCardContainer}>
+								<Pressable
+									style={styles.dogSizeCard}
+									onPress={() => handleChangeSize(DOG_SIZE_S)}
+								>
+									<View style={styles.dogSizeCard}>
+										<Image
+											style={{
+												maxHeight: 40,
+												marginTop: 8,
+												maxWidth: 40,
+												tintColor:
+													dogSize === DOG_SIZE_S ? "#F1AF5A" : "#5B1A10",
+											}}
+											source={require("../assets/Images/petit.png")}
+										/>
+										<Text>Petit</Text>
+									</View>
+								</Pressable>
+								<Pressable
+									style={styles.dogSizeCard}
+									onPress={() => handleChangeSize(DOG_SIZE_M)}
+								>
+									<View style={styles.dogSizeCard}>
+										<Image
+											style={{
+												maxHeight: 50,
+												maxWidth: 50,
+												tintColor:
+													dogSize === DOG_SIZE_M ? "#F1AF5A" : "#5B1A10",
+											}}
+											source={require("../assets/Images/moyen.png")}
+										/>
+										<Text>Moyen</Text>
+									</View>
+								</Pressable>
+								<Pressable
+									style={styles.dogSizeCard}
+									onPress={() => handleChangeSize(DOG_SIZE_L)}
+								>
+									<View style={styles.dogSizeCard}>
+										<Image
+											style={{
+												maxHeight: 100,
+												maxWidth: 100,
+												tintColor:
+													dogSize === DOG_SIZE_L ? "#F1AF5A" : "#5B1A10",
+											}}
+											source={require("../assets/Images/grand.png")}
+										/>
+										<Text>Grand</Text>
+									</View>
+								</Pressable>
+							</View>
+						</View>
 					</View>
 				</Modal>
 				<Modal
@@ -520,7 +546,10 @@ export const CarouselDog = ({ doggies, updateDoggiesCallBack }) => {
 					visible={modalRaceIsVisible}
 				>
 					<View style={styles.contenuModal}>
-						<View style={styles.close} onPress={() => setModalRaceIsVisible(false)}>
+						<View
+							style={styles.close}
+							onPress={() => setModalRaceIsVisible(false)}
+						>
 							<FontAwesome
 								alignSelf="center"
 								name="close"
@@ -530,7 +559,7 @@ export const CarouselDog = ({ doggies, updateDoggiesCallBack }) => {
 							/>
 						</View>
 						<Text style={styles.petitTexte}>
-							Changer la race : {selectedDog?.race || 'Unknown'}
+							Changer la race : {selectedDog?.race || "Unknown"}
 						</Text>
 						<View style={styles.pickerContainer}>
 							<DropDownPicker
@@ -557,7 +586,10 @@ export const CarouselDog = ({ doggies, updateDoggiesCallBack }) => {
 					visible={modalDeleteIsVisible}
 				>
 					<View style={styles.contenuModal}>
-						<View style={styles.close} onPress={() => setModalDeleteIsVisible(false)}>
+						<View
+							style={styles.close}
+							onPress={() => setModalDeleteIsVisible(false)}
+						>
 							<FontAwesome
 								alignSelf="center"
 								name="close"
@@ -566,22 +598,20 @@ export const CarouselDog = ({ doggies, updateDoggiesCallBack }) => {
 								onPress={() => setModalDeleteIsVisible(false)}
 							/>
 						</View>
-						<Text style={{fontSize:20, fontWeight: 600}}>
-							Retirer {selectedDog?.name || 'Unknown'}?
+						<Text style={{ fontSize: 20, fontWeight: 600 }}>
+							Retirer {selectedDog?.name || "Unknown"}?
 						</Text>
-						<TouchableOpacity style={styles.deleteBtn}
-						onPress={() => handleDelete(selectedDog)}
+						<TouchableOpacity
+							style={styles.deleteBtn}
+							onPress={() => handleDelete(selectedDog)}
 						>
-							<Text style={styles.deleteTexte}>
-								Oui
-							</Text>
+							<Text style={styles.deleteTexte}>Oui</Text>
 						</TouchableOpacity>
-						<TouchableOpacity style={styles.deleteBtn}
+						<TouchableOpacity
+							style={styles.deleteBtn}
 							onPress={() => setModalDeleteIsVisible(false)}
-						>	
-							<Text style={styles.deleteTexte}>
-								Non
-							</Text>
+						>
+							<Text style={styles.deleteTexte}>Non</Text>
 						</TouchableOpacity>
 					</View>
 				</Modal>
@@ -595,8 +625,7 @@ const styles = StyleSheet.create({
 	modal: {
 		marginTop: "20%",
 	},
-	modalDelete: {
-	},
+	modalDelete: {},
 	contenuModal: {
 		backgroundColor: "white",
 		borderRadius: 20,
@@ -616,7 +645,7 @@ const styles = StyleSheet.create({
 	},
 	encadreTextCarousel: {
 		justifyContent: "center",
-		backgroundColor:'#f5f5f5',
+		backgroundColor: "#f5f5f5",
 		borderWidth: 1,
 		borderRadius: 10,
 		width: "50%",
@@ -679,11 +708,11 @@ const styles = StyleSheet.create({
 	},
 	icones: {
 		// backgroundColor: 'red',
-		height: '60%',
-		width: '20%',
-		justifyContent: 'center',
-		alignItems: 'center',
-		borderRadius: 100
+		height: "60%",
+		width: "20%",
+		justifyContent: "center",
+		alignItems: "center",
+		borderRadius: 100,
 	},
 	deleteBtn: {
 		flex: 0,
