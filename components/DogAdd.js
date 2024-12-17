@@ -33,7 +33,7 @@ const DOG_SIZE_L = "grand";
 
 
 
-export const DogAdd = () => {
+export const DogAdd = ( {added} ) => {
 	// DropDown Picker
 	const [open, setOpen] = useState(false);
 	const [value, setValue] = useState(null);
@@ -402,7 +402,8 @@ export const DogAdd = () => {
 					</View>
 					<TouchableOpacity
 						style={styles.button}
-						onPress={() => handleDogSignup(true)}
+						onPressIn={() => handleDogSignup(true)}
+						onPressOut={added}
 					>
 						{isLoading ? (
 							<ActivityIndicator style={{ size: "large", color: "#F1AF5A" }} />
