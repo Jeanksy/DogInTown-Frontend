@@ -176,11 +176,10 @@ export const CarouselDog = ({ doggies, updateDoggiesCallBack }) => {
 	};
 
 	const handleDelete = (dog) => {
-		setSelectedDog(dog)
 		console.log(dog._id)
-		// fetch(`https://dog-in-town-backend.vercel.app/users/dog/${user.token}`, {
+		fetch(`https://dog-in-town-backend.vercel.app/users/dog/${user.token}`, {
 	
-			fetch(`http://172.20.10.6:3000/users/dog/${user.token}`, {
+			// fetch(`http://172.20.10.6:3000/users/dog/${user.token}`, {
 				method: "DELETE",
 				headers: {
 					"Content-Type": "application/json",
