@@ -10,6 +10,7 @@ const PopUpInfoPlace = ({ friendlyToSee, setModalFriendlyVisible, userLocation, 
 
     const [comments, setComments] = useState([]);
     const [userCommentData, setUserCommentData] = useState(null);
+    
 
 
     // Fonction pour récupérer tous les commentaires d'un lieu
@@ -20,7 +21,6 @@ const PopUpInfoPlace = ({ friendlyToSee, setModalFriendlyVisible, userLocation, 
     }
 
     // Fonction pour obtenir l'utilisateur d'un commentaire
-
     const getUser = async (token) => {
         const response = await fetch(`https://dog-in-town-backend.vercel.app/comments/user/${token}`)
         const result = await response.json();
@@ -41,9 +41,19 @@ const PopUpInfoPlace = ({ friendlyToSee, setModalFriendlyVisible, userLocation, 
         }
     };
 
+//      Fetch pour  ajouter un lieu dans la base de données User *** FAVORIS
+    	const handleFavorite = () => {    
+        fetch(`https://dog-in-town-backend.vercel.app/users/addFavoris/${user.token}`, {
+    			method: 'POST',
+    			headers: { 'Content-Type': 'application/json' },
+    			body: JSON.stringify({ placeId: friendlyToSee._id }),
+    		}).then(response => response.json())
+    }
+    
 
     useEffect(() => {
         getComments();
+        //console.log('friendlyToSee --->', friendlyToSee)
     }, []);
 
     useEffect(() => {
@@ -65,7 +75,7 @@ const PopUpInfoPlace = ({ friendlyToSee, setModalFriendlyVisible, userLocation, 
                 </Pressable>
             </View>
             <View style={styles.placeInfo}>
-                <TouchableOpacity style={styles.buttonLike}>
+                <TouchableOpacity style={styles.buttonLike} onPress={() => handleFavorite()}>
                     <View>
                         <Text>Ajouter aux favoris</Text>
                     </View>

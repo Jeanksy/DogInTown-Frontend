@@ -24,7 +24,7 @@ export default function MapScreen({navigation}) {
   const [friendlyToSee, setFriendlyToSee] = useState(null) //objet du lieu à afficher avec le pop up lieu
   const [refreshShow, setRefreshShow] = useState(false);
   const [modalFriendlyVisible, setModalFriendlyVisible] = useState(false) //Modal détail de lieu
-  const user = useSelector((state) => state.user.value);
+  const user = useSelector((state) => state.user.value); // Reducer pour accéder au username et token
   const isFocused = useIsFocused();
 
 
