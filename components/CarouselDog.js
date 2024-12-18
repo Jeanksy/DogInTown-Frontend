@@ -187,7 +187,7 @@ export const CarouselDog = ({ doggies, updateDoggiesCallBack }) => {
 					console.log("Dog list updated");
 
 					if (doggies.length === 1) {
-						setActiveIndex(0);
+						console.log('last dog')
 						this.carousel?.scrollTo({ index: 0 });
 					  }
 				} else {

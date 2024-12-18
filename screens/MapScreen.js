@@ -24,6 +24,7 @@ import { useIsFocused } from "@react-navigation/native";
 import PopUpInfoPlace from "../components/PopUpInfoPlace";
 import PopUpAddPlace from "../components/PopUpAddPlace";
 import PopUpFilterPlace from "../components/PopUpFilterPlace";
+import Switch from "react-native-switch-toggles";
 
 const { width, height } = Dimensions.get("window"); //dimension de l'écran
 
@@ -41,22 +42,28 @@ export default function MapScreen({ navigation }) {
 	const user = useSelector((state) => state.user.value); // Reducer pour accéder au username et token
 	const dispatch = useDispatch(); // Reducer pour recupérer la position actuelle du user
 	const isFocused = useIsFocused();
-  const [modalFilterVisible, setModalFilterVisible] = useState(false);
-  const [resto, setResto] = useState([false, 'restaurant']);
-  const [bars, setBars] = useState([false, 'bar']);
-  const [cafe, setCafe] = useState([false, 'cafe']);
-  const [dogSizeS, setDogSizeS] = useState([false, "petit"]);
-  const [dogSizeM, setDogSizeM] = useState([false, "moyen"]);
-  const [dogSizeL, setDogSizeL] = useState([false, "grand"]);
-    
-  //Use effect fetch des lieux présent dans la bdd
+	const [modalFilterVisible, setModalFilterVisible] = useState(false);
+	const [resto, setResto] = useState([false, "restaurant"]);
+	const [bars, setBars] = useState([false, "bar"]);
+	const [cafe, setCafe] = useState([false, "cafe"]);
+	const [dogSizeS, setDogSizeS] = useState([false, "petit"]);
+	const [dogSizeM, setDogSizeM] = useState([false, "moyen"]);
+	const [dogSizeL, setDogSizeL] = useState([false, "grand"]);
+	const [useFilter, setUseFilter] = useState([]);
+	const [isGeoloc, setIsGeoloc] = useState(true);
+
+	//Use effect fetch des lieux présent dans la bdd
 	useEffect(() => {
+		if (useFilter.length > 0) {
+			return;
+		}
 		(async () => {
 			const response = await fetch(
 				"https://dog-in-town-backend.vercel.app/places"
 			);
 			const result = await response.json();
 			setFriendlies(result.allPlaces);
+			setUseFilter([]);
 		})();
 	}, [isFocused, modalVisible, refreshShow]);
 
@@ -65,8 +72,17 @@ export default function MapScreen({ navigation }) {
 		(async () => {
 			const result = await Location.requestForegroundPermissionsAsync();
 			const status = result?.status;
+				if (status === "denied") {
+					setIsGeoloc(false);
+				}
 
-			if (status === "granted") {
+			if (isGeoloc && status === "denied") {
+				return;
+
+			} else if (isGeoloc === false && status === "granted") {
+				return;
+
+			} else if (isGeoloc === true && status === "granted") {
 				Location.watchPositionAsync({ distanceInterval: 10 }, (location) => {
 					setCurrentPosition(location.coords);
 					dispatch(position({ positionLat: location.coords.latitude, positionLon: location.coords.longitude }));
@@ -75,46 +91,53 @@ export default function MapScreen({ navigation }) {
 		})();
 	}, [currentPosition, modalVisible]);
 	
-	 //filtrer les friendlies par catégories et/ou tailles de chiengs
+	//filtrer les friendlies par catégories et/ou tailles de chiengs
 
-	 const researchFilter = (places) => {
-	  
+	const researchFilter = (places) => {
 		const selectedPlaceTypes = [];
-		if (resto[0]) {selectedPlaceTypes.push(resto[1])};
-		if (bars[0]) {selectedPlaceTypes.push(bars[1])};
-		if (cafe[0]) {selectedPlaceTypes.push(cafe[1])};
-	  
-	
+		if (resto[0]) {
+			selectedPlaceTypes.push(resto[1]);
+		} //check is resto is thuthfully, then push resto type in filter array
+		if (bars[0]) {
+			selectedPlaceTypes.push(bars[1]);
+		} //check is bar is thuthfully, then push bar type in filter array
+		if (cafe[0]) {
+			selectedPlaceTypes.push(cafe[1]);
+		}
+
 		let selectedDogSize = null;
-		if (dogSizeS[0]) {selectedDogSize = dogSizeS[1]};
-		if (dogSizeM[0]) {selectedDogSize = dogSizeM[1]};
-		if (dogSizeL[0]) {selectedDogSize = dogSizeL[1]};
-	  
+		if (dogSizeS[0]) {
+			selectedDogSize = dogSizeS[1];
+		} //check is sizeS is thuthfully, then sets selectedDog is true
+		if (dogSizeM[0]) {
+			selectedDogSize = dogSizeM[1];
+		}
+		if (dogSizeL[0]) {
+			selectedDogSize = dogSizeL[1];
+		}
+
 		const filtered = places.filter((place) => {
-		  const matchesPlaceType =
-			selectedPlaceTypes.length === 0 || selectedPlaceTypes.includes(place.type);
-		  const matchesDogSize =
-			!selectedDogSize || place.sizeAccepted === selectedDogSize;
-	  
-		 
-		  return matchesPlaceType && matchesDogSize;
+			const matchesPlaceType =
+				selectedPlaceTypes.length === 0 ||
+				selectedPlaceTypes.includes(place.type);
+			const matchesDogSize =
+				!selectedDogSize || place.sizeAccepted === selectedDogSize;
+
+			return matchesPlaceType && matchesDogSize; // filter returns places matching selected filters
 		});
-	  
+
 		// Update the state with the filtered results
-		setFriendlies(filtered);
-	  
+		setUseFilter(friendlies); // places filtered to display
+		setFriendlies(filtered); // useState to stop map from rerendering
+
 		// Reset filter states
-		setResto([false, 'restaurant']);
-		setBars([false, 'bar']);
-		setCafe([false, 'cafe']);
-		setDogSizeS([false, 'petit']);
-		setDogSizeM([false, 'moyen']);
-		setDogSizeL([false, 'grand']);
-	  
-		console.log('FILTERED LOG:', filtered);
-		console.log('FRIENDLIES LOG:', friendlies);
-	  };
-	  
+		setResto([false, "restaurant"]);
+		setBars([false, "bar"]);
+		setCafe([false, "cafe"]);
+		setDogSizeS([false, "petit"]);
+		setDogSizeM([false, "moyen"]);
+		setDogSizeL([false, "grand"]);
+	};
 
 	// Fonction pour filtrer les friendlies en fonction de la recherche
 	const filterFriendlies = () => {
@@ -124,8 +147,23 @@ export default function MapScreen({ navigation }) {
 
 		// Filtre les friendlies dont le nom contient la recherche
 		return friendlies.filter(
-			(friendly) =>
-				friendly.name.toLowerCase().includes(searchText.toLowerCase()) // Comparaison insensible à la casse
+			(friendly) => {
+
+			if (searchText.toLowerCase().trim() === 'bar') {
+			friendly.type.toLowerCase().includes(searchText.toLowerCase());
+			
+		} else if (searchText.toLowerCase().trim() === 'cafe') {
+			friendly.type.toLowerCase().includes(searchText.toLowerCase());
+			
+		} else if (searchText.toLowerCase().trim() === 'restaurant') {
+				friendly.type.toLowerCase().includes(searchText.toLowerCase());
+				
+		}
+			
+				friendly.name.toLowerCase().includes(searchText.toLowerCase()); // Comparaison insensible à la casse
+			}
+
+				
 		);
 	};
 
@@ -166,9 +204,7 @@ export default function MapScreen({ navigation }) {
 				friendly.latitude === place.geometry.location.lat &&
 				friendly.longitude === place.geometry.location.lng
 		);
-  };
-  
-
+	};
 
 	return (
 		<KeyboardAvoidingView
@@ -178,7 +214,7 @@ export default function MapScreen({ navigation }) {
 			<MapView
 				mapType="standard"
 				onPress={() => {
-					setPlaces([]), setRefreshShow(!refreshShow);
+					setPlaces([]), setRefreshShow(!refreshShow), setUseFilter([]);
 				}}
 				style={styles.map}
 				initialRegion={{
@@ -188,14 +224,14 @@ export default function MapScreen({ navigation }) {
 					longitudeDelta: 1.0,
 				}}
 			>
-				{currentPosition &&
+				{isGeoloc && currentPosition &&
 					currentPosition.latitude &&
 					currentPosition.longitude && (
 						<Marker
 							coordinate={currentPosition}
 							pinColor="#fecb2d"
 							title="Vous êtes ici"
-						/>
+					/>
 					)}
 				{places &&
 					places.length > 0 &&
@@ -245,11 +281,26 @@ export default function MapScreen({ navigation }) {
 							</View>
 						</Marker>
 					))}
+				<View style={styles.toggleBtn}>
+					<Switch
+					
+						size={30}
+						value={isGeoloc}
+						onChange={(value) => setIsGeoloc(value)}
+						activeTrackColor={"#45D058"}
+						renderOffIndicator={() => (
+							<Text style={{ fontSize: 12, color: "white" }}>OFF</Text>
+						)}
+						renderOnIndicator={() => (
+							<Text style={{ fontSize: 15, color: "white" }}>🧭</Text>
+						)}
+					/>
+				</View>
 			</MapView>
 			<View style={styles.blocRecherches}>
 				<FontAwesome
 					name="sliders"
-					color="red"
+					color="#525252"
 					style={styles.icons}
 					onPress={() => setModalFilterVisible(true)}
 				/>
@@ -317,11 +368,11 @@ export default function MapScreen({ navigation }) {
 						setModalFilterVisible={setModalFilterVisible}
 						setDogSizeS={setDogSizeS}
 						setDogSizeM={setDogSizeM}
-            setDogSizeL={setDogSizeL}
-            setResto={setResto}
-            setCafe={setCafe}
-            setBars={setBars}
-            applyFilter={() => researchFilter(friendlies)}
+						setDogSizeL={setDogSizeL}
+						setResto={setResto}
+						setCafe={setCafe}
+						setBars={setBars}
+						applyFilter={() => researchFilter(friendlies)}
 					/>
 				</View>
 			</Modal>
@@ -393,5 +444,11 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		marginTop: "10%",
 	},
-});
+	toggleBtn: {
+		position: 'absolute',
+		marginTop: '195%',
+		marginLeft: '83%',
 
+		
+	},
+});

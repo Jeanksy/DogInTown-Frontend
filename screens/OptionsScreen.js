@@ -151,6 +151,7 @@ const styles = StyleSheet.create({
     width: '25%',
     height: '65%',
     marginRight: '10%',
+    transform: [{ scaleX: -1 }],
   },
   ////// Modal ////
   modalConteneur: {

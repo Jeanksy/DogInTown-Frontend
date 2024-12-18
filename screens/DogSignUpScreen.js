@@ -54,7 +54,7 @@ export default function DogSignUpScreen({ navigation }) {
   ]);
   
 // LOADER CHECK
-const delay = (ms) => new Promise(res => setTimeout(res, ms));	
+const delay = (ms) => new Promise(res => setTimeout(res, ms));	 /// to set timers using delay
 
 // Etat image pour affichage écran
   const [image, setImage] = useState(null);
@@ -68,11 +68,11 @@ const delay = (ms) => new Promise(res => setTimeout(res, ms));
   const [hasPermission, setHasPermission] = useState(false);
   const [facing, setFacing] = useState("back");
   const [flashStatus, setFlashStatus] = useState(false);
-  const [isImageUploading, setIsImageUploading] = useState(false);
+  const [isImageUploading, setIsImageUploading] = useState(false);   // useState pour le chargement de la photo dans le bloc photo
   
 
   
-  const handlePhoto = () => {
+  const handlePhoto = () => {                     // Opens modal to take picture
     setModalIsVisible(true)
 
   };
@@ -107,7 +107,7 @@ const delay = (ms) => new Promise(res => setTimeout(res, ms));
     });
     
     try {
-      fetch('https://dog-in-town-backend.vercel.app/users/upload', {
+      fetch('https://dog-in-town-backend.vercel.app/users/upload', {            //sends photo to the back using POST
         method: "POST",
         body: formData,
       })
@@ -128,7 +128,7 @@ const delay = (ms) => new Promise(res => setTimeout(res, ms));
     
     } finally {
 
-      setIsImageUploading(false);
+      setIsImageUploading(false);                           // ends the loading status
       setModalIsVisible(false);
       
       }
@@ -208,7 +208,7 @@ const delay = (ms) => new Promise(res => setTimeout(res, ms));
   }
 
   // Fonction pour naviguer vers le Tab menu
-  const handleDogSignup = async (dogRegister) => {
+  const handleDogSignup = async (dogRegister) => {                              
     if (!dogRegister) {
             navigation.navigate('TabNavigator');
       return;
@@ -331,7 +331,7 @@ const delay = (ms) => new Promise(res => setTimeout(res, ms));
             </Pressable>
             <Pressable style={styles.dogSizeCard} onPress={() => setDogSize(DOG_SIZE_M)}>
               <View style={styles.dogSizeCard}>
-                <Image style={{maxHeight: 50, maxWidth: 50, tintColor: dogSize === DOG_SIZE_M ? "#F1AF5A" : "#5B1A10"}} source={require('../assets/Images/moyen.png')} />
+                <Image style={{transform: [{ scaleX: -1 }], maxHeight: 50, maxWidth: 50, tintColor: dogSize === DOG_SIZE_M ? "#F1AF5A" : "#5B1A10"} } source={require('../assets/Images/moyen.png')} />
                 <Text>Moyen</Text>
               </View>
             </Pressable>
