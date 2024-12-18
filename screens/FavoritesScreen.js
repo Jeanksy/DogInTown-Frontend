@@ -61,6 +61,7 @@ fetch(`https://dog-in-town-backend.vercel.app/users/deleteFavoris/${user.token}`
 
 // // Fonction pour ouvrir l'itinéraire dans Google Maps
     const openDirectionsInGoogleMaps = (latitude, longitude) => {
+        if(positionLat) {
             const userLat = user.positionLat;
             const userLng = user.positionLon;
             const placeLat = latitude;
@@ -69,6 +70,9 @@ fetch(`https://dog-in-town-backend.vercel.app/users/deleteFavoris/${user.token}`
             // Créer l'URL d'itinéraire pour Google Maps
             const url = `https://www.google.com/maps/dir/?api=1&origin=${userLat},${userLng}&destination=${placeLat},${placeLng}`;
             Linking.openURL(url);
+          } else {
+            alert('Il faut autoriser votre géolocalisation dans la page map');
+          }
     };
 
   // Affichage des favoris avec logique conditionnelle pour chaque élément
