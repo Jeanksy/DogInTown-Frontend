@@ -13,6 +13,8 @@ import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from '../reducers/user'
 import FontAwesome from "react-native-vector-icons/FontAwesome";
+import { Camera } from "expo-camera";
+import { CameraCompo } from "../components/CameraCompo";
 
 export default function UserScreen({ navigation }) {
 	// Etat des modals
@@ -24,7 +26,9 @@ export default function UserScreen({ navigation }) {
 	const [newUser, setnewUser] = useState("");
 	const [newmail, setNewmail] = useState("");
 	const [newpassword, setNewpassword] = useState("");
-	const [newphoto, setNewPhoto] = useState("");
+	const [newPhoto, setNewPhoto] = useState("");
+	const [modalCamIsVisible, setModalCamIsVisible] = useState(false);
+	const [imageTaken, setImageTaken] = useState("")
 	// REDUCER
 	const user = useSelector((state) => state.user.value);
 	const dispatch = useDispatch();
@@ -43,6 +47,13 @@ export default function UserScreen({ navigation }) {
 			});
 	}, []);
 
+	useEffect(() => {
+		if (imageTaken) {
+			setNewPhoto(imageTaken)
+			handleUpdate("avatar");
+		}
+	  }, [imageTaken]);
+
 
 	//Fonction pour supprimer compte
 	const handleDelete = async () => {
@@ -58,6 +69,11 @@ export default function UserScreen({ navigation }) {
 		navigation.navigate('SignIn'); //retourner à la page signIn
 	}
 
+	const handleChangePhoto = () => {
+		setModalCamIsVisible(true)
+	}
+
+
 	const handleReturn = () => {
 		navigation.navigate('Options');
 	}
@@ -66,6 +82,7 @@ export default function UserScreen({ navigation }) {
 	const handleUpdate = async (type) => {
 		const token = user.token; // token du reducer
 		let updatedData = {};
+		console.log(newPhoto)
 
 		// Définir les données à envoyer en fonction de (type)
 		if (type === "username") {
@@ -74,6 +91,8 @@ export default function UserScreen({ navigation }) {
 			updatedData = { email: newmail };
 		} else if (type === "password") {
 			updatedData = { password: newpassword };
+		} else if (type === "avatar") {
+			updatedData = { avatar : newPhoto}
 		}
 
 		// Envoyer les données au backend
@@ -87,6 +106,7 @@ export default function UserScreen({ navigation }) {
 			});
 
 			const data = await response.json();
+			console.log("Sending to backend:", updatedData);
 
 			if (response.ok) {
 				// Réinitialiser les champs et fermer la modal
@@ -109,7 +129,9 @@ export default function UserScreen({ navigation }) {
 			<Pressable style={styles.fleche} onPress={() => handleReturn()}><FontAwesome name="arrow-left" size={30} color="#A23D42" textAlign='right'></FontAwesome></Pressable>
 			{/* Zone d'affichage standard page */}
 			<View style={styles.container}>
-				<Image style={styles.photoPincipale} source={{ uri: newphoto }} />
+				<TouchableOpacity onPress={() => handleChangePhoto()}>
+					<Image style={styles.photoPincipale} source={{ uri: newPhoto }} />
+				</TouchableOpacity>
 				<Text style={styles.nom}>Modifiez votre profil ici !</Text>
 				<TouchableOpacity
 					style={styles.bouton}
@@ -138,6 +160,7 @@ export default function UserScreen({ navigation }) {
 			</View>
 
 			{/* Zone des modales */}
+			<CameraCompo setModalCamIsVisible={setModalCamIsVisible} modalCamIsVisible={modalCamIsVisible} setImageTaken={setImageTaken}/>
 			{/* MODALE PSEUDO */}
 			<Modal style={styles.modal} animationType="fade" transparent={true} visible={modalIsVisibleU} onRequestClose={() => setModalIsVisibleU(false)}>
 				<View style={styles.contenuModal}>
