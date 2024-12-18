@@ -442,7 +442,7 @@ const styles = StyleSheet.create({
 	},
 	toggleBtn: {
 		position: 'absolute',
-		marginTop: '195%',
+		marginTop: '155%',
 		marginLeft: '83%',
 
 
