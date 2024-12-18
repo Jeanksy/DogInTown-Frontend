@@ -363,6 +363,7 @@ export const DogAdd = ( {added} ) => {
 										maxHeight: 50,
 										maxWidth: 50,
 										tintColor: dogSize === DOG_SIZE_M ? "#F1AF5A" : "#5B1A10",
+										transform: [{ scaleX: -1 }],
 									}}
 									source={require("../assets/Images/moyen.png")}
 								/>
