@@ -30,19 +30,9 @@ export default function CommentsScreen({ route, navigation }) {
         setSorted(!sorted);
     }
 
-    if(!sorted){
-         commentList = comments.map((data, i) => {
-            return (
-                <Comment key={i} username={data.user.username} avatar={data.user.avatar} content={data.content} race={data.user.dogs[0].race.toLowerCase()} date={data.date} />
-            );
-        });
-    }else{
-         commentList = comments.reverse().map((data, i) => {
-            return (
-                <Comment key={i} username={data.user.username} avatar={data.user.avatar} content={data.content} race={data.user.dogs[0].race.toLowerCase()} date={data.date} />
-            );
-        });
-    }
+    // Appliquer le tri si l'état `sorted` est vrai
+    const sortedComments = sorted ? [...comments].reverse() : comments;
+
 
     return (
         <SafeAreaView style={styles.container}>
@@ -59,15 +49,24 @@ export default function CommentsScreen({ route, navigation }) {
                         <Text style={styles.commentTitle}>Commentaires</Text>
                     </View>
                 </View>
-                <Pressable onPress={() => handleSort()}>
-                    <FontAwesome style={styles.icon} name='sort-up' size={30} color='#5B1A10' />
+                <Pressable style={styles.buttonSort} onPress={() => handleSort()}>
+                    <FontAwesome style={styles.icon} name={sorted ? 'sort-down' : 'sort-up'} size={30} color='#5B1A10' />
                 </Pressable>
             </View>
             <ScrollView
                 contentContainerStyle={styles.commentsContainer}
                 removeClippedSubviews={true}
             >
-                {commentList}
+                {sortedComments.map((data, i) => (
+                    <Comment
+                        key={i}
+                        username={data.user.username}
+                        avatar={data.user.avatar}
+                        content={data.content}
+                        race={data.user.dogs && data.user.dogs[0] && data.user.dogs[0].race ? data.user.dogs[0].race.toLowerCase() : ''}
+                        date={data.date}
+                    />
+                ))}
             </ScrollView>
             <TouchableOpacity onPress={() => navigation.navigate('Feedback', { name: name, comments: comments })} style={styles.lowerContent}>
                 <Text style={styles.buttonText}>Laisser un avis</Text>
@@ -120,10 +119,14 @@ const styles = StyleSheet.create({
         marginRight: '30%',
         color: '#A23D42',
     },
-    icon: {
+    buttonSort: {
+        height: 50,
+        width: 50,
         position: 'absolute',
-        top: '100%',
-        left: '98%',
+        top: '80%',
+        left: '93%',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     commentsContainer: {
         flexGrow: 1,

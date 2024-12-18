@@ -10,7 +10,6 @@ import { useSelector } from 'react-redux';
 const PopUpInfoPlace = ({ friendlyToSee, setModalFriendlyVisible, userLocation, navigation }) => {
 
     const [comments, setComments] = useState([]);
-    const [userCommentData, setUserCommentData] = useState(null);
     const [addFavorite, setAddFavorite] = useState(false);
     const isFocused = useIsFocused();
     const user = useSelector((state) => state.user.value); // Reducer pour accéder au username et token
@@ -112,8 +111,8 @@ const deleteButton = () => {
                 </View>
             </TouchableOpacity>}
                 <View style={styles.ratingContainer}>
-                    <View style={styles.cercleAvis} backgroundColor={friendlyToSee.feedback > 10 ? '#D9F4B7' : '#F7CC99'}></View>
-                    <Text style={styles.avis}>{friendlyToSee.feedback} Avis</Text>
+                    <View style={styles.cercleAvis} backgroundColor={friendlyToSee.feedback.length > 10 ? '#D9F4B7' : '#F7CC99'}></View>
+                    <Text style={styles.avis}>{friendlyToSee.feedback.length} Avis</Text>
                 </View>
                 <Text style={styles.sizeText}>Chiens de {friendlyToSee.sizeAccepted}{friendlyToSee.sizeAccepted === 'moyen' ? 'ne' : 'e'} taille acceptés.</Text>
             </View>
@@ -124,7 +123,7 @@ const deleteButton = () => {
                     </View>}
                     <View style={styles.userInfoText}>
                         {comments[0].user && <Text style={styles.username}>{comments[0].user.username}</Text>}
-                        {comments[0].user.dogs && comments[0].user.dogs[0].race && <Text style={styles.userdogRace}>Propriétaire d'un {comments[0].user.dogs[0].race.toLowerCase()}</Text>}
+                        {comments[0].user.dogs && comments[0].user.dogs[0] && <Text style={styles.userdogRace}>Propriétaire d'un {comments[0].user.dogs[0].race.toLowerCase()}</Text>}
                     </View>
                 </View>}
                 <View style={styles.commentsPart}>

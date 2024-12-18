@@ -33,7 +33,6 @@ export default function FeedbackScreen({ route, navigation }) {
     },[selectedDogIndex, comments])
 
     const handleCommentAdd = async() => {
-        console.log('yes');
         if(selectedDogIndex === null){
             setError('Veuillez sélectionner un chien.')
             return
@@ -46,9 +45,8 @@ export default function FeedbackScreen({ route, navigation }) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ content: comment, token: user.token, size: dogs[selectedDogIndex]}),
           });
-        const result = await response.json();
-        console.log(result);
         navigation.navigate('Comments', {name : name, comments : comments});
+        setComment('');
     }
 
     return (

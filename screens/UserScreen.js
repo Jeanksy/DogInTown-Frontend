@@ -10,14 +10,16 @@ import {
 	SafeAreaView,
 } from "react-native";
 import { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from '../reducers/user'
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 
-export default function UserScreen({navigation}) {
+export default function UserScreen({ navigation }) {
 	// Etat des modals
 	const [modalIsVisibleU, setModalIsVisibleU] = useState(false);
 	const [modalIsVisibleM, setModalIsVisibleM] = useState(false);
 	const [modalIsVisibleP, setModalIsVisibleP] = useState(false);
+	const [deleteModalIsVisbile, setDeleteModalIsVisbile] = useState(false);
 	// Etat changement de pseudo/ email/ mdp/ photo
 	const [newUser, setnewUser] = useState("");
 	const [newmail, setNewmail] = useState("");
@@ -25,28 +27,42 @@ export default function UserScreen({navigation}) {
 	const [newphoto, setNewPhoto] = useState("");
 	// REDUCER
 	const user = useSelector((state) => state.user.value);
+	const dispatch = useDispatch();
 
 	//Reccupération des infos du user avec le fetch de la route get
-	useEffect(() => {	
-	fetch(`https://dog-in-town-backend.vercel.app/users/${user.token}`)
-		  .then((response) => response.json())
-		  .then((data) => {
-			if(data.result) {
-				setnewUser(data.profilUser[0].username)
-				setNewmail(data.profilUser[0].email)
-				setNewpassword(data.profilUser[0].password)
-				setNewPhoto(data.profilUser[0].avatar)
+	useEffect(() => {
+		fetch(`https://dog-in-town-backend.vercel.app/users/${user.token}`)
+			.then((response) => response.json())
+			.then((data) => {
+				if (data.result) {
+					setnewUser(data.profilUser[0].username)
+					setNewmail(data.profilUser[0].email)
+					setNewpassword(data.profilUser[0].password)
+					setNewPhoto(data.profilUser[0].avatar)
+				}
+			});
+	}, []);
+
+
+	//Fonction pour supprimer compte
+	const handleDelete = async () => {
+		const result = await fetch(`https://dog-in-town-backend.vercel.app/users/${user.token}`, {
+			method: 'DELETE',
+			headers: {
+				'Content-Type': 'application/json',
 			}
-		  });
-	  }, []);
+		});
+		const response = await result.json()
+		console.log(response);
+		dispatch(logout()); //Enlever le token du reducer et se déconnecter
+		navigation.navigate('SignIn'); //retourner à la page signIn
+	}
 
-	  console.log(newphoto)
-
-	  const handleReturn = () => {
+	const handleReturn = () => {
 		navigation.navigate('Options');
-	  }
+	}
 
-	  // Envoyer la mise à jour au backend
+	// Envoyer la mise à jour au backend
 	const handleUpdate = async (type) => {
 		const token = user.token; // token du reducer
 		let updatedData = {};
@@ -63,13 +79,13 @@ export default function UserScreen({navigation}) {
 		// Envoyer les données au backend
 		try {
 			const response = await fetch(`https://dog-in-town-backend.vercel.app/users/profil/${user.token}`, {
-			    method: "PUT",
-			    headers: {
-				"Content-Type": "application/json",
-			},
-			    body: JSON.stringify(updatedData),
+				method: "PUT",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify(updatedData),
 			});
-		
+
 			const data = await response.json();
 
 			if (response.ok) {
@@ -82,10 +98,10 @@ export default function UserScreen({navigation}) {
 				// Géstion des erreurs
 				alert("Erreur lors de la mise à jour.");
 			}
-			} catch (error) {
-			    alert("Erreur de connexion.");
-			}
-		  };
+		} catch (error) {
+			alert("Erreur de connexion.");
+		}
+	};
 
 
 	return (
@@ -101,23 +117,29 @@ export default function UserScreen({navigation}) {
 					<Text style={styles.texteBouton}>Modifier mon pseudo :</Text>
 					<Text style={styles.texteBoutonB}>{newUser}</Text>
 				</TouchableOpacity>
-				<TouchableOpacity 
+				<TouchableOpacity
 					style={styles.bouton}
 					onPress={() => setModalIsVisibleM(true)}>
 					<Text style={styles.texteBouton}>Modifier mon email :</Text>
 					<Text style={styles.texteBoutonB}>{newmail}</Text>
 				</TouchableOpacity>
-				<TouchableOpacity 
+				<TouchableOpacity
 					style={styles.bouton}
 					onPress={() => setModalIsVisibleP(true)}>
 					<Text style={styles.texteBouton}>Modifier mon mot de passe :</Text>
 					<Text style={styles.texteBoutonB}>******</Text>
 				</TouchableOpacity>
+				<TouchableOpacity
+					style={styles.bouton}
+					onPress={() => setDeleteModalIsVisbile(true)}
+				>
+					<Text style={[styles.texteBouton, { fontWeight: 600 }]}>Supprimer votre compte</Text>
+				</TouchableOpacity>
 			</View>
 
 			{/* Zone des modales */}
 			{/* MODALE PSEUDO */}
-			<Modal style={styles.modal} animationType="fade" transparent={true} visible={modalIsVisibleU}  onRequestClose={() => setModalIsVisibleU(false)}>
+			<Modal style={styles.modal} animationType="fade" transparent={true} visible={modalIsVisibleU} onRequestClose={() => setModalIsVisibleU(false)}>
 				<View style={styles.contenuModal}>
 					<View style={styles.close} onPress={() => setModalIsVisibleU(false)}>
 						<FontAwesome name="close" size={20} color="gray" onPress={() => setModalIsVisibleU(false)} />
@@ -137,7 +159,7 @@ export default function UserScreen({navigation}) {
 			</Modal>
 
 			{/* MODALE Email */}
-			<Modal style={styles.modal} animationType="fade" transparent={true} visible={modalIsVisibleM}  onRequestClose={() => setModalIsVisibleM(false)}>
+			<Modal style={styles.modal} animationType="fade" transparent={true} visible={modalIsVisibleM} onRequestClose={() => setModalIsVisibleM(false)}>
 				<View style={styles.contenuModal}>
 					<View style={styles.close} onPress={() => setModalIsVisibleM(false)}>
 						<FontAwesome name="close" size={20} color="gray" onPress={() => setModalIsVisibleM(false)} />
@@ -160,7 +182,7 @@ export default function UserScreen({navigation}) {
 			</Modal>
 
 			{/* MODALE Mot de Passe */}
-			<Modal style={styles.modal} animationType="fade" transparent={true} visible={modalIsVisibleP}  onRequestClose={() => setModalIsVisibleP(false)}>
+			<Modal style={styles.modal} animationType="fade" transparent={true} visible={modalIsVisibleP} onRequestClose={() => setModalIsVisibleP(false)}>
 				<View style={styles.contenuModal}>
 					<View style={styles.close} onPress={() => setModalIsVisibleP(false)}>
 						<FontAwesome name="close" size={20} color="gray" onPress={() => setModalIsVisibleP(false)} />
@@ -176,6 +198,21 @@ export default function UserScreen({navigation}) {
 					<TouchableOpacity onPress={() => handleUpdate("password")} style={styles.bouton}>
 						<Text style={styles.texteBoutonB}>Mettre à jour</Text>
 					</TouchableOpacity>
+				</View>
+			</Modal>
+
+			{/* MODALE Suppression de compte */}
+			<Modal style={styles.modal} animationType="fade" transparent={true} visible={deleteModalIsVisbile} onRequestClose={() => setModalIsVisibleP(false)}>
+				<View style={styles.contenuModal}>
+					<Text style={styles.petitTexte}>Etes vous sûr de vouloir supprimer votre comptes ?</Text>
+					<View style={styles.buttonRow}>
+						<TouchableOpacity onPress={() => handleDelete()} style={styles.boutonDelete}>
+							<Text style={styles.texteBoutonB}>Oui</Text>
+						</TouchableOpacity>
+						<TouchableOpacity onPress={() => setDeleteModalIsVisbile(false)} style={styles.boutonDelete}>
+							<Text style={styles.texteBoutonB}>Non</Text>
+						</TouchableOpacity>
+					</View>
 				</View>
 			</Modal>
 		</SafeAreaView>
@@ -254,4 +291,19 @@ const styles = StyleSheet.create({
 		fontSize: 16,
 		textAlign: "center",
 	},
+	buttonRow: {
+		flexDirection: 'row',
+		width: '100%',
+		height: 200,
+		alignItems: 'center',
+		justifyContent: 'space-evenly',
+	},
+	boutonDelete: {
+		backgroundColor: "#A23D42",
+		width: "40%",
+		height: "30%",
+		justifyContent: 'center',
+		borderRadius: 20,
+		marginBottom: "3%",
+	}
 });

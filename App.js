@@ -39,8 +39,10 @@ const TabNavigator = () => {
   return (
     <Tab.Navigator screenOptions={({ route }) => ({
       tabBarStyle: {
-        minHeight: 70,
+        height: 70,
         justifyContent: 'center',
+        backgroundColor: 'white', 
+        borderTopWidth: 0,
       },
       tabBarIcon: ({ color, size }) => {
         let iconName = '';
@@ -55,14 +57,13 @@ const TabNavigator = () => {
 
         return <FontAwesome name={iconName} size={size} color={color} />;
       },
-
-      tabBarActiveTintColor: '#ec6e5b',
-      tabBarInactiveTintColor: '#335561',
+      tabBarActiveTintColor: '#A23D42',
+      tabBarInactiveTintColor: '#525252',
       headerShown: false,
     })}>
-      <Tab.Screen name="Map" component={MapScreen} />
-      <Tab.Screen name="Favoris" component={FavoritesScreen} />
-      <Tab.Screen name="Options" component={OptionsScreen} />
+      <Tab.Screen name="Map" component={MapScreen} options={{tabBarLabel: () => null}}/>
+      <Tab.Screen name="Favoris" component={FavoritesScreen} options={{tabBarLabel: () => null}}/>
+      <Tab.Screen name="Options" component={OptionsScreen} options={{tabBarLabel: () => null}}/>
     </Tab.Navigator>
   );
 };

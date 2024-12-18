@@ -3,6 +3,7 @@ import { StyleSheet, Pressable, Text, View, TouchableOpacity, Image, TextInput, 
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { useState} from 'react';
 
+
 const DOG_SIZE_S = 'petit';
 const DOG_SIZE_M = 'moyen';
 const DOG_SIZE_L = 'grand';
@@ -29,6 +30,7 @@ const PopUpAddPlace = ({ addPlaceName, placeToAdd, setModalVisible, setPlaces, u
               body: JSON.stringify({
                 name: place.name,
                 token: result.comment.token,
+                userToken : userToken,
                 type: place.types[0],
                 adress: place.formatted_address,
                 size: dogSize,
@@ -43,6 +45,7 @@ const PopUpAddPlace = ({ addPlaceName, placeToAdd, setModalVisible, setPlaces, u
               body: JSON.stringify({
                 name: place.name,
                 type: place.types[0],
+                userToken : userToken,
                 adress: place.formatted_address,
                 size: dogSize,
                 latitude: place.geometry.location.lat,

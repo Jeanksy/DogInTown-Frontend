@@ -231,7 +231,7 @@ export default function MapScreen({ navigation }) {
 								setModalFriendlyVisible(true), setFriendlyToSee(place);
 							}}
 						>
-							<View style={styles.markerContainer}>
+							<View style={styles.markerContainer} backgroundColor={place.feedback.length < 10 ? '#F1AF5A' : '#45D058'}>
 								<Image
 									source={require("../assets/Images/patte2.png")}
 									style={{
@@ -361,7 +361,6 @@ const styles = StyleSheet.create({
 		height: 28,
 		width: 28,
 		borderRadius: 100,
-		backgroundColor: "#F1AF5A",
 		justifyContent: "center",
 		alignItems: "center",
 		resizeMode: "contain",
