@@ -3,7 +3,7 @@ import { Modal, SafeAreaView, TouchableOpacity, View, StyleSheet } from 'react-n
 import { CameraView } from 'expo-camera';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
-const Camera = ({ modalIsVisible, setModalIsVisible, setImage }) => {
+export const CameraCompo = ({modalCamIsVisible, setModalCamIsVisible, setImageTaken}) => {
   const [facing, setFacing] = useState("front");
   const [flashStatus, setFlashStatus] = useState(false);
   const cameraRef = useRef(null);
@@ -42,7 +42,7 @@ const Camera = ({ modalIsVisible, setModalIsVisible, setImage }) => {
       const data = await response.json();
 
       if (data.result) {
-        setImage(data.url);  // Met à jour l'image après l'upload
+        setImageTaken(data.url);  // Met à jour l'image après l'upload
       } else {
         console.error('Upload failed:', data.error);
       }
@@ -50,15 +50,15 @@ const Camera = ({ modalIsVisible, setModalIsVisible, setImage }) => {
       console.error('Error during upload:', error);
     }
 
-    setModalIsVisible(false); // Ferme la modal après la prise de photo
+    setModalCamIsVisible(false); // Ferme la modal après la prise de photo
   };
 
   return (
     <Modal
       animationType="fade"
       transparent={true}
-      visible={modalIsVisible}
-      onRequestClose={() => setModalIsVisible(!modalIsVisible)}
+      visible={modalCamIsVisible}
+      onRequestClose={() => setModalCamIsVisible(false)}
     >
       <View style={styles.centeredView}>
         <View style={styles.modalView}>
@@ -82,7 +82,7 @@ const Camera = ({ modalIsVisible, setModalIsVisible, setImage }) => {
             <TouchableOpacity style={styles.snapButton} onPress={takePicture}>
               <FontAwesome name="circle-thin" size={80} color="gray" />
             </TouchableOpacity>
-            <TouchableOpacity style={styles.closeModal} onPress={() => setModalIsVisible(false)}>
+            <TouchableOpacity style={styles.closeModal} onPress={() => setModalCamIsVisible(false)}>
               <FontAwesome name="times" size={35} color="gray" opacity={0.8} />
             </TouchableOpacity>
           </View>
@@ -106,36 +106,39 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     height: '70%',
     width: '90%',
-    alignItems: 'center',
     justifyContent: 'space-between',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
+    overflow: 'hidden',
   },
   camera: {
     width: '100%',
     height: '80%',
     aspectRatio: 1 / 1,
+    paddingTop: 5,
+    justifyContent: "space-between",
+   
   },
   settingContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginHorizontal: '15%',
+    marginTop: '1%',
+    width:'77%',
   },
   settingButton: {
     width: 40,
-    aspectRatio: 1,
     alignItems: "center",
     justifyContent: "center",
+    
   },
   snapContainer: {
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 20,
     gap: 60,
   },
   snapButton: {
@@ -147,9 +150,8 @@ const styles = StyleSheet.create({
   },
   closeModal: {
     position: 'absolute',
-    top: 20,
     right: 20,
   },
 });
 
-export default Camera;
+export default CameraCompo;
