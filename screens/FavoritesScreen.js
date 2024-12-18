@@ -59,9 +59,10 @@ fetch(`https://dog-in-town-backend.vercel.app/users/deleteFavoris/${user.token}`
 })
 }
 
+
 // // Fonction pour ouvrir l'itinéraire dans Google Maps
     const openDirectionsInGoogleMaps = (latitude, longitude) => {
-        if(positionLat) {
+        if(user.positionLat) {
             const userLat = user.positionLat;
             const userLng = user.positionLon;
             const placeLat = latitude;

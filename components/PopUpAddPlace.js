@@ -85,7 +85,7 @@ const PopUpAddPlace = ({ addPlaceName, placeToAdd, setModalVisible, setPlaces, u
                     </Pressable>
                     <Pressable style={styles.dogSizeCard} onPress={() => setDogSize(DOG_SIZE_M)}>
                         <View style={styles.dogSizeCard}>
-                            <Image style={{ maxHeight: 50, maxWidth: 50, tintColor: dogSize === DOG_SIZE_M ? "#A23D42" : "#5B1A10" }} source={require('../assets/Images/moyen.png')} />
+                            <Image style={{ transform:[{scaleX: -1}], maxHeight: 50, maxWidth: 50, tintColor: dogSize === DOG_SIZE_M ? "#A23D42" : "#5B1A10" }} source={require('../assets/Images/moyen.png')} />
                             <Text>Moyen</Text>
                         </View>
                     </Pressable>

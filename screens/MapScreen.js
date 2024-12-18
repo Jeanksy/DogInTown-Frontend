@@ -24,7 +24,7 @@ import { useIsFocused } from "@react-navigation/native";
 import PopUpInfoPlace from "../components/PopUpInfoPlace";
 import PopUpAddPlace from "../components/PopUpAddPlace";
 import PopUpFilterPlace from "../components/PopUpFilterPlace";
-import Switch from "react-native-switch-toggles";
+import { Switch } from "react-native-switch-toggles";
 
 const { width, height } = Dimensions.get("window"); //dimension de l'écran
 
@@ -72,9 +72,9 @@ export default function MapScreen({ navigation }) {
 		(async () => {
 			const result = await Location.requestForegroundPermissionsAsync();
 			const status = result?.status;
-				if (status === "denied") {
-					setIsGeoloc(false);
-				}
+			if (status === "denied") {
+				setIsGeoloc(false);
+			}
 
 			if (isGeoloc && status === "denied") {
 				return;
@@ -90,7 +90,7 @@ export default function MapScreen({ navigation }) {
 			}
 		})();
 	}, [currentPosition, modalVisible]);
-	
+
 	//filtrer les friendlies par catégories et/ou tailles de chiengs
 
 	const researchFilter = (places) => {
@@ -139,31 +139,27 @@ export default function MapScreen({ navigation }) {
 		setDogSizeL([false, "grand"]);
 	};
 
+
 	// Fonction pour filtrer les friendlies en fonction de la recherche
 	const filterFriendlies = () => {
 		if (searchText.trim().length === 0) {
-			return friendlies; // Si rien n'est recherché, retourne tous les friendlies
+			return; // Si rien n'est recherché, retourne tous les friendlies
+		}
+
+		if (searchText.toLocaleLowerCase() === 'bar' || searchText.toLocaleLowerCase() === 'cafe' || searchText.toLocaleLowerCase() === 'restaurant'){
+			return friendlies.filter(
+				(friendly) => {
+					return friendly.type === searchText.toLocaleLowerCase(); 
+				}
+			);
 		}
 
 		// Filtre les friendlies dont le nom contient la recherche
 		return friendlies.filter(
 			(friendly) => {
-
-			if (searchText.toLowerCase().trim() === 'bar') {
-			friendly.type.toLowerCase().includes(searchText.toLowerCase());
-			
-		} else if (searchText.toLowerCase().trim() === 'cafe') {
-			friendly.type.toLowerCase().includes(searchText.toLowerCase());
-			
-		} else if (searchText.toLowerCase().trim() === 'restaurant') {
-				friendly.type.toLowerCase().includes(searchText.toLowerCase());
-				
-		}
-			
-				friendly.name.toLowerCase().includes(searchText.toLowerCase()); // Comparaison insensible à la casse
+				console.log(friendly.name);
+				return friendly.name.toLowerCase().includes(searchText.toLowerCase()); // Comparaison insensible à la casse
 			}
-
-				
 		);
 	};
 
@@ -214,7 +210,7 @@ export default function MapScreen({ navigation }) {
 			<MapView
 				mapType="standard"
 				onPress={() => {
-					setPlaces([]), setRefreshShow(!refreshShow), setUseFilter([]);
+					setPlaces([]),setRefreshShow(!refreshShow), setUseFilter([]);
 				}}
 				style={styles.map}
 				initialRegion={{
@@ -231,7 +227,7 @@ export default function MapScreen({ navigation }) {
 							coordinate={currentPosition}
 							pinColor="#fecb2d"
 							title="Vous êtes ici"
-					/>
+						/>
 					)}
 				{places &&
 					places.length > 0 &&
@@ -281,9 +277,9 @@ export default function MapScreen({ navigation }) {
 							</View>
 						</Marker>
 					))}
-				<View style={styles.toggleBtn}>
+				{/* <View style={styles.toggleBtn}>
 					<Switch
-					
+
 						size={30}
 						value={isGeoloc}
 						onChange={(value) => setIsGeoloc(value)}
@@ -292,10 +288,10 @@ export default function MapScreen({ navigation }) {
 							<Text style={{ fontSize: 12, color: "white" }}>OFF</Text>
 						)}
 						renderOnIndicator={() => (
-							<Text style={{ fontSize: 15, color: "white" }}>🧭</Text>
+							<Text style={{ fontSize: 15, colo: "white" }}></Text>
 						)}
 					/>
-				</View>
+				</View> */}
 			</MapView>
 			<View style={styles.blocRecherches}>
 				<FontAwesome
@@ -449,6 +445,6 @@ const styles = StyleSheet.create({
 		marginTop: '195%',
 		marginLeft: '83%',
 
-		
+
 	},
 });

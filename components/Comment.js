@@ -4,7 +4,7 @@ import { StyleSheet, Text, View, Image, } from 'react-native';
 
 
 
-const Comment = ({ avatar, username, race, content, date }) => {
+const Comment = ({ avatar, username, race, content, date, dogAvatar }) => {
 
     const dateToFormat = new Date(date);
 
@@ -19,16 +19,20 @@ const Comment = ({ avatar, username, race, content, date }) => {
         minute: '2-digit',
     });
 
+    console.log(dogAvatar);
 
     return (
-        <View style={styles.commentCard}>
+        <View style={styles.commentCard} height={200 + content.length/1.5}>
             <View style={styles.commentUserInfo}>
                 <View style={styles.imageContainer}>
+                    {avatar === null ? <Image style={styles.userAvatar} source={require('../assets/Images/avatar.png')}/> :
                     <Image style={styles.userAvatar} source={{ uri: avatar }} />
+                    }
+                    <Image style={styles.dogAvatar} source={{ uri: dogAvatar }}/>
                 </View>
                 <View style={styles.userInfoText}>
                     <Text style={styles.username}>{username}</Text>
-                    <Text style={styles.userdogRace}>Propriétaire d'un {race}</Text>
+                    {race !== '' && <Text style={styles.userdogRace}>Propriétaire d'un {race}</Text>}
                 </View>
             </View>
             <View style={styles.commentsPart}>
@@ -45,29 +49,37 @@ const styles = StyleSheet.create({
 
     commentCard: {
         marginVertical: 5,
-        height: 200,
         width: 320,
         borderRadius: 20,
-        padding: '3%',
+        padding: 20,
         backgroundColor: 'white',
     },
     commentUserInfo: {
         flexDirection: 'row',
         width: '100%',
-        height: '30%',
+        height: 80,
         alignItems: 'center',
         paddingHorizontal: '1%',
     },
     imageContainer: {
-        height: 60,
-        width: 60,
+        height: 70,
+        width: 70,
         borderRadius: 50,
+        marginRight: '3%',
         justifyContent: 'center',
         alignItems: 'center',
     },
     userAvatar: {
-        height: 60,
-        width: 60,
+        height: 70,
+        width: 70,
+        borderRadius: 50,
+    },
+    dogAvatar: {
+        position: 'absolute',
+        top: '52%',
+        left: '64%',
+        height: 35,
+        width: 35,
         borderRadius: 50,
     },
     userInfoText: {

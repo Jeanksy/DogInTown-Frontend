@@ -33,7 +33,7 @@ export default function FeedbackScreen({ route, navigation }) {
     },[selectedDogIndex, comments])
 
     const handleCommentAdd = async() => {
-        if(selectedDogIndex === null){
+        if(selectedDogIndex === null && dogs.length > 0){
             setError('Veuillez sélectionner un chien.')
             return
         }else if(comment === ''){
@@ -67,7 +67,7 @@ export default function FeedbackScreen({ route, navigation }) {
                     <TextInput multiline={true} maxLength={280} placeholder='Laisser un avis...' onChangeText={(value) => setComment(value)} value={comment} autoCapitalize="sentences" style={styles.textInput}></TextInput>
                 </View>
                 <View style={styles.subTitleContainer}>
-                    <Text style={styles.subtitles}>Avec quel chien êtes vous venu ?</Text>
+                    {dogs.length > 0 && <Text style={styles.subtitles}>Avec quel chien êtes vous venu ?</Text>}
                 </View>
                 <View style={styles.dogsContainer}>
                     {dogs && dogs.length > 0 && (

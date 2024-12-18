@@ -58,12 +58,14 @@ export default function CommentsScreen({ route, navigation }) {
                 removeClippedSubviews={true}
             >
                 {sortedComments.map((data, i) => (
+                    console.log(data.user.dogs[0]),
                     <Comment
                         key={i}
                         username={data.user.username}
                         avatar={data.user.avatar}
                         content={data.content}
                         race={data.user.dogs && data.user.dogs[0] && data.user.dogs[0].race ? data.user.dogs[0].race.toLowerCase() : ''}
+                        dogAvatar={data.user.dogs[0].photo}
                         date={data.date}
                     />
                 ))}

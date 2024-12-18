@@ -118,9 +118,10 @@ const deleteButton = () => {
             </View>
             <View style={styles.commentsContainer}>
                 {comments[0] && <View style={styles.commentUserInfo}>
-                    {comments[0].user.avatar && <View style={styles.imageContainer}>
-                        <Image style={styles.userAvatar} source={{ uri: comments[0].user.avatar }} />
-                    </View>}
+                    <View style={styles.imageContainer}>
+                        {comments[0].user.avatar === null ? <Image style={styles.userAvatar} source={require('../assets/Images/avatar.png')}/> :
+                        <Image style={styles.userAvatar} source={{ uri: comments[0].user.avatar }} />}
+                    </View>
                     <View style={styles.userInfoText}>
                         {comments[0].user && <Text style={styles.username}>{comments[0].user.username}</Text>}
                         {comments[0].user.dogs && comments[0].user.dogs[0] && <Text style={styles.userdogRace}>Propriétaire d'un {comments[0].user.dogs[0].race.toLowerCase()}</Text>}
