@@ -48,39 +48,6 @@ export default function MapScreen({ navigation }) {
   const [dogSizeL, setDogSizeL] = useState([false, "grand"]);
 
 
-  //filtrer les friendlies par catégories et/ou tailles de chiengs
-
-  const researchFilter = (places) => {
-    const selectedPlaceTypes = [];
-     // si type est true alors push dans  selectedPlacesTypes
-    if (resto[0]) {selectedPlaceTypes.push(resto[1])};
-    if (bars[0]) {selectedPlaceTypes.push(bars[1])};
-    if (cafe[0]) {selectedPlaceTypes.push(cafe[1])};
-  
-    // taille du chieng selectionné
-    let selectedDogSize = null;
-    if (dogSizeS[0]) {selectedDogSize = dogSizeS[1]};
-    if (dogSizeM[0]) {selectedDogSize = dogSizeM[1]};
-    if (dogSizeL[0]) {selectedDogSize = dogSizeL[1]};
-  
-    // compare les résultats de la recherche avec les critères de filtre seletionnés
-    const filtered = places.filter((placesFiltered) => {
-    const matchesPlaceType = selectedPlaceTypes.includes(placesFiltered.type);
-    const matchesDogSize = selectedDogSize ? placesFiltered.sizeAccepted === selectedDogSize : true;
-    return matchesPlaceType && matchesDogSize;
-    });
-    console.log(filtered);
-    setFriendlies(filtered);
-    setResto([false, 'restaurant']);
-    setBars([false, 'bar']);
-    setCafe([false, 'cafe']);
-    setDogSizeS([false, "petit"]);
-    setDogSizeM([false, "moyen"]);
-    setDogSizeL([false, "grand"]);
-
-    
-        console.log(friendlies)
-  };
     
   //Use effect fetch des lieux présent dans la bdd
 	useEffect(() => {
@@ -106,6 +73,47 @@ export default function MapScreen({ navigation }) {
 			}
 		})();
 	}, [currentPosition, modalVisible]);
+
+	 //filtrer les friendlies par catégories et/ou tailles de chiengs
+
+	 const researchFilter = (places) => {
+	  
+		const selectedPlaceTypes = [];
+		if (resto[0]) {selectedPlaceTypes.push(resto[1])};
+		if (bars[0]) {selectedPlaceTypes.push(bars[1])};
+		if (cafe[0]) {selectedPlaceTypes.push(cafe[1])};
+	  
+	
+		let selectedDogSize = null;
+		if (dogSizeS[0]) {selectedDogSize = dogSizeS[1]};
+		if (dogSizeM[0]) {selectedDogSize = dogSizeM[1]};
+		if (dogSizeL[0]) {selectedDogSize = dogSizeL[1]};
+	  
+		const filtered = places.filter((place) => {
+		  const matchesPlaceType =
+			selectedPlaceTypes.length === 0 || selectedPlaceTypes.includes(place.type);
+		  const matchesDogSize =
+			!selectedDogSize || place.sizeAccepted === selectedDogSize;
+	  
+		 
+		  return matchesPlaceType && matchesDogSize;
+		});
+	  
+		// Update the state with the filtered results
+		setFriendlies(filtered);
+	  
+		// Reset filter states
+		setResto([false, 'restaurant']);
+		setBars([false, 'bar']);
+		setCafe([false, 'cafe']);
+		setDogSizeS([false, 'petit']);
+		setDogSizeM([false, 'moyen']);
+		setDogSizeL([false, 'grand']);
+	  
+		console.log('FILTERED LOG:', filtered);
+		console.log('FRIENDLIES LOG:', friendlies);
+	  };
+	  
 
 	// Fonction pour filtrer les friendlies en fonction de la recherche
 	const filterFriendlies = () => {
@@ -386,3 +394,4 @@ const styles = StyleSheet.create({
 		marginTop: "10%",
 	},
 });
+

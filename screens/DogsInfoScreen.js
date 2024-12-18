@@ -46,15 +46,17 @@ export default function DogsInfoScreen() {
 
 	const handleAdd = async () => {
 		setAddModalIsVisible(true);
+		updateDoggies();
 	};
 
 	const handleCloseModal = () => {
 		setAddModalIsVisible(false);
-		setUpdate((previousUpdate) => previousUpdate + 1);
+		updateDoggies();
 	};
 
 	const handleDogPress = (key) => {
 		setMainDog(doggies[key]);
+		updateDoggies();
 	};
 
 	const updateDoggies = () => {
@@ -66,7 +68,7 @@ export default function DogsInfoScreen() {
 	};
 
 	useEffect(() => {
-		fetch(`https://dog-in-town-backend.vercel.app/users/dog/${user.token}`) //  <<<<< Token dynamique
+		fetch(`https://dog-in-town-backend.vercel.app/users/dog/${user.token}`)
 			.then((response) => response.json())
 			.then((data) => {
 				if (data) {
