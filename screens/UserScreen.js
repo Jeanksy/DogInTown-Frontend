@@ -26,7 +26,7 @@ export default function UserScreen({navigation}) {
 	// REDUCER
 	const user = useSelector((state) => state.user.value);
 
-	//INFO USER -----> Reccupération des infos du user avec le fetch de la route get
+	//INFO USER ----->Reccupération des infos du user avec le fetch de la route get
 	useEffect(() => {	
 	fetch(`https://dog-in-town-backend.vercel.app/users/${user.token}`)
 		  .then((response) => response.json())
@@ -94,7 +94,6 @@ export default function UserScreen({navigation}) {
 			{/* Zone d'affichage standard page */}
 			<View style={styles.container}>
 				<Image style={styles.photoPincipale} source={{ uri: newphoto }} />
-				<Camera setImage={setImage} image={image} />
 				<Text style={styles.nom}>Modifiez votre profil ici !</Text>
 				<TouchableOpacity
 					style={styles.bouton}
