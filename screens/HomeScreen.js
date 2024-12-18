@@ -7,7 +7,7 @@ export default function HomeScreen({navigation}) {
     // Démarrer un timer qui navigue après 4 secondes
     const timer = setTimeout(() => {
       navigation.navigate('SignIn');
-    }, 4000);
+    }, 500);
 
     // Cleanup pour annuler le timer si le composant est démonté avant les 2 secondes
     return () => clearTimeout(timer);
