@@ -18,7 +18,8 @@ import MapView, { Marker } from "react-native-maps";
 import * as Location from "expo-location";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { API_GOOGLE_KEY } from "@env";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { position } from '../reducers/user';
 import { useIsFocused } from "@react-navigation/native";
 import PopUpInfoPlace from "../components/PopUpInfoPlace";
 import PopUpAddPlace from "../components/PopUpAddPlace";
@@ -38,6 +39,7 @@ export default function MapScreen({ navigation }) {
 	const [refreshShow, setRefreshShow] = useState(false);
 	const [modalFriendlyVisible, setModalFriendlyVisible] = useState(false); //Modal détail de lieu
 	const user = useSelector((state) => state.user.value); // Reducer pour accéder au username et token
+	const dispatch = useDispatch(); // Reducer pour recupérer la position actuelle du user
 	const isFocused = useIsFocused();
   const [modalFilterVisible, setModalFilterVisible] = useState(false);
   const [resto, setResto] = useState([false, 'restaurant']);
@@ -46,8 +48,6 @@ export default function MapScreen({ navigation }) {
   const [dogSizeS, setDogSizeS] = useState([false, "petit"]);
   const [dogSizeM, setDogSizeM] = useState([false, "moyen"]);
   const [dogSizeL, setDogSizeL] = useState([false, "grand"]);
-
-
     
   //Use effect fetch des lieux présent dans la bdd
 	useEffect(() => {
@@ -69,11 +69,12 @@ export default function MapScreen({ navigation }) {
 			if (status === "granted") {
 				Location.watchPositionAsync({ distanceInterval: 10 }, (location) => {
 					setCurrentPosition(location.coords);
+					dispatch(position({ positionLat: location.coords.latitude, positionLon: location.coords.longitude }));
 				});
 			}
 		})();
 	}, [currentPosition, modalVisible]);
-
+	
 	 //filtrer les friendlies par catégories et/ou tailles de chiengs
 
 	 const researchFilter = (places) => {

@@ -50,6 +50,7 @@ export default function DogSignUpScreen({ navigation }) {
       {label: 'Bulldog Français', value: 'Bulldog Français' },
       {label: 'Chihuahua', value: 'Chihuahua'},
       {label: 'Beagle', value: 'Beagle'},
+      {label: 'Berger des Shetland', value: 'Berger des Shetland'},
   ]);
   
 // LOADER CHECK

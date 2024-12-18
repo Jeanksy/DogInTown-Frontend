@@ -16,11 +16,11 @@ import FontAwesome from "react-native-vector-icons/FontAwesome";
 
 export default function UserScreen({ navigation }) {
 	// Etat des modals
-	const [modalIsVisibleU, setModalIsVisibleU] = useState(false);
-	const [modalIsVisibleM, setModalIsVisibleM] = useState(false);
-	const [modalIsVisibleP, setModalIsVisibleP] = useState(false);
+	const [modalIsVisibleU, setModalIsVisibleU] = useState(false); //Username
+	const [modalIsVisibleM, setModalIsVisibleM] = useState(false); // Mail
+	const [modalIsVisibleP, setModalIsVisibleP] = useState(false); // Password
 	const [deleteModalIsVisbile, setDeleteModalIsVisbile] = useState(false);
-	// Etat changement de pseudo/ email/ mdp/ photo
+	// INPUTS -----> Etat changement de pseudo/ email/ mdp/ photo
 	const [newUser, setnewUser] = useState("");
 	const [newmail, setNewmail] = useState("");
 	const [newpassword, setNewpassword] = useState("");
@@ -29,7 +29,7 @@ export default function UserScreen({ navigation }) {
 	const user = useSelector((state) => state.user.value);
 	const dispatch = useDispatch();
 
-	//Reccupération des infos du user avec le fetch de la route get
+	//INFO USER ----->Reccupération des infos du user avec le fetch de la route get
 	useEffect(() => {
 		fetch(`https://dog-in-town-backend.vercel.app/users/${user.token}`)
 			.then((response) => response.json())

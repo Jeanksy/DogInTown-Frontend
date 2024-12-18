@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Pressable, SafeAreaView, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, Pressable, SafeAreaView, TouchableOpacity, Linking } from 'react-native';
 import { useSelector } from 'react-redux';
 import { useState, useEffect } from 'react';
 import { useIsFocused } from '@react-navigation/native';
@@ -6,7 +6,7 @@ import FontAwesome from "react-native-vector-icons/FontAwesome";
 
 
 export default function FavoritesScreen() {
-  const user = useSelector((state) => state.user.value); // Reducer pour accéder au username et token
+  const user = useSelector((state) => state.user.value); // Reducer pour accéder a la position du user
   // On déclare un état pour stocker les résultats
   const [result, setResult] = useState([]);
   // État pour gérer la visibilité du bouton pour chaque élément
@@ -59,6 +59,22 @@ fetch(`https://dog-in-town-backend.vercel.app/users/deleteFavoris/${user.token}`
 })
 }
 
+// // Fonction pour ouvrir l'itinéraire dans Google Maps
+    const openDirectionsInGoogleMaps = (latitude, longitude) => {
+        if(positionLat) {
+            const userLat = user.positionLat;
+            const userLng = user.positionLon;
+            const placeLat = latitude;
+            const placeLng = longitude;
+
+            // Créer l'URL d'itinéraire pour Google Maps
+            const url = `https://www.google.com/maps/dir/?api=1&origin=${userLat},${userLng}&destination=${placeLat},${placeLng}`;
+            Linking.openURL(url);
+          } else {
+            alert('Il faut autoriser votre géolocalisation dans la page map');
+          }
+    };
+
   // Affichage des favoris avec logique conditionnelle pour chaque élément
   const favoris = result.map((data, i) => {
     return (
@@ -71,7 +87,7 @@ fetch(`https://dog-in-town-backend.vercel.app/users/deleteFavoris/${user.token}`
         </TouchableOpacity>
         {visibleButtons[data._id] && (
           <View style={styles.blocClic}>
-            <Pressable style={styles.go}><Text style={styles.texteGo}>On y va ?</Text></Pressable>
+            <Pressable style={styles.go} onPress={()=> openDirectionsInGoogleMaps(data.latitude, data.longitude)}><Text style={styles.texteGo}>On y va ?</Text></Pressable>
             <TouchableOpacity style={styles.boutonDelete} onPress={() => deleteButton(data._id)}>
               <FontAwesome name="close" size={25} color="#525252" />
               <Text style={styles.supp}>On supprime</Text>
