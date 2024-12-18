@@ -49,10 +49,17 @@ export default function UserScreen({ navigation }) {
 
 	useEffect(() => {
 		if (imageTaken) {
+			console.log( 'useEffect', imageTaken);
 			setNewPhoto(imageTaken)
-			handleUpdate("avatar");
 		}
-	  }, [imageTaken]);
+	}, [imageTaken]);
+	
+													// second useEffect pour decaler assurer la mise a jour de newPhoto
+	useEffect(() => {								// avant de call handleUpdate car sans la photo envoyée est la précédente.
+		if (newPhoto) {
+		  handleUpdate("avatar"); 
+		}
+	  }, [newPhoto]);
 
 
 	//Fonction pour supprimer compte
@@ -82,7 +89,7 @@ export default function UserScreen({ navigation }) {
 	const handleUpdate = async (type) => {
 		const token = user.token; // token du reducer
 		let updatedData = {};
-		console.log(newPhoto)
+		console.log('New photo apres updateData', newPhoto)
 
 		// Définir les données à envoyer en fonction de (type)
 		if (type === "username") {

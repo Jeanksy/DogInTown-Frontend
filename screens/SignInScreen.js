@@ -11,6 +11,7 @@ export default function SignInScreen({ navigation }) {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [errorLogIn, setErrorLogIn] = useState(false);
 
   	// REDUCER *******
 	const dispatch = useDispatch();  
@@ -21,7 +22,11 @@ export default function SignInScreen({ navigation }) {
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({ email: email, password: password }),
 		}).then(response => response.json())
-			.then(data => {
+    .then(data => {
+      if (!data.result) {
+        setErrorLogIn(true);
+      }
+          
         if (data.result) {
           navigation.navigate('TabNavigator', { screen: 'MapScreen' });
           dispatch(login({username: data.username, token: data.token}));
@@ -46,6 +51,7 @@ export default function SignInScreen({ navigation }) {
               keyboardType="email-address" // https://reactnative.dev/docs/textinput#keyboardtype
               textContentType="emailAddress" // https://reactnative.dev/docs/textinput#textcontenttype-ios
               autoComplete="email" // https://reactnative.dev/docs/textinput#autocomplete-android
+              onFocus={() => setErrorLogIn(false)}
               onChangeText={(value) => setEmail(value.toLocaleLowerCase().trim())}
               value={email}
               style={styles.input}
@@ -55,16 +61,18 @@ export default function SignInScreen({ navigation }) {
               secureTextEntry={true}
 				      textContentType="oneTimeCode"
               placeholder="Password"
+              onFocus={() => setErrorLogIn(false)}
               onChangeText={(value) => setPassword(value)}
               value={password}
               style={styles.input}
           />
 
-          <TouchableOpacity onPress={() => handleSignIn()} style={styles.signInBtn} activeOpacity={0.8}>
-            
-          <Text style={styles.clickableBtn}>Connexion</Text>
+          <TouchableOpacity onPress={() => handleSignIn()} style={styles.signInBtn} activeOpacity={0.8}>  
+            <Text style={styles.clickableBtn}>Connexion</Text>
           </TouchableOpacity>
+          {errorLogIn ? <Text style={styles.error}>User or password incorrect</Text> : <View></View>}
         </View>
+        
          <TouchableOpacity onPress={() => handleSignUp()} style={styles.signUpBtn} activeOpacity={0.8}>
            <Text style={styles.clickableBtn}>Inscription</Text>
          </TouchableOpacity>
