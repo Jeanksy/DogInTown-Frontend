@@ -245,6 +245,7 @@ const styles = StyleSheet.create({
 		fontSize: 20,
 		marginTop: "5%",
 		marginBottom: "8%",
+		fontFamily: 'LeagueSpartan-Black',
 	},
 	bouton: {
 		backgroundColor: "#A23D42",
@@ -259,12 +260,14 @@ const styles = StyleSheet.create({
 		textAlign: "center",
 		fontSize: 18,
 		fontWeight: 300,
+		fontFamily: 'LeagueSpartan-Medium',
 	},
 	texteBoutonB: {
 		color: "white",
 		textAlign: "center",
 		fontSize: 18,
 		fontWeight: 600,
+		fontFamily: 'LeagueSpartan-Medium',
 	},
 	// MODAL
 	contenuModal: {

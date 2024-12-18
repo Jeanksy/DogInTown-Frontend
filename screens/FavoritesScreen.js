@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Pressable, SafeAreaView, TouchableOpacity, Linking } from 'react-native';
+import { StyleSheet, Text, View, Pressable, SafeAreaView, TouchableOpacity, Linking, ScrollView } from 'react-native';
 import { useSelector } from 'react-redux';
 import { useState, useEffect } from 'react';
 import { useIsFocused } from '@react-navigation/native';
@@ -31,8 +31,8 @@ export default function FavoritesScreen() {
   // setVisibleButtons utilise une fonction qui prend l'état précédent (prevState) en argument et retourne un nouvel état mis à jour.
   // prevState est l'état précédent de visibleButtons. Cela nous permet de ne pas écraser l'état complet, mais plutôt de mettre à jour une partie de l'objet.
     setVisibleButtons((prevState) => ({
-  //...prevState déstructure l'objet prevState et copie toutes ses clés et valeurs dans le nouvel objet retourné.
-      ...prevState,
+  //prevState déstructure l'objet prevState et copie sa clés et sa valeur dans le nouvel objet retourné.
+      prevState,
   //prevState[id] récupère la valeur actuelle de la clé correspondant à cet id (soit true si le bouton est visible, soit false si le bouton est caché).
       [id]: !prevState[id],
     }));
@@ -61,7 +61,7 @@ fetch(`https://dog-in-town-backend.vercel.app/users/deleteFavoris/${user.token}`
 
 // // Fonction pour ouvrir l'itinéraire dans Google Maps
     const openDirectionsInGoogleMaps = (latitude, longitude) => {
-        if(positionLat) {
+        if(user.positionLat) {
             const userLat = user.positionLat;
             const userLng = user.positionLon;
             const placeLat = latitude;
@@ -103,7 +103,12 @@ fetch(`https://dog-in-town-backend.vercel.app/users/deleteFavoris/${user.token}`
       <Text style={styles.titre}>Favoris</Text>
       <Text style={styles.sousTitre}>Cliquez sur le lieu de votre choix !</Text>
       <View style={styles.favConteneur}>
+         <ScrollView
+                        contentContainerStyle={styles.scrollContent}
+                        removeClippedSubviews={true}
+                    >
         {favoris}
+        </ScrollView>
       </View>
     </SafeAreaView>
   );
@@ -115,6 +120,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#F7CC99',
     alignItems: 'center',
     justifyContent: 'center',
+    width: '100%',
   },
   titre: {
     color: "#A23D42",
@@ -146,10 +152,10 @@ const styles = StyleSheet.create({
   },
   blocFav: {
     backgroundColor: 'white',
-    width: '80%',
-    height: '90%',
+    width: 300,
+    height: 60,
     justifyContent: 'center',
-    marginTop: '5%',
+    marginTop: '8%',
     paddingLeft: '5%',
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
@@ -195,4 +201,7 @@ const styles = StyleSheet.create({
     marginLeft: '2%',
     color: '#525252',
   },
+  scrollContent: {
+    marginTop: '5%',
+},
 });
