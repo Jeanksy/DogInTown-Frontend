@@ -115,10 +115,10 @@ export default function DogsInfoScreen() {
 				</View>
 				<View style={styles.retourContainer}>
 					<TouchableOpacity
-						style={styles.retourBtn}
+						style={styles.fleche}
 						onPress={() => handleRetour()}
 					>
-						<Text style={{ fontSize: 17, fontWeight: 700 }}>Retour</Text>
+						<FontAwesome name='arrow-left' size={30} color='#A23D42'/>
 					</TouchableOpacity>
 				</View>
 				<View style={styles.mainContainer}>
@@ -211,22 +211,11 @@ const styles = StyleSheet.create({
 		borderRadius: 100,
 		marginBottom: 400,
 	},
-	retourBtn: {
-		flex: 0,
-		flexDirection: "row",
-		alignItems: "center",
-		justifyContent: "center",
-		backgroundColor: "#F7CC99",
-		width: "30%",
-		height: 50,
-		borderRadius: 10,
-		shadowColor: "black",
-		shadowOpacity: 0.4,
-		elevation: 2,
-		shadowRadius: 1,
-		shadowOffset: { width: 1, height: 4 },
-		borderWidth: 0,
-	},
+	fleche: {
+		marginTop: '5%',
+		marginLeft: '5%',
+		alignSelf: 'Left',
+	  },
 	retourContainer: {
 		flex: 0,
 		alignItems: "flex-end",

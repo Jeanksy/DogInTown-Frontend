@@ -39,8 +39,8 @@ export default function OptionsScreen({navigation}) {
 
   const handleDeconnection = () => {
     dispatch(logout(user))
+    setModalVisible(false)
     navigation.navigate('SignIn');
-    console.log(user.token)
   }
 
   
