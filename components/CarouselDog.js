@@ -20,7 +20,7 @@ import Carousel from "react-native-reanimated-carousel";
 import { useSelector } from "react-redux";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import DropDownPicker from "react-native-dropdown-picker";
-
+import { CameraCompo } from "../components/CameraCompo";
 import { ElementsText, window } from "../constants/sizes";
 import { withAnchorPoint } from "../utils/anchor-point";
 
@@ -36,16 +36,14 @@ export const CarouselDog = ({ doggies, updateDoggiesCallBack }) => {
 	const user = useSelector((state) => state.user.value);
 	const [selectedDog, setSelectedDog] = useState(null);
 	const [newName, setNewName] = useState("");
-	const [newSize, setNewSize] = useState("");
-	const [newRace, setNewRace] = useState("");
 	const [dogSize, setDogSize] = useState("");
-	const [selectedRace, setSelectedRace] = useState();
-	
+	const [newPhoto, setNewPhoto] = useState("");
+	const [modalCamIsVisible, setModalCamIsVisible] = useState(false);
+	const [imageTaken, setImageTaken] = useState("")
 
 	// DropDown Picker
 	const [open, setOpen] = useState(false);
 	const [value, setValue] = useState(null);
-	const [isLoading, setIsLoading] = useState(false);
 	const [raceList, setRaceList] = useState([
 		{ label: "Pincher", value: "Pincher" },
 		{ label: "Labrador", value: "Labrador" },
@@ -131,7 +129,6 @@ export const CarouselDog = ({ doggies, updateDoggiesCallBack }) => {
 			.then((res) => res.json())
 			.then((data) => {
 				if (data.result) {
-					alert("Dog size updated!");
 					setNewSize("");
 					setModalSizeIsVisible(false);
 					updateDoggiesCallBack();
@@ -157,13 +154,11 @@ export const CarouselDog = ({ doggies, updateDoggiesCallBack }) => {
 			.then((res) => res.json())
 			.then((data) => {
 				if (data.result) {
-					alert("Dog Race updated!");
-					setNewRace("");
 					setModalRaceIsVisible(false);
 					updateDoggiesCallBack();
 				} else {
 					alert("WAF");
-					setNewRace("");
+
 				}
 			});
 	};
@@ -181,20 +176,64 @@ export const CarouselDog = ({ doggies, updateDoggiesCallBack }) => {
 			.then((res) => res.json())
 			.then((data) => {
 				if (data.result) {
-					alert("Dog deleted");
 					setModalDeleteIsVisible(false);
 					updateDoggiesCallBack();
 					console.log("Dog list updated");
-
-					if (doggies.length === 1) {
-						console.log('last dog')
-						this.carousel?.scrollTo({ index: 0 });
-					  }
 				} else {
 					alert("WAF");
 				}
 			});
 	};
+
+	const handleChangePhoto = (dog) => {
+		setSelectedDog(dog);
+		setModalCamIsVisible(true);
+	};
+
+	const handleUpdatePhoto = () => {
+
+		fetch(`https://dog-in-town-backend.vercel.app/users/dog/${user.token}`, {
+			// fetch(`http://192.168.1.60:3000/users/dog/wqUJx2Hd86ZP0nffCdC3HlouzkCnAdEj`, {
+			method: "PUT",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({ dogId: selectedDog._id, photo: newPhoto }),
+		})
+			.then((res) => res.json())
+			.then((data) => {
+				if (data.result) {
+					setModalCamIsVisible(false);
+					updateDoggiesCallBack();
+				} else {
+					alert("WAF");
+				}
+			});
+
+	};
+
+
+	useEffect(() => {
+		if (imageTaken) {
+			console.log( 'useEffect', imageTaken);
+			setNewPhoto(imageTaken)
+		}
+	}, [imageTaken]);
+	
+													// second useEffect pour decaler assurer la mise a jour de newPhoto
+	useEffect(() => {								// avant de call handleUpdate car sans la photo envoyée est la précédente.
+		if (newPhoto) {
+		  handleUpdatePhoto(); 
+		}
+	}, [newPhoto]);
+	
+	useEffect(() => {
+		if (doggies.length === 1) {
+			console.log("last dog");
+			setActiveIndex(0); // Reset active index to 0
+		}
+	}, [doggies]);
+
 
 	const Card = memo(({ index, animationValue, dog }) => {
 		const WIDTH = PAGE_WIDTH;
@@ -376,22 +415,35 @@ export const CarouselDog = ({ doggies, updateDoggiesCallBack }) => {
 					</View>
 				</Animated.View>
 				{/* Dog Picture Options */}
-				<Animated.Image
-					source={{ uri: doggies[index]?.photo }}
-					style={[
-						{
-							width: 150,
-							height: 150,
-							borderRadius: 100,
-							justifyContent: "center",
-							alignItems: "center",
-							position: "absolute",
-							zIndex: 9,
-						},
-						blockDetails,
-					]}
-					resizeMode={"center"}
-				/>
+				<Pressable style={[
+							{
+								width: 150,
+								height: 150,
+								borderRadius: 100,
+								justifyContent: "center",
+								alignItems: "center",
+								position: "absolute",
+								zIndex: 9,
+							},
+							blockDetails,
+						]}onPress={() => handleChangePhoto(dog)}>
+					<Animated.Image
+						source={{ uri: doggies[index]?.photo }}
+						style={[
+							{
+								width: 150,
+								height: 150,
+								borderRadius: 100,
+								justifyContent: "center",
+								alignItems: "center",
+								position: "absolute",
+								zIndex: 9,
+							},
+							blockDetails,
+						]}
+						resizeMode={"center"}
+					/>
+				</Pressable>
 			</Animated.View>
 		);
 	});
@@ -401,7 +453,7 @@ export const CarouselDog = ({ doggies, updateDoggiesCallBack }) => {
 			<Carousel
 				{...baseOptions}
 				removeClippedSubviews={false}
-				loop={doggies.length !== 1}  // desactive la rotation si dog = 1
+				loop={doggies.length !== 1} // desactive la rotation si dog = 1
 				onSnapToItem={(index) => setActiveIndex(index)} // Track l'index actuel et set une valeur pour snapper la vue sur la card
 				withAnimation={{
 					type: "spring",
@@ -424,6 +476,7 @@ export const CarouselDog = ({ doggies, updateDoggiesCallBack }) => {
 				}}
 			/>
 			<View style={{ width: "100%", height: "100%", position: "absolute" }}>
+				<CameraCompo setModalCamIsVisible={setModalCamIsVisible} modalCamIsVisible={modalCamIsVisible} setImageTaken={setImageTaken}/>
 				<Modal
 					style={styles.modal}
 					animationType="fade"

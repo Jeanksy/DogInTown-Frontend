@@ -11,7 +11,7 @@ import {
 	Image,
 	TextInput,
 	Modal,
-	Alert,
+	Switch,
 } from "react-native";
 import { useState, useEffect } from "react";
 import MapView, { Marker } from "react-native-maps";
@@ -19,12 +19,11 @@ import * as Location from "expo-location";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { API_GOOGLE_KEY } from "@env";
 import { useDispatch, useSelector } from "react-redux";
-import { position } from '../reducers/user';
+import { position } from "../reducers/user";
 import { useIsFocused } from "@react-navigation/native";
 import PopUpInfoPlace from "../components/PopUpInfoPlace";
 import PopUpAddPlace from "../components/PopUpAddPlace";
 import PopUpFilterPlace from "../components/PopUpFilterPlace";
-import { Switch } from "react-native-switch-toggles";
 
 const { width, height } = Dimensions.get("window"); //dimension de l'écran
 
@@ -78,18 +77,21 @@ export default function MapScreen({ navigation }) {
 
 			if (isGeoloc && status === "denied") {
 				return;
-
 			} else if (isGeoloc === false && status === "granted") {
 				return;
-
 			} else if (isGeoloc === true && status === "granted") {
 				Location.watchPositionAsync({ distanceInterval: 10 }, (location) => {
 					setCurrentPosition(location.coords);
-					dispatch(position({ positionLat: location.coords.latitude, positionLon: location.coords.longitude }));
+					dispatch(
+						position({
+							positionLat: location.coords.latitude,
+							positionLon: location.coords.longitude,
+						})
+					);
 				});
 			}
 		})();
-	}, [currentPosition, modalVisible]);
+	}, [currentPosition, modalVisible, isGeoloc]);
 
 	//filtrer les friendlies par catégories et/ou tailles de chiengs
 
@@ -139,28 +141,27 @@ export default function MapScreen({ navigation }) {
 		setDogSizeL([false, "grand"]);
 	};
 
-
 	// Fonction pour filtrer les friendlies en fonction de la recherche
 	const filterFriendlies = () => {
 		if (searchText.trim().length === 0) {
 			return; // Si rien n'est recherché, retourne tous les friendlies
 		}
 
-		if (searchText.toLocaleLowerCase() === 'bar' || searchText.toLocaleLowerCase() === 'cafe' || searchText.toLocaleLowerCase() === 'restaurant'){
-			return friendlies.filter(
-				(friendly) => {
-					return friendly.type === searchText.toLocaleLowerCase(); 
-				}
-			);
+		if (
+			searchText.toLocaleLowerCase() === "bar" ||
+			searchText.toLocaleLowerCase() === "cafe" ||
+			searchText.toLocaleLowerCase() === "restaurant"
+		) {
+			return friendlies.filter((friendly) => {
+				return friendly.type === searchText.toLocaleLowerCase();
+			});
 		}
 
 		// Filtre les friendlies dont le nom contient la recherche
-		return friendlies.filter(
-			(friendly) => {
-				console.log(friendly.name);
-				return friendly.name.toLowerCase().includes(searchText.toLowerCase()); // Comparaison insensible à la casse
-			}
-		);
+		return friendlies.filter((friendly) => {
+			console.log(friendly.name);
+			return friendly.name.toLowerCase().includes(searchText.toLowerCase()); // Comparaison insensible à la casse
+		});
 	};
 
 	// FONCTION POUR TROUVER UN LIEU SUR L'API GOOGLE PLACE ET FILTRER L'AFFICHAGE
@@ -210,7 +211,7 @@ export default function MapScreen({ navigation }) {
 			<MapView
 				mapType="standard"
 				onPress={() => {
-					setPlaces([]),setRefreshShow(!refreshShow), setUseFilter([]);
+					setPlaces([]), setRefreshShow(!refreshShow), setUseFilter([]);
 				}}
 				style={styles.map}
 				initialRegion={{
@@ -220,7 +221,8 @@ export default function MapScreen({ navigation }) {
 					longitudeDelta: 1.0,
 				}}
 			>
-				{isGeoloc && currentPosition &&
+				{isGeoloc &&
+					currentPosition &&
 					currentPosition.latitude &&
 					currentPosition.longitude && (
 						<Marker
@@ -264,7 +266,12 @@ export default function MapScreen({ navigation }) {
 								setModalFriendlyVisible(true), setFriendlyToSee(place);
 							}}
 						>
-							<View style={styles.markerContainer} backgroundColor={place.feedback.length < 10 ? '#F1AF5A' : '#45D058'}>
+							<View
+								style={styles.markerContainer}
+								backgroundColor={
+									place.feedback.length < 10 ? "#F1AF5A" : "#45D058"
+								}
+							>
 								<Image
 									source={require("../assets/Images/patte2.png")}
 									style={{
@@ -277,21 +284,15 @@ export default function MapScreen({ navigation }) {
 							</View>
 						</Marker>
 					))}
-				{/* <View style={styles.toggleBtn}>
+				<View style={styles.toggleBtn}>
 					<Switch
-
-						size={30}
+						trackColor={{ false: "#767577", true: "#53CD2D" }}
+						thumbColor={isGeoloc ? "#f4f3f4" : "#f4f3f4"}
+						ios_backgroundColor="#3e3e3e"
+						onValueChange={(value) => setIsGeoloc(value)}
 						value={isGeoloc}
-						onChange={(value) => setIsGeoloc(value)}
-						activeTrackColor={"#45D058"}
-						renderOffIndicator={() => (
-							<Text style={{ fontSize: 12, color: "white" }}>OFF</Text>
-						)}
-						renderOnIndicator={() => (
-							<Text style={{ fontSize: 15, colo: "white" }}></Text>
-						)}
 					/>
-				</View> */}
+				</View>
 			</MapView>
 			<View style={styles.blocRecherches}>
 				<FontAwesome
@@ -441,10 +442,8 @@ const styles = StyleSheet.create({
 		marginTop: "10%",
 	},
 	toggleBtn: {
-		position: 'absolute',
-		marginTop: '155%',
-		marginLeft: '83%',
-
-
+		position: "absolute",
+		bottom: "7%",
+		right: "3%",
 	},
 });

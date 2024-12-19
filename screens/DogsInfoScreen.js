@@ -45,8 +45,10 @@ export default function DogsInfoScreen() {
 	const delay = (ms) => new Promise((res) => setTimeout(res, ms));
 
 	const handleAdd = async () => {
-		setAddModalIsVisible(true);
-		updateDoggies();
+			setAddModalIsVisible(true);
+			await updateDoggies();
+			setActiveIndex(doggies.length);  // Assuming the new dog is added at the end
+	
 	};
 
 	const handleCloseModal = () => {
@@ -238,7 +240,6 @@ const styles = StyleSheet.create({
 	dogListCircle: {
 		height: "60%",
 		aspectRatio: 1 / 1,
-		backgroundColor: "red",
 		borderRadius: 100,
 	},
 	dogListAdd: {
