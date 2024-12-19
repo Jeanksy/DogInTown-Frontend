@@ -4,8 +4,16 @@ import { logout } from '../reducers/user';
 import React, { useState} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import { useFonts } from 'expo-font'; // FONT
 
 export default function OptionsScreen({navigation}) {
+  // export de la font
+    useFonts({
+    "LeagueSpartan-Light": require("../assets/fonts/LeagueSpartan-Light.ttf"),
+    "LeagueSpartan-Regular": require("../assets/fonts/LeagueSpartan-Regular.ttf"),
+    "LeagueSpartan-Medium": require("../assets/fonts/LeagueSpartan-Medium.ttf"),
+    "LeagueSpartan-Bold": require("../assets/fonts/LeagueSpartan-Bold.ttf"),
+    });
 
   // REDUCER
 	const dispatch = useDispatch();
@@ -60,19 +68,19 @@ export default function OptionsScreen({navigation}) {
         <Text style={styles.titre}>Options</Text>
         <TouchableOpacity style={[styles.blocSelection1, styles.shadowBtn]} onPress={() => handleDog()}>
             <Image style={styles.image} source={require('../assets/Images/moyen.png')} />
-            <Text>Votre/vos chien(s)</Text>
+            <Text style={styles.texteTitre}>Votre/vos chien(s)</Text>
         </TouchableOpacity>
         <TouchableOpacity style={[styles.blocSelection2, styles.shadowBtn]} onPress={() => handleUser()}>
             <FontAwesome name='gears' color='white' size={50}/>
-            <Text>Parametres du compte</Text>
+            <Text style={styles.texteTitre}>Parametres du compte</Text>
         </TouchableOpacity>
         <TouchableOpacity style={[styles.blocSelection3, styles.shadowBtn]} onPress={() => handleContact()}>
             <FontAwesome name='envelope' color='#97C7DE' size={50}/>
-            <Text>Nous contacter</Text>
+            <Text style={styles.texteTitre}>Nous contacter</Text>
         </TouchableOpacity>
         <TouchableOpacity style={[styles.blocSelection4, styles.shadowBtn]} onPress={() => handleLogout()}>
             <Image style={styles.image} source={require('../assets/Images/Frame8.png')}/>
-            <Text>Deconnection</Text>
+            <Text style={styles.texteTitreB}>Deconnection</Text>
         </TouchableOpacity>
         <StatusBar style="auto" />
     </View>
@@ -99,8 +107,8 @@ const styles = StyleSheet.create({
     fontSize: 40,
     fontWeight: '600',
     color: '#A23D42',
-    marginTop: '15%',
-    marginBottom: '2%',
+    marginTop: '20%',
+    fontFamily: 'LeagueSpartan-Medium',
   },
   blocSelection1: {
     width: '75%',
@@ -153,6 +161,15 @@ const styles = StyleSheet.create({
     marginRight: '10%',
     transform: [{ scaleX: -1 }],
   },
+  texteTitre: {
+    fontFamily: 'LeagueSpartan-Light',
+    fontSize: 20,
+  },
+  texteTitreB: {
+    fontFamily: 'LeagueSpartan-Light',
+    fontSize: 20,
+    color: 'white',
+  },
   ////// Modal ////
   modalConteneur: {
     flex: 1,
@@ -177,6 +194,7 @@ const styles = StyleSheet.create({
     fontSize: 25,
     textAlign: 'center',
     marginBottom: '5%',
+    fontFamily: 'LeagueSpartan-Light',
   },
   ouiB: {
     width: '30%',
@@ -206,5 +224,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 400,
     color: 'white',
+    fontFamily: 'LeagueSpartan-Light',
   },
 });

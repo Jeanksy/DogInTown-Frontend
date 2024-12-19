@@ -15,8 +15,17 @@ import { logout } from '../reducers/user'
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { Camera } from "expo-camera";
 import { CameraCompo } from "../components/CameraCompo";
+import { useFonts } from 'expo-font'; // FONT
 
 export default function UserScreen({ navigation }) {
+	// export de la font
+		useFonts({
+		"LeagueSpartan-Light": require("../assets/fonts/LeagueSpartan-Light.ttf"),
+		"LeagueSpartan-Regular": require("../assets/fonts/LeagueSpartan-Regular.ttf"),
+		"LeagueSpartan-Medium": require("../assets/fonts/LeagueSpartan-Medium.ttf"),
+		"LeagueSpartan-Bold": require("../assets/fonts/LeagueSpartan-Bold.ttf"),
+		});
+	
 	// Etat des modals
 	const [modalIsVisibleU, setModalIsVisibleU] = useState(false); //Username
 	const [modalIsVisibleM, setModalIsVisibleM] = useState(false); // Mail
@@ -272,10 +281,10 @@ const styles = StyleSheet.create({
 	},
 	nom: {
 		color: "#A23D42",
-		fontSize: 20,
+		fontSize: 25,
 		marginTop: "5%",
-		marginBottom: "8%",
-		fontFamily: 'LeagueSpartan-Black',
+		marginBottom: "5%",
+		fontFamily: 'LeagueSpartan-Light',
 	},
 	bouton: {
 		backgroundColor: "#A23D42",
@@ -288,16 +297,16 @@ const styles = StyleSheet.create({
 	texteBouton: {
 		color: "white",
 		textAlign: "center",
-		fontSize: 18,
+		fontSize: 20,
 		fontWeight: 300,
-		fontFamily: 'LeagueSpartan-Medium',
+		fontFamily: 'LeagueSpartan-Light',
 	},
 	texteBoutonB: {
 		color: "white",
 		textAlign: "center",
-		fontSize: 18,
+		fontSize: 20,
 		fontWeight: 600,
-		fontFamily: 'LeagueSpartan-Medium',
+		fontFamily: 'LeagueSpartan-Bold',
 	},
 	// MODAL
 	contenuModal: {
@@ -321,8 +330,9 @@ const styles = StyleSheet.create({
 	},
 	petitTexte: {
 		marginTop: 10,
-		fontSize: 16,
+		fontSize: 18,
 		textAlign: "center",
+		fontFamily: 'LeagueSpartan-Light',
 	},
 	buttonRow: {
 		flexDirection: 'row',

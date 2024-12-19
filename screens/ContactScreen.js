@@ -2,9 +2,17 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Image, SafeAreaView, Pressable, TextInput, TouchableOpacity,TouchableWithoutFeedback, Keyboard  } from 'react-native';
 import { useState } from "react";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
+import { useFonts } from 'expo-font'; // FONT
 
 
 export default function ContactScreen({navigation}) {
+   // export de la font
+      useFonts({
+      "LeagueSpartan-Light": require("../assets/fonts/LeagueSpartan-Light.ttf"),
+      "LeagueSpartan-Regular": require("../assets/fonts/LeagueSpartan-Regular.ttf"),
+      "LeagueSpartan-Medium": require("../assets/fonts/LeagueSpartan-Medium.ttf"),
+      "LeagueSpartan-Bold": require("../assets/fonts/LeagueSpartan-Bold.ttf"),
+      });
   // Etats
   const [message, setMessage] = useState('') //Input 
   const [merci, setMerci] = useState(false) // message de confirmation message envoyé
@@ -77,6 +85,7 @@ export default function ContactScreen({navigation}) {
       marginLeft: '5%',
       marginRight: '5%',
       color: '#A23D42',
+      fontFamily: 'LeagueSpartan-Light',
     },
     encadreBlanc: {
       marginTop: '5%',
@@ -98,6 +107,7 @@ export default function ContactScreen({navigation}) {
     textSend: {
       color: 'white',
       fontSize: 18,
+      fontFamily: 'LeagueSpartan-Medium',
     },
     confirmation: {
       marginTop: '2%',
