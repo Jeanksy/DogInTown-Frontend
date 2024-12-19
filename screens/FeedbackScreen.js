@@ -3,12 +3,19 @@ import { StyleSheet, Text, View, Pressable, Image, TouchableOpacity, Platform, K
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-
+import { useFonts } from 'expo-font'; // FONT
 
 
 
 
 export default function FeedbackScreen({ route, navigation }) {
+// export de la font
+        useFonts({
+        "LeagueSpartan-Light": require("../assets/fonts/LeagueSpartan-Light.ttf"),
+        "LeagueSpartan-Regular": require("../assets/fonts/LeagueSpartan-Regular.ttf"),
+        "LeagueSpartan-Medium": require("../assets/fonts/LeagueSpartan-Medium.ttf"),
+        "LeagueSpartan-Bold": require("../assets/fonts/LeagueSpartan-Bold.ttf"),
+        });
 
     const user = useSelector((state) => state.user.value);
     const { name } = route.params;
@@ -105,6 +112,7 @@ const styles = StyleSheet.create({
     inner: {
         flex: 1,
         width: '100%',
+        height: '90%',
     },
     leaverRow: {
         width: '100%',
@@ -128,7 +136,7 @@ const styles = StyleSheet.create({
     },
     title: {
         fontSize: 30,
-        fontWeight: 600,
+        fontFamily: 'LeagueSpartan-Bold',
         color: '#A23D42',
     },
     inputContainer: {
@@ -140,29 +148,30 @@ const styles = StyleSheet.create({
         width: '100%',
         height: '100%',
         fontSize: 15,
+        fontFamily: 'LeagueSpartan-Light',
         backgroundColor: 'white',
         borderRadius: 10,
         textAlign: 'left',
         textAlignVertical: 'top',
+        padding: '5%',
     },
     subTitleContainer: {
         width: '100%',
-        height: '10%',
+        height: '12%',
         justifyContent: 'center',
         alignItems: 'center',
     },
     subtitles: {
-        fontSize: 18,
-        fontWeight: 500,
+        fontSize: 22,
+        fontFamily: 'LeagueSpartan-Medium',
         color: '#A23D42',
     },
     dogsContainer: {
         flexDirection: 'row',
         width: '100%',
-        height: '25%',
+        height: '21%',
         alignItems: 'center',
         justifyContent: 'space-evenly',
-        paddingHorizontal: '5%',
     },
     dogCard: {
         height: '100%',
@@ -177,12 +186,12 @@ const styles = StyleSheet.create({
     },
     dogName: {
         marginBottom: 8,
-        fontSize: 18,
-        fontWeight: 600,
+        fontSize: 20,
+        fontFamily: 'LeagueSpartan-Bold',
     },
     lowerContent: {
         width: '100%',
-        height: 250,
+        height: '15%',
         justifyContent: 'center',
         alignItems: 'center',
     },
@@ -190,19 +199,21 @@ const styles = StyleSheet.create({
         position: 'absolute',
         top: '10%',
         fontSize: 16,
+        fontFamily: 'LeagueSpartan-Medium',
         color: 'red',
     },
     validateButton: {
         width: '60%',
-        height: '20%',
+        height: '50%',
         borderRadius: 24,
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: '#A23D42',
+        marginTop: '20%',
     },
     buttonText: {
-        fontWeight: 700,
-        fontSize: 18,
+        fontFamily: 'LeagueSpartan-Medium',
+        fontSize: 20,
         color: 'white',
     },
 });

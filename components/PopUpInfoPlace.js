@@ -4,10 +4,17 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { useState, useEffect } from 'react';
 import { useIsFocused } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
-
+import { useFonts } from 'expo-font'; // FONT
 
 
 const PopUpInfoPlace = ({ friendlyToSee, setModalFriendlyVisible, userLocation, navigation }) => {
+     // export de la font
+        useFonts({
+        "LeagueSpartan-Light": require("../assets/fonts/LeagueSpartan-Light.ttf"),
+        "LeagueSpartan-Regular": require("../assets/fonts/LeagueSpartan-Regular.ttf"),
+        "LeagueSpartan-Medium": require("../assets/fonts/LeagueSpartan-Medium.ttf"),
+        "LeagueSpartan-Bold": require("../assets/fonts/LeagueSpartan-Bold.ttf"),
+        });
 
     const [comments, setComments] = useState([]);
     const [addFavorite, setAddFavorite] = useState(false);
@@ -192,15 +199,15 @@ const styles = StyleSheet.create({
     },
     friendlyModalTitle: {
         width: '75%',
-        fontSize: 22,
-        fontWeight: 700,
+        fontSize: 25,
+        fontFamily: 'LeagueSpartan-Bold',
         color: '#5B1A10',
     },
     type: {
         marginTop: '3%',
         marginBottom: '3%',
-        fontSize: 16,
-        fontStyle: 'italic',
+        fontSize: 19,
+        fontFamily: 'LeagueSpartan-Light',
         color: '#525252',
     },
     placeInfo: {
@@ -213,7 +220,7 @@ const styles = StyleSheet.create({
     },
     sizeText: {
         fontSize: 18,
-        fontWeight: 500,
+        fontFamily: 'LeagueSpartan-Medium',
         color: '#A23D42',
     },
     buttonLike: {
@@ -247,8 +254,10 @@ const styles = StyleSheet.create({
         borderRadius: 100,
     },
     avis: {
-        fontWeight: 600,
+        fontFamily: 'LeagueSpartan-Bold',
+        fontSize: 15,
         color: '#5B1A10',
+        marginLeft: '6%',
     },
     commentsContainer: {
         padding: '4%',
@@ -289,17 +298,19 @@ const styles = StyleSheet.create({
     },
     username: {
         fontSize: 22,
-        fontWeight: 600,
+        fontFamily: 'LeagueSpartan-Medium',
         color: '#A23D42',
     },
     userdogRace: {
-        fontStyle: 'italic',
+        fontFamily: 'LeagueSpartan-Light',
+        fontSize: 14,
         color: '#A23D42',
     },
     commentText: {
         fontSize: 16,
+        fontFamily: 'LeagueSpartan-Light',
         color: '#525252',
-        fontStyle: 'italic',
+        marginTop: '5%',
     },
     commentsOpenerContainer: {
         padding: '3%',
@@ -307,8 +318,8 @@ const styles = StyleSheet.create({
         height: '30%',
     },
     commentsOpenText: {
-        fontWeight: 600,
-        fontSize: 16,
+        fontFamily: 'LeagueSpartan-Bold',
+        fontSize: 18,
         color: '#A23D42',
     },
     downButtonsContainer: {
@@ -335,7 +346,7 @@ const styles = StyleSheet.create({
         borderRadius: 12,
     },
     textButtonDown: {
-        fontWeight: 700,
+        fontFamily: 'LeagueSpartan-Medium',
         fontSize: 18,
         color: 'white',
     },
