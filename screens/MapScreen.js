@@ -325,7 +325,7 @@ export default function MapScreen({ navigation }) {
 							<View
 								style={styles.markerContainer}
 								backgroundColor={
-									place.feedback.length < 10 ? "#F1AF5A" : "#45D058"
+									place.feedback.length < 10 ? "#F1AF5A" : "#53CD2D"
 								}
 							>
 								<Image

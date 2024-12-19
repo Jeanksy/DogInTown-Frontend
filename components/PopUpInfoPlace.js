@@ -118,7 +118,7 @@ const deleteButton = () => {
                 </View>
             </TouchableOpacity>}
                 <View style={styles.ratingContainer}>
-                    <View style={styles.cercleAvis} backgroundColor={friendlyToSee.feedback.length > 10 ? '#D9F4B7' : '#F7CC99'}></View>
+                    <View style={styles.cercleAvis} backgroundColor={friendlyToSee.feedback.length >= 10 ? '#53CD2D' : '#F7CC99'}></View>
                     <Text style={styles.avis}>{friendlyToSee.feedback.length} Avis</Text>
                 </View>
                 <Text style={styles.sizeText}>Chiens de {friendlyToSee.sizeAccepted}{friendlyToSee.sizeAccepted === 'moyen' ? 'ne' : 'e'} taille acceptés.</Text>
