@@ -329,7 +329,6 @@ export const CarouselDog = ({ doggies, updateDoggiesCallBack, scrollToIndex }) =
 					flex: 1,
 					justifyContent: "center",
 					alignItems: "center",
-					// backgroundColor: "red",
 				}}
 			>
 				<Animated.View
@@ -454,6 +453,7 @@ export const CarouselDog = ({ doggies, updateDoggiesCallBack, scrollToIndex }) =
 								alignItems: "center",
 								position: "absolute",
 								zIndex: 9,
+								resizeMode: 'cover',
 							},
 							blockDetails,
 						]}
@@ -722,7 +722,6 @@ const styles = StyleSheet.create({
 		height: 32,
 	},
 	close: {
-		// backgroundColor: 'red',
 		height: 30,
 		width: 30,
 		borderRadius: 100,

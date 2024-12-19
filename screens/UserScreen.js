@@ -13,7 +13,6 @@ import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from '../reducers/user'
 import FontAwesome from "react-native-vector-icons/FontAwesome";
-import { Camera } from "expo-camera";
 import { CameraCompo } from "../components/CameraCompo";
 import { useFonts } from 'expo-font'; // FONT
 
@@ -32,12 +31,15 @@ export default function UserScreen({ navigation }) {
 	const [modalIsVisibleP, setModalIsVisibleP] = useState(false); // Password
 	const [deleteModalIsVisbile, setDeleteModalIsVisbile] = useState(false);
 	// INPUTS -----> Etat changement de pseudo/ email/ mdp/ photo
+	const [username, setUsername] = useState("");
+	const [email, setEmail] = useState("");
 	const [newUser, setnewUser] = useState("");
 	const [newmail, setNewmail] = useState("");
 	const [newpassword, setNewpassword] = useState("");
 	const [newPhoto, setNewPhoto] = useState("");
 	const [modalCamIsVisible, setModalCamIsVisible] = useState(false);
 	const [imageTaken, setImageTaken] = useState("")
+	const [hideButtons, setHideButtons] = useState(false);
 	// REDUCER
 	const user = useSelector((state) => state.user.value);
 	const dispatch = useDispatch();
@@ -48,13 +50,12 @@ export default function UserScreen({ navigation }) {
 			.then((response) => response.json())
 			.then((data) => {
 				if (data.result) {
-					setnewUser(data.profilUser[0].username)
-					setNewmail(data.profilUser[0].email)
-					setNewpassword(data.profilUser[0].password)
+					setUsername(data.profilUser[0].username)
+					setEmail(data.profilUser[0].email)
 					setNewPhoto(data.profilUser[0].avatar)
 				}
 			});
-	}, []);
+	}, [hideButtons]);
 
 	useEffect(() => {
 		if (imageTaken) {
@@ -69,6 +70,16 @@ export default function UserScreen({ navigation }) {
 		  handleUpdate("avatar"); 
 		}
 	  }, [newPhoto]);
+
+
+	  useEffect(() => {
+		if (modalCamIsVisible || modalIsVisibleM || modalIsVisibleP || modalIsVisibleU || deleteModalIsVisbile) {
+			setHideButtons(true)
+		}
+		else{
+			setHideButtons(false)
+		}
+	}, [modalCamIsVisible, modalIsVisibleM, modalIsVisibleP, modalIsVisibleU, deleteModalIsVisbile]);
 
 
 	//Fonction pour supprimer compte
@@ -98,7 +109,6 @@ export default function UserScreen({ navigation }) {
 	const handleUpdate = async (type) => {
 		const token = user.token; // token du reducer
 		let updatedData = {};
-		console.log('New photo apres updateData', newPhoto)
 
 		// Définir les données à envoyer en fonction de (type)
 		if (type === "username") {
@@ -122,7 +132,6 @@ export default function UserScreen({ navigation }) {
 			});
 
 			const data = await response.json();
-			console.log("Sending to backend:", updatedData);
 
 			if (response.ok) {
 				// Réinitialiser les champs et fermer la modal
@@ -144,7 +153,7 @@ export default function UserScreen({ navigation }) {
 		<SafeAreaView style={styles.background}>
 			<Pressable style={styles.fleche} onPress={() => handleReturn()}><FontAwesome name="arrow-left" size={30} color="#A23D42" textAlign='right'></FontAwesome></Pressable>
 			{/* Zone d'affichage standard page */}
-			<View style={styles.container}>
+			{!hideButtons && <View style={styles.container}>
 				<TouchableOpacity onPress={() => handleChangePhoto()}>
 					<Image style={styles.photoPincipale} source={{ uri: newPhoto }} />
 				</TouchableOpacity>
@@ -153,13 +162,13 @@ export default function UserScreen({ navigation }) {
 					style={styles.bouton}
 					onPress={() => setModalIsVisibleU(true)}>
 					<Text style={styles.texteBouton}>Modifier mon pseudo :</Text>
-					<Text style={styles.texteBoutonB}>{newUser}</Text>
+					<Text style={styles.texteBoutonB}>{username}</Text>
 				</TouchableOpacity>
 				<TouchableOpacity
 					style={styles.bouton}
 					onPress={() => setModalIsVisibleM(true)}>
 					<Text style={styles.texteBouton}>Modifier mon email :</Text>
-					<Text style={styles.texteBoutonB}>{newmail}</Text>
+					<Text style={styles.texteBoutonB}>{email}</Text>
 				</TouchableOpacity>
 				<TouchableOpacity
 					style={styles.bouton}
@@ -171,9 +180,9 @@ export default function UserScreen({ navigation }) {
 					style={styles.bouton}
 					onPress={() => setDeleteModalIsVisbile(true)}
 				>
-					<Text style={[styles.texteBouton, { fontWeight: 600 }]}>Supprimer votre compte</Text>
+					<Text style={[styles.texteBouton, { fontWeight: 700 }]}>Supprimer votre compte</Text>
 				</TouchableOpacity>
-			</View>
+			</View>}
 
 			{/* Zone des modales */}
 			<CameraCompo setModalCamIsVisible={setModalCamIsVisible} modalCamIsVisible={modalCamIsVisible} setImageTaken={setImageTaken}/>
@@ -229,7 +238,6 @@ export default function UserScreen({ navigation }) {
 					<Text style={styles.petitTexte}>Modifiez votre mot de passe ci-dessous</Text>
 					<TextInput
 						placeholder="Nouveau mot de passe"
-						secureTextEntry
 						onChangeText={(value) => setNewpassword(value)}
 						value={newpassword}
 						style={styles.encadreBlanc}
@@ -263,6 +271,7 @@ const styles = StyleSheet.create({
 		width: "100%",
 		height: "100%",
 		backgroundColor: "#F7CC99",
+		padding: 20,
 	},
 	container: {
 		flex: 1,
@@ -313,7 +322,7 @@ const styles = StyleSheet.create({
 		backgroundColor: "white",
 		borderRadius: 20,
 		width: "80%",
-		height: "80%",
+		height: 400,
 		margin: "10%",
 		marginTop: "18%",
 		justifyContent: "center",
