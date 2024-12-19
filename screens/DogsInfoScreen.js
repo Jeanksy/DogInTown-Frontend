@@ -128,17 +128,15 @@ export default function DogsInfoScreen() {
 							doggies.map((dog, index) => (
 								<View key={dog.id} style={{ alignItems: "center", gap: "5%" }}>
 									<TouchableOpacity
-										key={`tO${dog.id}`}
 										style={[styles.dogListCircle, styles.shadow]}
 										onPress={() => handleDogPress(index)}
 									>
 										<Image
-											key={`img${dog.id}`}
 											style={{ height: "100%", borderRadius: 100 }}
 											source={{ uri: dog.photo }}
 										/>
 									</TouchableOpacity>
-									<Text key={`name${dog.id}`} style={styles.textsDogs}>
+									<Text style={styles.textsDogs}>
 										{dog.name}
 									</Text>
 								</View>

@@ -28,7 +28,7 @@ export default function SignInScreen({ navigation }) {
       }
           
         if (data.result) {
-          navigation.navigate('TabNavigator', { screen: 'MapScreen' });
+          navigation.replace('TabNavigator', { screen: 'MapScreen' });
           setEmail('');
           setPassword('');
           dispatch(login({username: data.username, token: data.token, postCode: data.postCode}));
