@@ -14,7 +14,8 @@ import {
 	Switch,
 	BackHandler
 } from "react-native";
-import { useState, useEffect } from "react";
+import LottieView from 'lottie-react-native';
+import { useState, useEffect, useRef } from "react";
 import MapView, { Marker } from "react-native-maps";
 import * as Location from "expo-location";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
@@ -54,6 +55,13 @@ export default function MapScreen({ navigation }) {
 	const [postCodeLat, setPostCodeLat] = useState(45.75);
 	const [postCodeLon, setPostCodeLon] = useState(4.85);
 	const [isInitialPositionLoaded, setIsInitialPositionLoaded] = useState(false);
+  	const animation = useRef(null);
+
+
+
+	  const source = Platform.OS === 'android'
+	  ? require('../assets/cloudLoading.mp4.lottie.json')  // Source pour Android
+	  : require('../assets/cloudLoading.mp4.lottie.lottie'); // Source pour iOS
 
 
 	// useEffect(() => {
@@ -256,7 +264,7 @@ export default function MapScreen({ navigation }) {
 			style={styles.container}
 			behavior={Platform.OS === "ios" ? "padding" : "height"}
 		>
-			{isInitialPositionLoaded && <MapView
+			{isInitialPositionLoaded ? <MapView
 				mapType="standard"
 				onPress={() => {
 					setPlaces([]), setRefreshShow(!refreshShow), setUseFilter([]);
@@ -332,7 +340,13 @@ export default function MapScreen({ navigation }) {
 							</View>
 						</Marker>
 					))}
-			</MapView>}
+			</MapView> : <LottieView
+			  ref={animation}
+              style={{
+                  width: '100%',
+                  height: '100%',
+                  }}
+                  source={source} autoPlay loop />}
 			<View style={styles.toggleBtn}>
 					<Switch
 						trackColor={{ false: "#767577", true: "#53CD2D" }}
