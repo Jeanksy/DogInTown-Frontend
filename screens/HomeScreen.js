@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Button, Pressable, Image } from 'react-native';
+import { StyleSheet, Text, View, Button, Pressable, Image, Platform } from 'react-native';
 import React, { useEffect, useRef } from 'react';
 import LottieView from 'lottie-react-native';
 
@@ -10,6 +10,9 @@ export default function HomeScreen({ navigation }) {
     navigation.navigate('SignIn');
   }
 
+  const source = Platform.OS === 'android'
+  ? require('../assets/dogSplashLoading.mp4.lottie.json')  // Source pour Android
+  : require('../assets/dogSplashLoading.mp4.lottie.lottie'); // Source pour iOS
 
   
       return (
@@ -25,7 +28,7 @@ export default function HomeScreen({ navigation }) {
                   height: '100%',
                   backgroundColor: '#F7CC99',
                   }}
-                  source={require('../assets/dogSplashLoading.mp4.lottie.lottie')} autoPlay loop />      
+                  source={source} autoPlay loop />      
             </View>
             </Pressable>
         </View>
