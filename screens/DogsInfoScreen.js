@@ -47,10 +47,9 @@ export default function DogsInfoScreen() {
 	const delay = (ms) => new Promise((res) => setTimeout(res, ms));
 
 	const handleAdd = async () => {
-			setAddModalIsVisible(true);
-			await updateDoggies();
-			setActiveIndex(doggies.length);  // Assuming the new dog is added at the end
-	
+		setAddModalIsVisible(true);
+		await delay(1000); 
+		updateDoggies(true); 
 	};
 
 	const handleCloseModal = () => {
@@ -64,10 +63,19 @@ export default function DogsInfoScreen() {
 		updateDoggies();
 	};
 
-	const updateDoggies = () => {
+	const updateDoggies = (isAdding = false) => {
 		setUpdate((previousUpdate) => previousUpdate + 1);
+	
+		setTimeout(() => {
+			if (isAdding && doggies.length > 0) {
+				// Scroll to the newly added dog (last one)
+				setScrollToIndex(doggies.length);
+			} else if (doggies.length === 1) {
+				// Scroll to the last remaining dog
+				setScrollToIndex(0);
+			}
+		}, 500);
 	};
-
 	const handleRetour = () => {
 		navigation.navigate("TabNavigator", { screen: "Options" });
 	};

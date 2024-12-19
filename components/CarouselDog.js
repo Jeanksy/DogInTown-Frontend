@@ -76,11 +76,11 @@ export const CarouselDog = ({ doggies, updateDoggiesCallBack, scrollToIndex }) =
     };
 
     // Expose the scroll function to the parent
-    useEffect(() => {
-        if (scrollToIndex !== null && scrollToIndex !== undefined) {
-            handleScrollToIndex(scrollToIndex);
-        }
-    }, [scrollToIndex]);	
+	useEffect(() => {
+		if (scrollToIndex !== null && scrollToIndex !== undefined && carouselRef.current) {
+			carouselRef.current.scrollTo({ index: scrollToIndex });
+		}
+	}, [scrollToIndex]);	
 
 
 	// Handlers for modals of editing fields(name, size, race)
@@ -190,8 +190,13 @@ export const CarouselDog = ({ doggies, updateDoggiesCallBack, scrollToIndex }) =
 			.then((data) => {
 				if (data.result) {
 					setModalDeleteIsVisible(false);
-					updateDoggiesCallBack();
-					console.log("Dog list updated");
+					updateDoggiesCallBack(); // Callback to update the dog list
+					setTimeout(() => {
+						if (doggies.length === 1) {
+							handleScrollToIndex(0); // Scroll to the last remaining dog
+							updateDoggiesCallBack()
+						}
+					}, 500);
 				} else {
 					alert("WAF");
 				}
@@ -241,11 +246,10 @@ export const CarouselDog = ({ doggies, updateDoggiesCallBack, scrollToIndex }) =
 	}, [newPhoto]);
 	
 	useEffect(() => {
-		if (doggies.length === 1) {
-			console.log("last dog");
-			setActiveIndex(0); // Reset active index to 0
+		if (doggies.length > 0) {
+			handleScrollToIndex(doggies.length - 1);
 		}
-	}, [doggies]);
+	}, [doggies.length]);
 
 
 	const Card = memo(({ index, animationValue, dog }) => {
