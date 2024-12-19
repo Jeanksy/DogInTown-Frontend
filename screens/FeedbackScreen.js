@@ -64,7 +64,7 @@ export default function FeedbackScreen({ route, navigation }) {
                     <Text style={styles.title}>Laissez-nous votre avis :</Text>
                 </View>
                 <View style={styles.inputContainer}>
-                    <TextInput multiline={true} maxLength={280} placeholder='Laisser un avis...' onChangeText={(value) => setComment(value)} value={comment} autoCapitalize="sentences" style={styles.textInput}></TextInput>
+                    <TextInput multiline={true} returnKeyType="done" maxLength={280} placeholder='Laisser un avis...' onChangeText={(value) => setComment(value)} value={comment} autoCapitalize="sentences" style={styles.textInput}></TextInput>
                 </View>
                 <View style={styles.subTitleContainer}>
                     {dogs.length > 0 && <Text style={styles.subtitles}>Avec quel chien êtes vous venu ?</Text>}

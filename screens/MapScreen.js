@@ -50,6 +50,34 @@ export default function MapScreen({ navigation }) {
 	const [dogSizeL, setDogSizeL] = useState([false, "grand"]);
 	const [useFilter, setUseFilter] = useState([]);
 	const [isGeoloc, setIsGeoloc] = useState(true);
+	const [postCodeLat, setPostCodeLat] = useState(45.75);
+	const [postCodeLon, setPostCodeLon] = useState(4.85);
+	const [isInitialPositionLoaded, setIsInitialPositionLoaded] = useState(false);
+
+
+
+
+	useEffect(() => {
+		(async () => {
+			let data;
+			try {
+				console.log(user.postCode);
+				const response = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${user.postCode}&components=country:FR&key=${API_GOOGLE_KEY}`);
+				if (response.ok) {
+					data = await response.json();
+					const result = data.results[0];
+					setPostCodeLat(result.geometry.location.lat);
+					setPostCodeLon(result.geometry.location.lng);
+					setIsInitialPositionLoaded(true);
+				} else {
+					console.error('Erreur de récupération des données');
+				}
+			} catch (error) {
+				console.error('Erreur:', error);
+			}
+		})();
+	}, [user.postCode]);
+
 
 	//Use effect fetch des lieux présent dans la bdd
 	useEffect(() => {
@@ -147,14 +175,12 @@ export default function MapScreen({ navigation }) {
 			return; // Si rien n'est recherché, retourne tous les friendlies
 		}
 
-		if (
-			searchText.toLocaleLowerCase() === "bar" ||
-			searchText.toLocaleLowerCase() === "cafe" ||
-			searchText.toLocaleLowerCase() === "restaurant"
-		) {
-			return friendlies.filter((friendly) => {
-				return friendly.type === searchText.toLocaleLowerCase();
-			});
+		if (searchText.toLocaleLowerCase() === 'bar' || searchText.toLocaleLowerCase() === 'cafe' || searchText.toLocaleLowerCase() === 'restaurant') {
+			return friendlies.filter(
+				(friendly) => {
+					return friendly.type === searchText.toLocaleLowerCase();
+				}
+			);
 		}
 
 		// Filtre les friendlies dont le nom contient la recherche
@@ -208,15 +234,15 @@ export default function MapScreen({ navigation }) {
 			style={styles.container}
 			behavior={Platform.OS === "ios" ? "padding" : "height"}
 		>
-			<MapView
+			{isInitialPositionLoaded && <MapView
 				mapType="standard"
 				onPress={() => {
-					setPlaces([]), setRefreshShow(!refreshShow), setUseFilter([]);
+					setPlaces([]),  setRefreshShow(!refreshShow), setUseFilter([]);
 				}}
 				style={styles.map}
 				initialRegion={{
-					latitude: 45.75,
-					longitude: 4.85,
+					latitude: postCodeLat,
+					longitude: postCodeLon,
 					latitudeDelta: 1.0,
 					longitudeDelta: 1.0,
 				}}
@@ -293,7 +319,7 @@ export default function MapScreen({ navigation }) {
 						value={isGeoloc}
 					/>
 				</View>
-			</MapView>
+			</MapView>}
 			<View style={styles.blocRecherches}>
 				<FontAwesome
 					name="sliders"
