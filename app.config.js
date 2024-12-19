@@ -2,8 +2,23 @@ import 'dotenv/config';
 
 export default {
   expo: {
+    assetBundlePatterns: [
+      "**/*"
+    ],
     name: "dogInTown-frontend",
-    slug: "dogInTown-frontend",
+    slug: "dogintown",
+    owner: "mistersupraez",
+    extra: {
+      eas: {
+        projectId: "b1ef12f5-49d9-4c9f-90bd-f831155ce39a" 
+      }, 
+    },
+    updates: {
+      url: "https://u.expo.dev/b1ef12f5-49d9-4c9f-90bd-f831155ce39a", // URL de mise à jour
+    },
+    runtimeVersion: {
+      policy: "appVersion", // Politique de version pour les mises à jour
+    },
     version: "1.0.0",
     orientation: "portrait",
     icon: "./assets/icon.png",
