@@ -232,7 +232,7 @@ const takePicture = async () => {
 			.then((response) => response.json())
 			.then(async (data) => {
 				if (data.result) {
-					dispatch(login({ username: data.username, token: data.token }));
+					dispatch(login({ username: data.username, token: data.token, postCode: postCode }));
 					
 						setIsLoading(true);
 						await delay(1000);
