@@ -65,7 +65,7 @@ export default function CommentsScreen({ route, navigation }) {
                         avatar={data.user.avatar}
                         content={data.content}
                         race={data.user.dogs && data.user.dogs[0] && data.user.dogs[0].race ? data.user.dogs[0].race.toLowerCase() : ''}
-                        dogAvatar={data.user.dogs[0].photo}
+                        dogAvatar={data.user.dogs && data.user.dogs[0] && data.user.dogs[0].photo ? data.user.dogs[0].photo : ''}
                         date={data.date}
                     />
                 ))}

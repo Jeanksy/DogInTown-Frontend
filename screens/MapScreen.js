@@ -54,31 +54,6 @@ export default function MapScreen({ navigation }) {
 	const [postCodeLon, setPostCodeLon] = useState(4.85);
 	const [isInitialPositionLoaded, setIsInitialPositionLoaded] = useState(false);
 
-
-
-
-	useEffect(() => {
-		(async () => {
-			let data;
-			try {
-				console.log(user.postCode);
-				const response = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${user.postCode}&components=country:FR&key=${API_GOOGLE_KEY}`);
-				if (response.ok) {
-					data = await response.json();
-					const result = data.results[0];
-					setPostCodeLat(result.geometry.location.lat);
-					setPostCodeLon(result.geometry.location.lng);
-					setIsInitialPositionLoaded(true);
-				} else {
-					console.error('Erreur de récupération des données');
-				}
-			} catch (error) {
-				console.error('Erreur:', error);
-			}
-		})();
-	}, [user.postCode]);
-
-
 	//Use effect fetch des lieux présent dans la bdd
 	useEffect(() => {
 		if (useFilter.length > 0) {
@@ -104,6 +79,22 @@ export default function MapScreen({ navigation }) {
 			}
 
 			if (isGeoloc && status === "denied") {
+				let data;
+				try {
+					console.log(user.postCode);
+					const response = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${user.postCode}&components=country:FR&key=${API_GOOGLE_KEY}`);
+					if (response.ok) {
+						data = await response.json();
+						const result = data.results[0];
+						setPostCodeLat(result.geometry.location.lat);
+						setPostCodeLon(result.geometry.location.lng);
+						setIsInitialPositionLoaded(true);
+					} else {
+						console.error('Erreur de récupération des données');
+					}
+				} catch (error) {
+					console.error('Erreur:', error);
+				}
 				return;
 			} else if (isGeoloc === false && status === "granted") {
 				return;
@@ -116,6 +107,9 @@ export default function MapScreen({ navigation }) {
 							positionLon: location.coords.longitude,
 						})
 					);
+					setPostCodeLat(location.coords.latitude);
+					setPostCodeLon(location.coords.longitude);
+					setIsInitialPositionLoaded(true);
 				});
 			}
 		})();
@@ -237,7 +231,7 @@ export default function MapScreen({ navigation }) {
 			{isInitialPositionLoaded && <MapView
 				mapType="standard"
 				onPress={() => {
-					setPlaces([]),  setRefreshShow(!refreshShow), setUseFilter([]);
+					setPlaces([]), setRefreshShow(!refreshShow), setUseFilter([]);
 				}}
 				style={styles.map}
 				initialRegion={{
@@ -310,16 +304,15 @@ export default function MapScreen({ navigation }) {
 							</View>
 						</Marker>
 					))}
-				<View style={styles.toggleBtn}>
+			</MapView>}
+			<View style={styles.toggleBtn}>
 					<Switch
 						trackColor={{ false: "#767577", true: "#53CD2D" }}
-						thumbColor={isGeoloc ? "#f4f3f4" : "#f4f3f4"}
-						ios_backgroundColor="#3e3e3e"
+						thumbColor="#f4f3f4"
 						onValueChange={(value) => setIsGeoloc(value)}
 						value={isGeoloc}
 					/>
 				</View>
-			</MapView>}
 			<View style={styles.blocRecherches}>
 				<FontAwesome
 					name="sliders"
@@ -469,6 +462,10 @@ const styles = StyleSheet.create({
 	},
 	toggleBtn: {
 		position: "absolute",
+		justifyContent: 'center',
+		alignItems: 'center',
+		height: 80,
+		width: 80,
 		bottom: "7%",
 		right: "3%",
 	},
