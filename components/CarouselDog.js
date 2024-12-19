@@ -467,6 +467,7 @@ export const CarouselDog = ({
 							source={{ uri: doggies[index]?.photo }}
 							style={[
 								{
+									
 									width: 150,
 									height: 150,
 									borderRadius: 100,

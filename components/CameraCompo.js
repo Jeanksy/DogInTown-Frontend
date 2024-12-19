@@ -1,12 +1,30 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Modal, SafeAreaView, TouchableOpacity, View, StyleSheet } from 'react-native';
-import { CameraView } from 'expo-camera';
+import { CameraView, Camera } from 'expo-camera';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import { useIsFocused } from "@react-navigation/native";
 
 export const CameraCompo = ({modalCamIsVisible, setModalCamIsVisible, setImageTaken}) => {
   const [facing, setFacing] = useState("front");
   const [flashStatus, setFlashStatus] = useState(false);
   const cameraRef = useRef(null);
+  const isFocused = useIsFocused();  
+  // Permission hooks
+  const [hasPermission, setHasPermission] = useState(false);
+    
+  
+    
+
+  useEffect(() => {
+      (async () => {
+        const result = await Camera.requestCameraPermissionsAsync();
+        setHasPermission(result && result?.status === "granted");
+      })();
+    }, []);
+    // Conditions to prevent more than 1 camera component to run in the bg
+    if (!hasPermission || !isFocused) {
+      return <View />;
+  };
 
   // Fonction pour basculer entre la caméra avant et arrière
   const toggleCameraFacing = () => {
