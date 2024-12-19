@@ -3,11 +3,19 @@ import { useDispatch } from 'react-redux';
 import { login, logout } from '../reducers/user';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, TextInput , View, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
+import { useFonts } from 'expo-font'; // FONT
 
 // Regex email only for input email
 const EMAIL_REGEX = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
 export default function SignInScreen({ navigation }) {
+  // export de la font
+    useFonts({
+    "LeagueSpartan-Light": require("../assets/fonts/LeagueSpartan-Light.ttf"),
+    "LeagueSpartan-Regular": require("../assets/fonts/LeagueSpartan-Regular.ttf"),
+    "LeagueSpartan-Medium": require("../assets/fonts/LeagueSpartan-Medium.ttf"),
+    "LeagueSpartan-Bold": require("../assets/fonts/LeagueSpartan-Bold.ttf"),
+    });
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -108,8 +116,7 @@ export default function SignInScreen({ navigation }) {
     },
     title: {
       fontSize: 40,
-      fontWeight: '600',
-      fontFamily: 'Futura',
+      fontFamily: 'LeagueSpartan-Bold',
       marginBottom: 20
     },
     input: {
@@ -156,9 +163,8 @@ export default function SignInScreen({ navigation }) {
       borderWidth: 0,
     },
     textButton: {
-      fontFamily: 'Futura',
+      fontFamily: 'LeagueSpartan-Regular',
       height: 30,
-      fontWeight: '600',
       fontSize: 16,
     },
     error: {

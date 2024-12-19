@@ -105,7 +105,6 @@ const styles = StyleSheet.create({
   titre: {
     flex: 1,
     fontSize: 40,
-    fontWeight: '600',
     color: '#A23D42',
     marginTop: '20%',
     fontFamily: 'LeagueSpartan-Medium',
@@ -163,11 +162,11 @@ const styles = StyleSheet.create({
   },
   texteTitre: {
     fontFamily: 'LeagueSpartan-Light',
-    fontSize: 20,
+    fontSize: 19,
   },
   texteTitreB: {
     fontFamily: 'LeagueSpartan-Light',
-    fontSize: 20,
+    fontSize: 19,
     color: 'white',
   },
   ////// Modal ////
@@ -217,13 +216,12 @@ const styles = StyleSheet.create({
   },
   texteB: {
     fontSize: 20,
-    fontWeight: 400,
+    fontFamily: 'LeagueSpartan-Regular',
     color: '#525252',
   },
   texteBlanc: {
     fontSize: 20,
-    fontWeight: 400,
     color: 'white',
-    fontFamily: 'LeagueSpartan-Light',
+    fontFamily: 'LeagueSpartan-Regular',
   },
 });
