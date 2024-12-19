@@ -67,19 +67,19 @@ export default function OptionsScreen({navigation}) {
 
         <Text style={styles.titre}>Options</Text>
         <TouchableOpacity style={[styles.blocSelection1, styles.shadowBtn]} onPress={() => handleDog()}>
-            <Image style={styles.image} source={require('../assets/Images/moyen.png')} />
+            <Image style={styles.imageDog} source={require('../assets/Images/moyen.png')} />
             <Text style={styles.texteTitre}>Votre/vos chien(s)</Text>
         </TouchableOpacity>
         <TouchableOpacity style={[styles.blocSelection2, styles.shadowBtn]} onPress={() => handleUser()}>
-            <FontAwesome name='gears' color='white' size={50}/>
+            <FontAwesome name='gears' color='white' size={50} marginRight='6%'/>
             <Text style={styles.texteTitre}>Parametres du compte</Text>
         </TouchableOpacity>
         <TouchableOpacity style={[styles.blocSelection3, styles.shadowBtn]} onPress={() => handleContact()}>
-            <FontAwesome name='envelope' color='#97C7DE' size={50}/>
+            <FontAwesome name='envelope' color='#97C7DE' size={50} marginRight='19%'/>
             <Text style={styles.texteTitre}>Nous contacter</Text>
         </TouchableOpacity>
         <TouchableOpacity style={[styles.blocSelection4, styles.shadowBtn]} onPress={() => handleLogout()}>
-            <Image style={styles.image} source={require('../assets/Images/Frame8.png')}/>
+            <Image style={styles.imageDeco} source={require('../assets/Images/Frame8.png')}/>
             <Text style={styles.texteTitreB}>Deconnection</Text>
         </TouchableOpacity>
         <StatusBar style="auto" />
@@ -154,10 +154,16 @@ const styles = StyleSheet.create({
     marginBottom: '8%',
     backgroundColor: '#A23D43',
   },
-  image: {
+  imageDog: {
     width: '25%',
     height: '65%',
     marginRight: '10%',
+    transform: [{ scaleX: -1 }],
+  },
+  imageDeco: {
+    width: '25%',
+    height: '65%',
+    marginRight: '20%',
     transform: [{ scaleX: -1 }],
   },
   texteTitre: {
