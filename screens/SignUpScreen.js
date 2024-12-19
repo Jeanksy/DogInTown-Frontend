@@ -402,8 +402,7 @@ const styles = StyleSheet.create({
 	},
 	title: {
 		fontSize: 40,
-		fontWeight: "600",
-		fontFamily: "Futura",
+		fontFamily: 'LeagueSpartan-Bold',
 		marginBottom: 20,
 	},
 	input: {
@@ -451,7 +450,7 @@ const styles = StyleSheet.create({
 		marginTop: '5%',
 	},
 	textButton: {
-		fontFamily: "Futura",
+		fontFamily: 'LeagueSpartan-Regular',
 		height: 30,
 		fontWeight: "600",
 		fontSize: 16,
