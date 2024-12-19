@@ -28,6 +28,7 @@
     "expo-location": "~18.0.3",
     "expo-status-bar": "~2.0.0",
     "express-fileupload": "^1.5.1",
+    "lottie-react-native": "^7.1.0",
     "react": "18",
     "react-native": "0.76.5",
     "react-native-dotenv": "^3.4.11",
