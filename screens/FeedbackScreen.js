@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Pressable, Image, TouchableOpacity, Platform, TextInput, KeyboardAvoidingView, SafeAreaView } from 'react-native';
+import { StyleSheet, Text, View, Pressable, Image, TouchableOpacity, Platform, Keyboard, TextInput, KeyboardAvoidingView, SafeAreaView } from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -55,38 +55,40 @@ export default function FeedbackScreen({ route, navigation }) {
                 style={styles.inner}
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
             >
-                <View style={styles.leaverRow}>
-                    <Pressable style={styles.leaveContainer}>
-                        <FontAwesome name='arrow-left' size={30} color='#A23D42' onPress={() => navigation.goBack()} />
-                    </Pressable>
-                </View>
-                <View style={styles.titleContainter}>
-                    <Text style={styles.title}>Laissez-nous votre avis :</Text>
-                </View>
-                <View style={styles.inputContainer}>
-                    <TextInput multiline={true} returnKeyType="done" maxLength={280} placeholder='Laisser un avis...' onChangeText={(value) => setComment(value)} value={comment} autoCapitalize="sentences" style={styles.textInput}></TextInput>
-                </View>
-                <View style={styles.subTitleContainer}>
-                    {dogs.length > 0 && <Text style={styles.subtitles}>Avec quel chien êtes vous venu ?</Text>}
-                </View>
-                <View style={styles.dogsContainer}>
-                    {dogs && dogs.length > 0 && (
-                        dogs.map((dog, index) => (
-                            <Pressable key={index} onPress={() => setSelectedDogIndex(index)}>
-                                <View style={styles.dogCard}>
-                                    <Text style={[styles.dogName, { color: selectedDogIndex === index ? '#5B1A10' : '#A23D42' }]}>{dog.name}</Text>
-                                    {dog.photo && <Image style={[styles.dogPhoto, { borderColor: selectedDogIndex === index ? '#5B1A10' : '#F7CC99' }]} source={{ uri: dog.photo }} />}
-                                </View>
-                            </Pressable>
-                        ))
-                    )}
-                </View>
-                <View style={styles.lowerContent}>
-                    {error !== '' && <Text style={styles.error}>{error}</Text>}
-                    <TouchableOpacity style={styles.validateButton} onPress={() => handleCommentAdd()}>
-                        <Text style={styles.buttonText}>Valider</Text>
-                    </TouchableOpacity>
-                </View>
+                <Pressable onPress={Keyboard.dismiss}>
+                    <View style={styles.leaverRow}>
+                        <Pressable style={styles.leaveContainer}>
+                            <FontAwesome name='arrow-left' size={30} color='#A23D42' onPress={() => navigation.goBack()} />
+                        </Pressable>
+                    </View>
+                    <View style={styles.titleContainter}>
+                        <Text style={styles.title}>Laissez-nous votre avis :</Text>
+                    </View>
+                    <View style={styles.inputContainer}>
+                            <TextInput multiline={true}  maxLength={280} placeholder='Laisser un avis...' onChangeText={(value) => setComment(value)} value={comment} autoCapitalize="sentences" style={styles.textInput}></TextInput>
+                    </View>
+                    <View style={styles.subTitleContainer}>
+                        {dogs.length > 0 && <Text style={styles.subtitles}>Avec quel chien êtes vous venu ?</Text>}
+                    </View>
+                    <View style={styles.dogsContainer}>
+                        {dogs && dogs.length > 0 && (
+                            dogs.map((dog, index) => (
+                                <Pressable key={index} onPress={() => setSelectedDogIndex(index)}>
+                                    <View style={styles.dogCard}>
+                                        <Text style={[styles.dogName, { color: selectedDogIndex === index ? '#5B1A10' : '#A23D42' }]}>{dog.name}</Text>
+                                        {dog.photo && <Image style={[styles.dogPhoto, { borderColor: selectedDogIndex === index ? '#5B1A10' : '#F7CC99' }]} source={{ uri: dog.photo }} />}
+                                    </View>
+                                </Pressable>
+                            ))
+                        )}
+                    </View>
+                    <View style={styles.lowerContent}>
+                        {error !== '' && <Text style={styles.error}>{error}</Text>}
+                        <TouchableOpacity style={styles.validateButton} onPress={() => handleCommentAdd()}>
+                            <Text style={styles.buttonText}>Valider</Text>
+                        </TouchableOpacity>
+                    </View>
+                </Pressable>   
             </KeyboardAvoidingView>
         </SafeAreaView>
     )
