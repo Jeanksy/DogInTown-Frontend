@@ -32,14 +32,18 @@ const DOG_SIZE_L = "Grand";
 const PAGE_WIDTH = window.width;
 const PAGE_HEIGHT = window.width * 1.1;
 
-export const CarouselDog = ({ doggies, updateDoggiesCallBack, scrollToIndex }) => {
+export const CarouselDog = ({
+	doggies,
+	updateDoggiesCallBack,
+	scrollToIndex,
+}) => {
 	const user = useSelector((state) => state.user.value);
 	const [selectedDog, setSelectedDog] = useState(null);
 	const [newName, setNewName] = useState("");
 	const [dogSize, setDogSize] = useState("");
 	const [newPhoto, setNewPhoto] = useState("");
 	const [modalCamIsVisible, setModalCamIsVisible] = useState(false);
-	const [imageTaken, setImageTaken] = useState("")
+	const [imageTaken, setImageTaken] = useState("");
 	const carouselRef = useRef(null);
 
 	// DropDown Picker
@@ -70,18 +74,21 @@ export const CarouselDog = ({ doggies, updateDoggiesCallBack, scrollToIndex }) =
 		width: PAGE_WIDTH,
 		height: PAGE_HEIGHT,
 	};
-	   // Function to scroll to a specific dog
+	// Function to scroll to a specific dog
 	const handleScrollToIndex = (index) => {
-        carouselRef.current?.scrollTo({ index });
-    };
+		carouselRef.current?.scrollTo({ index });
+	};
 
-    // Expose the scroll function to the parent
+	// Expose the scroll function to the parent
 	useEffect(() => {
-		if (scrollToIndex !== null && scrollToIndex !== undefined && carouselRef.current) {
+		if (
+			scrollToIndex !== null &&
+			scrollToIndex !== undefined &&
+			carouselRef.current
+		) {
 			carouselRef.current.scrollTo({ index: scrollToIndex });
 		}
-	}, [scrollToIndex]);	
-
+	}, [scrollToIndex]);
 
 	// Handlers for modals of editing fields(name, size, race)
 	const openModalName = (dog) => {
@@ -171,7 +178,6 @@ export const CarouselDog = ({ doggies, updateDoggiesCallBack, scrollToIndex }) =
 					updateDoggiesCallBack();
 				} else {
 					alert("WAF");
-
 				}
 			});
 	};
@@ -194,7 +200,7 @@ export const CarouselDog = ({ doggies, updateDoggiesCallBack, scrollToIndex }) =
 					setTimeout(() => {
 						if (doggies.length === 1) {
 							handleScrollToIndex(0); // Scroll to the last remaining dog
-							updateDoggiesCallBack()
+							updateDoggiesCallBack();
 						}
 					}, 500);
 				} else {
@@ -209,7 +215,6 @@ export const CarouselDog = ({ doggies, updateDoggiesCallBack, scrollToIndex }) =
 	};
 
 	const handleUpdatePhoto = () => {
-
 		fetch(`https://dog-in-town-backend.vercel.app/users/dog/${user.token}`, {
 			// fetch(`http://192.168.1.60:3000/users/dog/wqUJx2Hd86ZP0nffCdC3HlouzkCnAdEj`, {
 			method: "PUT",
@@ -227,30 +232,28 @@ export const CarouselDog = ({ doggies, updateDoggiesCallBack, scrollToIndex }) =
 					alert("WAF");
 				}
 			});
-
 	};
-
 
 	useEffect(() => {
 		if (imageTaken) {
-			console.log( 'useEffect', imageTaken);
-			setNewPhoto(imageTaken)
+			console.log("useEffect", imageTaken);
+			setNewPhoto(imageTaken);
 		}
 	}, [imageTaken]);
-	
-													// second useEffect pour decaler assurer la mise a jour de newPhoto
-	useEffect(() => {								// avant de call handleUpdate car sans la photo envoyée est la précédente.
+
+	// second useEffect pour decaler assurer la mise a jour de newPhoto
+	useEffect(() => {
+		// avant de call handleUpdate car sans la photo envoyée est la précédente.
 		if (newPhoto) {
-		  handleUpdatePhoto(); 
+			handleUpdatePhoto();
 		}
 	}, [newPhoto]);
-	
+
 	useEffect(() => {
 		if (doggies.length > 0) {
 			handleScrollToIndex(doggies.length - 1);
 		}
 	}, [doggies.length]);
-
 
 	const Card = memo(({ index, animationValue, dog }) => {
 		const WIDTH = PAGE_WIDTH;
@@ -431,20 +434,22 @@ export const CarouselDog = ({ doggies, updateDoggiesCallBack, scrollToIndex }) =
 					</View>
 				</Animated.View>
 				{/* Dog Picture Options */}
-				<Pressable style={[
-							{
-								width: 150,
-								height: 150,
-								borderRadius: 100,
-								justifyContent: "center",
-								alignItems: "center",
-								position: "absolute",
-								zIndex: 9,
-							},
-							blockDetails,
-						]}onPress={() => handleChangePhoto(dog)}>
-					<Animated.Image
-						source={{ uri: doggies[index]?.photo }}
+				<Animated.View
+					style={[
+						{
+							backgroundColor: "red",
+							width: 150,
+							height: 150,
+							borderRadius: 100,
+							justifyContent: "center",
+							alignItems: "center",
+							position: "absolute",
+							zIndex: 9,
+						},
+						blockDetails,
+					]}
+				>
+					<Pressable
 						style={[
 							{
 								width: 150,
@@ -457,9 +462,26 @@ export const CarouselDog = ({ doggies, updateDoggiesCallBack, scrollToIndex }) =
 							},
 							blockDetails,
 						]}
-						resizeMode={"center"}
-					/>
-				</Pressable>
+						onPress={() => handleChangePhoto(dog)}
+					>
+						<Animated.Image
+							source={{ uri: doggies[index]?.photo }}
+							style={[
+								{
+									width: 150,
+									height: 150,
+									borderRadius: 100,
+									justifyContent: "center",
+									alignItems: "center",
+									position: "absolute",
+									zIndex: 9,
+								},
+							
+							]}
+							resizeMode={"center"}
+						/>
+					</Pressable>
+				</Animated.View>
 			</Animated.View>
 		);
 	});
@@ -493,7 +515,11 @@ export const CarouselDog = ({ doggies, updateDoggiesCallBack, scrollToIndex }) =
 				}}
 			/>
 			<View style={{ width: "100%", height: "100%", position: "absolute" }}>
-				<CameraCompo setModalCamIsVisible={setModalCamIsVisible} modalCamIsVisible={modalCamIsVisible} setImageTaken={setImageTaken}/>
+				<CameraCompo
+					setModalCamIsVisible={setModalCamIsVisible}
+					modalCamIsVisible={modalCamIsVisible}
+					setImageTaken={setImageTaken}
+				/>
 				<Modal
 					style={styles.modal}
 					animationType="fade"
