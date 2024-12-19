@@ -437,7 +437,6 @@ export const CarouselDog = ({
 				<Animated.View
 					style={[
 						{
-							backgroundColor: "red",
 							width: 150,
 							height: 150,
 							borderRadius: 100,
