@@ -12,6 +12,7 @@ import {
 	TextInput,
 	Modal,
 	Switch,
+	BackHandler
 } from "react-native";
 import { useState, useEffect } from "react";
 import MapView, { Marker } from "react-native-maps";
@@ -53,6 +54,33 @@ export default function MapScreen({ navigation }) {
 	const [postCodeLat, setPostCodeLat] = useState(45.75);
 	const [postCodeLon, setPostCodeLon] = useState(4.85);
 	const [isInitialPositionLoaded, setIsInitialPositionLoaded] = useState(false);
+
+
+	// useEffect(() => {
+	// 	// Désactiver le retour en arrière
+	// 	navigation.setOptions({
+	// 	  gestureEnabled: false, // Empêche le geste de retour
+	// 	  headerLeft: () => null, // Empêche l'icône du bouton retour dans l'en-tête
+	// 	});
+	//   }, [navigation]);
+
+	useEffect(() => {
+		// Fonction qui sera exécutée lorsque l'utilisateur appuie sur le bouton retour
+		const backAction = () => {
+		  // Fermer l'application
+		  BackHandler.exitApp(); // Ferme l'application sur Android
+		  return true; // Indique que l'action est gérée
+		};
+	
+		// Ajouter l'écouteur pour le bouton retour
+		BackHandler.addEventListener('hardwareBackPress', backAction);
+	
+		// Nettoyer l'écouteur lorsque le composant est démonté
+		return () => {
+		  BackHandler.removeEventListener('hardwareBackPress', backAction);
+		};
+	  }, []);
+
 
 	//Use effect fetch des lieux présent dans la bdd
 	useEffect(() => {
@@ -466,7 +494,7 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		height: 80,
 		width: 80,
-		bottom: "7%",
+		bottom: "0%",
 		right: "3%",
 	},
 });
