@@ -1,4 +1,4 @@
-import React, { useState, useEffect, memo } from "react";
+import React, { useState, useEffect, memo, useRef } from "react";
 import {
 	View,
 	Platform,
@@ -32,7 +32,7 @@ const DOG_SIZE_L = "Grand";
 const PAGE_WIDTH = window.width;
 const PAGE_HEIGHT = window.width * 1.1;
 
-export const CarouselDog = ({ doggies, updateDoggiesCallBack }) => {
+export const CarouselDog = ({ doggies, updateDoggiesCallBack, scrollToIndex }) => {
 	const user = useSelector((state) => state.user.value);
 	const [selectedDog, setSelectedDog] = useState(null);
 	const [newName, setNewName] = useState("");
@@ -40,6 +40,7 @@ export const CarouselDog = ({ doggies, updateDoggiesCallBack }) => {
 	const [newPhoto, setNewPhoto] = useState("");
 	const [modalCamIsVisible, setModalCamIsVisible] = useState(false);
 	const [imageTaken, setImageTaken] = useState("")
+	const carouselRef = useRef(null);
 
 	// DropDown Picker
 	const [open, setOpen] = useState(false);
@@ -69,6 +70,18 @@ export const CarouselDog = ({ doggies, updateDoggiesCallBack }) => {
 		width: PAGE_WIDTH,
 		height: PAGE_HEIGHT,
 	};
+	   // Function to scroll to a specific dog
+	const handleScrollToIndex = (index) => {
+        carouselRef.current?.scrollTo({ index });
+    };
+
+    // Expose the scroll function to the parent
+    useEffect(() => {
+        if (scrollToIndex !== null && scrollToIndex !== undefined) {
+            handleScrollToIndex(scrollToIndex);
+        }
+    }, [scrollToIndex]);	
+
 
 	// Handlers for modals of editing fields(name, size, race)
 	const openModalName = (dog) => {
@@ -318,8 +331,7 @@ export const CarouselDog = ({ doggies, updateDoggiesCallBack }) => {
 				<Animated.View
 					style={[
 						{
-							backgroundColor:
-								colors[Math.floor(Math.random() * colors.length)],
+							backgroundColor: colors[index],
 							alignSelf: "center",
 							justifyContent: "center",
 							alignItems: "center",
@@ -454,6 +466,7 @@ export const CarouselDog = ({ doggies, updateDoggiesCallBack }) => {
 				{...baseOptions}
 				removeClippedSubviews={false}
 				loop={doggies.length !== 1} // desactive la rotation si dog = 1
+				ref={carouselRef}
 				onSnapToItem={(index) => setActiveIndex(index)} // Track l'index actuel et set une valeur pour snapper la vue sur la card
 				withAnimation={{
 					type: "spring",

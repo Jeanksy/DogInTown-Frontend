@@ -40,6 +40,8 @@ export default function DogsInfoScreen() {
 	const [update, setUpdate] = useState(0);
 	// Etat de la modal
 	const [addModalIsVisible, setAddModalIsVisible] = useState(false);
+	const [scrollToIndex, setScrollToIndex] = useState(null);
+
 
 	// LOADER CHECK
 	const delay = (ms) => new Promise((res) => setTimeout(res, ms));
@@ -57,6 +59,7 @@ export default function DogsInfoScreen() {
 	};
 
 	const handleDogPress = (key) => {
+		setScrollToIndex(key);
 		setMainDog(doggies[key]);
 		updateDoggies();
 	};
@@ -160,6 +163,7 @@ export default function DogsInfoScreen() {
 								<CarouselDog
 									doggies={doggies}
 									updateDoggiesCallBack={updateDoggies}
+									scrollToIndex={scrollToIndex}
 								/>
 							) : (
 								<View></View>
