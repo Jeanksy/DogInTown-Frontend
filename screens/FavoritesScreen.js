@@ -3,9 +3,17 @@ import { useSelector } from 'react-redux';
 import { useState, useEffect } from 'react';
 import { useIsFocused } from '@react-navigation/native';
 import FontAwesome from "react-native-vector-icons/FontAwesome";
+import { useFonts } from 'expo-font'; // FONT
 
 
 export default function FavoritesScreen() {
+  // export de la font
+  useFonts({
+		"LeagueSpartan-Light": require("../assets/fonts/LeagueSpartan-Light.ttf"),
+		"LeagueSpartan-Regular": require("../assets/fonts/LeagueSpartan-Regular.ttf"),
+		"LeagueSpartan-Medium": require("../assets/fonts/LeagueSpartan-Medium.ttf"),
+		"LeagueSpartan-Bold": require("../assets/fonts/LeagueSpartan-Bold.ttf"),
+		});
   const user = useSelector((state) => state.user.value); // Reducer pour accéder a la position du user
   // On déclare un état pour stocker les résultats
   const [result, setResult] = useState([]);
@@ -124,9 +132,11 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   titre: {
-    color: "#A23D42",
     fontSize: 40,
-    marginTop: "20%",
+    fontWeight: '600',
+    color: '#A23D42',
+    fontFamily: 'LeagueSpartan-Medium',
+    marginTop: "30%",
     marginLeft: '25%',
     height: '10%',
     width: '100%',
@@ -134,9 +144,9 @@ const styles = StyleSheet.create({
   sousTitre: {
     color: "#A23D42",
     marginLeft: '25%',
-    fontSize: 18,
+    fontSize: 20,
     width: '100%',
-    marginBottom: '5%',
+    fontFamily: 'LeagueSpartan-Light',
   },
   favConteneur: {
     height: '90%',
@@ -166,6 +176,7 @@ const styles = StyleSheet.create({
     color: '#525252',
     fontSize: 21,
     fontWeight: 500,
+    fontFamily: 'LeagueSpartan-Medium',
   },
   blocClic: {
     flex: 0,
@@ -189,18 +200,20 @@ const styles = StyleSheet.create({
   },
   texteGo: {
     color: 'white',
-    fontSize: 15,
+    fontSize: 17,
     fontWeight: 500,
+    fontFamily: 'LeagueSpartan-Medium',
   },
   boutonDelete: {
     flexDirection: 'row',
   },
   supp: {
     height: '60%',
-    fontSize: 15,
-    marginTop: '2%',
+    fontSize: 17,
+    marginTop: '5%',
     marginLeft: '2%',
     color: '#525252',
+    fontFamily: 'LeagueSpartan-Medium',
   },
   scrollContent: {
     marginTop: '5%',
