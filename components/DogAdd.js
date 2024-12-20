@@ -453,6 +453,7 @@ const styles = StyleSheet.create({
 	},
 	title: {
 		fontSize: 25,
+		fontFamily: 'LeagueSpartan-Medium',
 		color: "#5B1A10",
 		textAlign: "center",
 		lineHeight: 28,
@@ -478,7 +479,8 @@ const styles = StyleSheet.create({
 		width: "100%",
 		height: "100%",
 		borderRadius: 12,
-		fontSize: 18,
+		fontSize: 20,
+		fontFamily: 'LeagueSpartan-Regular',
 		paddingHorizontal: 15,
 	},
 	pickerContainer: {
@@ -491,7 +493,8 @@ const styles = StyleSheet.create({
 		width: "100%",
 		height: 60,
 		borderRadius: 12,
-		fontSize: 18,
+		fontSize: 20,
+		fontFamily: 'LeagueSpartan-Regular',
 		backgroundColor: "#F5F5F5",
 	},
 	dogSize: {
@@ -501,7 +504,8 @@ const styles = StyleSheet.create({
 	},
 	dogSizeText: {
 		marginLeft: 8,
-		fontSize: 20,
+		fontSize: 22,
+		fontFamily: 'LeagueSpartan-Regular',
 		color: "#5B1A10",
 	},
   dogPicture: {
@@ -533,19 +537,19 @@ const styles = StyleSheet.create({
 	},
 	clickableBtn: {
 		color: "#fff",
-		fontWeight: 700,
-		fontSize: 20,
+		fontFamily: 'LeagueSpartan-Bold',
+		fontSize: 22,
 	},
 	buttonText: {
 		textAlign: "center",
-		fontSize: 20,
+		fontSize: 22,
 		color: "white",
-		fontWeight: 700,
+		fontFamily: 'LeagueSpartan-Bold',
 	},
 	leaveText: {
 		color: "#5B1A10",
 		fontSize: 18,
-		// fontWeight: 600,
+		fontFamily: 'LeagueSpartan-Regular',
 	},
 	// bouton ajouter photo
 	pictureConteneur: {

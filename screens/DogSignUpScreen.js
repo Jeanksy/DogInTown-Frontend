@@ -316,7 +316,8 @@ const delay = (ms) => new Promise(res => setTimeout(res, ms));	 /// to set timer
                       setSelectedRace(value);
                     }}
                     textStyle={{
-                      fontSize: 18
+                      fontSize: 18,
+                      fontFamily: 'LeagueSpartan-Regular',
                     }}
                     setItems={setRaceList}
                     placeholder={'Race'}
@@ -396,7 +397,8 @@ const styles = StyleSheet.create({
 
   },
   title: {
-    fontSize: 25,
+    fontSize: 27,
+    fontFamily: 'LeagueSpartan-Regular',
     color: '#5B1A10',
     textAlign: 'center',
     lineHeight: 28,
@@ -422,7 +424,8 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     borderRadius: 12,
-    fontSize: 18,
+    fontSize: 20,
+    fontFamily: 'LeagueSpartan-Light',
     paddingHorizontal: 15,
   },
   pickerContainer: {
@@ -435,7 +438,8 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 60,
     borderRadius: 12,
-    fontSize: 18,
+    fontSize: 20,
+    fontFamily: 'LeagueSpartan-Light',
     backgroundColor: '#F5F5F5',
   },
   dogSize: {
@@ -445,7 +449,8 @@ const styles = StyleSheet.create({
   },
   dogSizeText: {
     marginLeft: 8,
-    fontSize: 20,
+    fontSize: 22,
+    fontFamily: 'LeagueSpartan-Regular',
     color: '#5B1A10',
   },
   dogPicture: {
@@ -471,7 +476,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   dogPictureText: {
-    fontSize: 20,
+    fontSize: 22,
+    fontFamily: 'LeagueSpartan-Regular',
     color: '#5B1A10',
     marginBottom: '2%',
   },
@@ -482,9 +488,9 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     textAlign: 'center',
-    fontSize: 20,
+    fontSize: 22,
     color: 'white',
-    fontWeight: 700,
+    fontFamily: 'LeagueSpartan-Bold',
   },
   leaveText: {
     color: '#5B1A10',

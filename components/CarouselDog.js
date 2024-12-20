@@ -783,9 +783,8 @@ const styles = StyleSheet.create({
 		fontFamily: 'LeagueSpartan-Medium',
 	},
 	dogDetailsInputs: {
-		color: "black",
 		fontSize: 19,
-		fontFamily: 'LeagueSpartan-Medium',
+		fontFamily: 'LeagueSpartan-Regular',
 		alignSelf: "center",
 	},
 	dogDetailsLocked: {
