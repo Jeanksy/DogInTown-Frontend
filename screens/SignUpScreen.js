@@ -16,6 +16,7 @@ import {
 	Modal,
 	SafeAreaView,
 	ActivityIndicator,
+	Platform,
 } from "react-native";
 // picker pour telechargement photos depuis téléphone
 import * as ImagePicker from 'expo-image-picker';
@@ -54,40 +55,40 @@ export default function SignUpScreen({ navigation }) {
 	const [image, setImage] = useState(null);
 
 
-// LOADER CHECK
-	const delay = (ms) => new Promise(res => setTimeout(res, ms));	
+	// LOADER CHECK
+	const delay = (ms) => new Promise(res => setTimeout(res, ms));
 
-// REDUCER
+	// REDUCER
 	const dispatch = useDispatch();
 
 
-//////CAMERA/////// ********************************************************* CAMERA ***************************************
-const photo = 'photo.png';
-// Reference to the camera
-const cameraRef = useRef(null);
-const isFocused = useIsFocused();
+	//////CAMERA/////// ********************************************************* CAMERA ***************************************
+	const photo = 'photo.png';
+	// Reference to the camera
+	const cameraRef = useRef(null);
+	const isFocused = useIsFocused();
 
-  // Permission hooks Camera
-const [hasPermission, setHasPermission] = useState(false);
-const [facing, setFacing] = useState("front");
-const [flashStatus, setFlashStatus] = useState(false);
-// Modal ouverture photo
-const [modalIsVisible, setModalIsVisible] = useState(false);
+	// Permission hooks Camera
+	const [hasPermission, setHasPermission] = useState(false);
+	const [facing, setFacing] = useState("front");
+	const [flashStatus, setFlashStatus] = useState(false);
+	// Modal ouverture photo
+	const [modalIsVisible, setModalIsVisible] = useState(false);
 
-// Activation de l'affichage photo
-const handlePhoto = () => {
-    setModalIsVisible(true)
+	// Activation de l'affichage photo
+	const handlePhoto = () => {
+		setModalIsVisible(true)
 
-};
+	};
 
-  // Functions to toggle camera facing and flash status
-const toggleCameraFacing = () => {
-	setFacing((current) => (current === "front" ? "back" : "front"));
-};
+	// Functions to toggle camera facing and flash status
+	const toggleCameraFacing = () => {
+		setFacing((current) => (current === "front" ? "back" : "front"));
+	};
 
-const toggleFlashStatus = () => {
-	setFlashStatus((current) => (current === false ? true : false));
-};
+	const toggleFlashStatus = () => {
+		setFlashStatus((current) => (current === false ? true : false));
+	};
 
 // Function to take a picture and save it to the reducer store
 const takePicture = async () => {
@@ -139,51 +140,51 @@ const takePicture = async () => {
 		  aspect: [4, 3],
 		  quality: 0.3,
 		});
-	  
-		if (!result.canceled) {
-		  const imageUri = result.assets[0].uri;
-		  //setImage(imageUri);  // On enregistre l'URI dans l'état
-	  
-		  // Conversion de l'image en base64, uniquement si l'URI est valide
-		  try {
-			if (imageUri) {
-			  const fileInfo = await FileSystem.readAsStringAsync(imageUri, {
-				encoding: FileSystem.EncodingType.Base64,
-			  });
-	  
-			  const formData = new FormData();
-			  formData.append("photoFromFront", {
-				uri: imageUri,  // Utilisation de l'URI de l'image
-				name: "photo.jpg",  // Le nom du fichier
-				type: "image/jpeg",  // Le type MIME du fichier
-				base64: fileInfo,  // Ajout du fichier encodé en base64
-			  });
-	  
-			  fetch('https://dog-in-town-backend.vercel.app/users/upload', {
-				method: "POST",
-				body: formData,
-			  })
-				.then((response) => response.json())
-				.then((data) => {
 
-				  if (data.result) {
-				
-					setImage(data.url);  // Mise à jour de l'URL de l'image après l'upload
-				  } else {
-					console.error('Upload failed:', data.error);
-				  }
-				})
-				.catch((error) => {
-				  console.error('An error occurred:', error);
-				});
-			} else {
-			  console.error("No valid image URI provided");
+		if (!result.canceled) {
+			const imageUri = result.assets[0].uri;
+			//setImage(imageUri);  // On enregistre l'URI dans l'état
+
+			// Conversion de l'image en base64, uniquement si l'URI est valide
+			try {
+				if (imageUri) {
+					const fileInfo = await FileSystem.readAsStringAsync(imageUri, {
+						encoding: FileSystem.EncodingType.Base64,
+					});
+
+					const formData = new FormData();
+					formData.append("photoFromFront", {
+						uri: imageUri,  // Utilisation de l'URI de l'image
+						name: "photo.jpg",  // Le nom du fichier
+						type: "image/jpeg",  // Le type MIME du fichier
+						base64: fileInfo,  // Ajout du fichier encodé en base64
+					});
+
+					fetch('https://dog-in-town-backend.vercel.app/users/upload', {
+						method: "POST",
+						body: formData,
+					})
+						.then((response) => response.json())
+						.then((data) => {
+
+							if (data.result) {
+
+								setImage(data.url);  // Mise à jour de l'URL de l'image après l'upload
+							} else {
+								console.error('Upload failed:', data.error);
+							}
+						})
+						.catch((error) => {
+							console.error('An error occurred:', error);
+						});
+				} else {
+					console.error("No valid image URI provided");
+				}
+			} catch (error) {
+				console.error('Unexpected error:', error);
 			}
-		  } catch (error) {
-			console.error('Unexpected error:', error);
-		  }
 		}
-	  };
+	};
 
 	// check if passwords are empty, doesn't match or match
 	const passwordCheck = () => {
@@ -214,7 +215,7 @@ const takePicture = async () => {
 		return emailError === false && passwordStatus === PASSWORD_MATCH && postCodeError === false;
 	};
 
-	
+
 	//on press check if email is valid email structure, if both passwords match and post code is valid
 	const handleSignUp = () => {
 		if (isFormValid()) {
@@ -229,73 +230,42 @@ const takePicture = async () => {
 					postCode: postCode,
 				}),
 			})
-			.then((response) => response.json())
-			.then(async (data) => {
-				if (data.result) {
-					dispatch(login({ username: data.username, token: data.token, postCode: postCode }));
-					
+				.then((response) => response.json())
+				.then(async (data) => {
+					if (data.result) {
+						dispatch(login({ username: data.username, token: data.token, postCode: postCode }));
+
 						setIsLoading(true);
 						await delay(1000);
 						setIsLoading(false);
 
 						navigation.navigate("DogSignUp");
 					}
-				
-			});
+
+				});
 		}
 	};
-	
-// Hook pour prise de photo
+
+	// Hook pour prise de photo
 	useEffect(() => {
 		(async () => {
 			const result = await Camera.requestCameraPermissionsAsync();
 			setHasPermission(result && result?.status === "granted");
 		})();
-	    }, []);
-// Conditions to prevent more than 1 camera component to run in the bg
-		if (!hasPermission || !isFocused) {
+	}, []);
+	// Conditions to prevent more than 1 camera component to run in the bg
+	if (!hasPermission || !isFocused) {
 		return <View />;
 	};
 
 	return (
 		<KeyboardAvoidingView style={styles.container}>
 			<View style={styles.connexionCont}>
-			<Modal
-			animationType="fade"
-			transparent={true}
-			visible={modalIsVisible}
-			onRequestClose={() => {
-				setModalIsVisible(!modalIsVisible);
-				}}>
-            	<View style={styles.centeredView}>
-                	<View style={styles.modalView}>
-                    	<CameraView style={styles.camera} facing={facing} enableTorch={flashStatus} ref={(ref) => (cameraRef.current = ref)}>
-	                   	<SafeAreaView style={styles.settingContainer}>
-	                   		<TouchableOpacity style={styles.settingButton} onPress={toggleFlashStatus}>
-	                   			<FontAwesome name="flash" size={25} color={flashStatus === true ? "#e8be4b" : "white"} />
-	                   		</TouchableOpacity>
-	                   		<TouchableOpacity style={styles.settingButton} onPress={toggleCameraFacing}>
-	                   			<FontAwesome name="rotate-right" size={25} color="white" />
-	                   		</TouchableOpacity>
-	                   	</SafeAreaView>
-	                   </CameraView>
-					    {/* Bottom container with the snap button */}
-						<View style={styles.snapContainer}>
-							<View style={styles.espace}></View>
-								<TouchableOpacity style={styles.snapButton} onPress={takePicture}>
-									<FontAwesome name="circle-thin" size={80} color="gray" />
-								</TouchableOpacity>
-								<TouchableOpacity style={styles.closeModal} onPress={() => setModalIsVisible(false)}>
-								<FontAwesome name='times' size={35} color="gray" opacity={0.8}/>
-								</TouchableOpacity>
-					    	</View>
-                    </View>
-                </View>
-        	</Modal>
+
 				<Text style={styles.head}>Inscrivez-vous</Text>
 				<TextInput
 					placeholder="Username"
-					autoFocus = {true}
+					autoFocus={true}
 					onChangeText={(value) => setUserName(value.trim())}
 					value={username}
 					style={styles.input}
@@ -350,26 +320,58 @@ const takePicture = async () => {
 				)}
 				{postCodeError && <Text style={styles.error}>Invalid postal code</Text>}
 			</View>
-			<View style={styles.pictureConteneur}>
-				<TouchableOpacity onPress={() => handlePhoto()}>
-					<FontAwesome name='camera' size={38} color='#A23D42' />
+				<View style={styles.pictureConteneur}>
+					<TouchableOpacity onPress={() => handlePhoto()}>
+						<FontAwesome name='camera' size={38} color='#A23D42' />
+					</TouchableOpacity>
+					<Image style={styles.avatar} source={{ uri: image }} />
+					<TouchableOpacity onPress={pickImage}>
+						<FontAwesome name='download' size={40} color='#A23D42' />
+					</TouchableOpacity>
+				</View>
+				<Text style={styles.option}>(photo optionnelle)</Text>
+				<TouchableOpacity
+					onPress={() => {
+						handleSignUp();
+					}}
+					style={styles.signUpBtn}
+					activeOpacity={0.8}
+				>
+					{(isLoading) ? <ActivityIndicator style={{ size: 'large', color: '#F1AF5A' }} />
+						: <Text style={styles.clickableBtn}>Let's Go !</Text>}
 				</TouchableOpacity>
- 				<Image style={styles.avatar} source={{uri: image}}/>
-				<TouchableOpacity onPress={pickImage}>
-					<FontAwesome name='download' size={40} color='#A23D42'/>
-				</TouchableOpacity>
-			</View>
-			<Text style={styles.option}>(photo optionnelle)</Text>
-			<TouchableOpacity
-				onPress={() => {
-					handleSignUp();
-				}}
-				style={styles.signUpBtn}
-				activeOpacity={0.8}
-			>
-				{(isLoading) ? <ActivityIndicator style={{ size: 'large', color: '#F1AF5A' }} />
-					: <Text style={styles.clickableBtn}>Let's Go !</Text>}
-			</TouchableOpacity>
+			<Modal
+				animationType="fade"
+				transparent={true}
+				visible={modalIsVisible}
+				onRequestClose={() => {
+					setModalIsVisible(!modalIsVisible);
+				}}>
+				<View style={styles.centeredView}>
+					<View style={styles.modalView}>
+						<CameraView style={styles.camera} facing={facing} enableTorch={flashStatus} ref={(ref) => (cameraRef.current = ref)}>
+							<SafeAreaView style={styles.settingContainer}>
+								<TouchableOpacity style={styles.settingButton} onPress={toggleFlashStatus}>
+									<FontAwesome name="flash" size={25} color={flashStatus === true ? "#e8be4b" : "white"} />
+								</TouchableOpacity>
+								<TouchableOpacity style={styles.settingButton} onPress={toggleCameraFacing}>
+									<FontAwesome name="rotate-right" size={25} color="white" />
+								</TouchableOpacity>
+							</SafeAreaView>
+						</CameraView>
+						{/* Bottom container with the snap button */}
+						<View style={styles.snapContainer}>
+							<View style={styles.espace}></View>
+							<TouchableOpacity style={styles.snapButton} onPress={takePicture}>
+								<FontAwesome name="circle-thin" size={80} color="gray" />
+							</TouchableOpacity>
+							<TouchableOpacity style={styles.closeModal} onPress={() => setModalIsVisible(false)}>
+								<FontAwesome name='times' size={35} color="gray" opacity={0.8} />
+							</TouchableOpacity>
+						</View>
+					</View>
+				</View>
+			</Modal>
 			<StatusBar style="auto" />
 		</KeyboardAvoidingView>
 	);
@@ -415,24 +417,7 @@ const styles = StyleSheet.create({
 		borderRadius: 20,
 		fontSize: 16,
 	},
-	signInBtn: {
-		flex: 0,
-		flexDirection: "row",
-		alignItems: "center",
-		justifyContent: "center",
-		backgroundColor: "#A23D42",
-		width: "80%",
-		height: 50,
-		borderRadius: 20,
-		shadowColor: "black",
-		shadowOpacity: 0.5,
-		elevation: 1,
-		shadowRadius: 1,
-		shadowOffset: { width: 1, height: 4 },
-		borderWidth: 0,
-	},
 	signUpBtn: {
-		flex: 0,
 		flexDirection: "row",
 		alignItems: "center",
 		justifyContent: "center",
@@ -459,7 +444,7 @@ const styles = StyleSheet.create({
 		marginTop: 10,
 		color: "red",
 	},
-// bouton ajouter photo
+	// bouton ajouter photo
 	pictureConteneur: {
 		height: '15%',
 		width: '80%',
@@ -484,9 +469,9 @@ const styles = StyleSheet.create({
 		alignSelf: 'left',
 		color: '#525252',
 		marginLeft: '12%',
-		
+
 	},
- // MODAL STYLE
+	// MODAL STYLE
 	centeredView: {
 		backgroundColor: 'rgba(0, 0, 0, 0.8)',
 		flex: 1,
@@ -506,8 +491,8 @@ const styles = StyleSheet.create({
 		shadowColor: '#000',
 		overflow: 'hidden',
 		shadowOffset: {
-		width: 0,
-		height: 2,
+			width: 0,
+			height: 2,
 		},
 		shadowOpacity: 0.25,
 		shadowRadius: 4,
@@ -528,34 +513,34 @@ const styles = StyleSheet.create({
 		paddingTop: 5,
 		justifyContent: "space-between",
 		overflow: 'hidden',
-		},
-		settingContainer: {
-			flexDirection: "row",
-			justifyContent: "space-between",
-			alignItems: "center",
-			marginHorizontal: '15%',
-		},
-		settingButton: {
-			width: 40,
-			aspectRatio: 1,
-			alignItems: "center",
-			justifyContent: "center",
-		},
-		snapContainer: {
-			flexDirection: "row",
-			justifyContent: "center",
-			alignItems: "center",
-			marginBottom: 20,
-			gap: 60,
-		},
-		snapButton: {
-			width: 100,
-			aspectRatio: 1 / 1,
-			alignItems: "center",
-			justifyContent: 'center',
-			opacity: 0.8,
-		},
-		espace: {
-			width: '10%',
-		}
+	},
+	settingContainer: {
+		flexDirection: "row",
+		justifyContent: "space-between",
+		alignItems: "center",
+		marginHorizontal: '15%',
+	},
+	settingButton: {
+		width: 40,
+		aspectRatio: 1,
+		alignItems: "center",
+		justifyContent: "center",
+	},
+	snapContainer: {
+		flexDirection: "row",
+		justifyContent: "center",
+		alignItems: "center",
+		marginBottom: 20,
+		gap: 60,
+	},
+	snapButton: {
+		width: 100,
+		aspectRatio: 1 / 1,
+		alignItems: "center",
+		justifyContent: 'center',
+		opacity: 0.8,
+	},
+	espace: {
+		width: '10%',
+	}
 });

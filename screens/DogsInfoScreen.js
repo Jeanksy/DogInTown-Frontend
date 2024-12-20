@@ -130,7 +130,7 @@ export default function DogsInfoScreen() {
 					<View style={styles.dogListCont}>
 						{doggies && doggies.length > 0 ? (
 							doggies.map((dog, index) => (
-								<View key={dog.id} style={{ alignItems: "center", gap: "5%" }}>
+								<View key={`${dog.id}-${index}`} style={{ alignItems: "center", gap: "5%" }}>
 									<TouchableOpacity
 										style={[styles.dogListCircle, styles.shadow]}
 										onPress={() => handleDogPress(index)}

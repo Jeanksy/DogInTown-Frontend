@@ -484,7 +484,7 @@ export const CarouselDog = ({
 								},
 							
 							]}
-							resizeMode={"center"}
+							resizeMode={"cover"}
 						/>
 					</Pressable>
 				</Animated.View>
