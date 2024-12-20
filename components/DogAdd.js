@@ -26,6 +26,7 @@ import DropDownPicker from "react-native-dropdown-picker";
 // imagepicker expo pour telechargement photos depuis téléphone
 import * as ImagePicker from "expo-image-picker";
 import * as FileSystem from "expo-file-system"; // pour convertir le fichier en format adapté pour Cloudinary
+import { useFonts } from 'expo-font'; // FONT
 
 const DOG_SIZE_S = "petit";
 const DOG_SIZE_M = "moyen";
@@ -34,6 +35,14 @@ const DOG_SIZE_L = "grand";
 
 
 export const DogAdd = ( {added} ) => {
+	// export de la font
+	useFonts({
+		"LeagueSpartan-Light": require("../assets/fonts/LeagueSpartan-Light.ttf"),
+		"LeagueSpartan-Regular": require("../assets/fonts/LeagueSpartan-Regular.ttf"),
+		"LeagueSpartan-Medium": require("../assets/fonts/LeagueSpartan-Medium.ttf"),
+		"LeagueSpartan-Bold": require("../assets/fonts/LeagueSpartan-Bold.ttf"),
+		});
+		
 	// DropDown Picker
 	const [open, setOpen] = useState(false);
 	const [value, setValue] = useState(null);
@@ -48,6 +57,7 @@ export const DogAdd = ( {added} ) => {
 		{ label: "Bulldog Français", value: "Bulldog Français" },
 		{ label: "Chihuahua", value: "Chihuahua" },
 		{ label: "Beagle", value: "Beagle" },
+		{label: 'Berger des Shetland', value: 'Berger des Shetland'},
 	]);
 
 	// LOADER CHECK

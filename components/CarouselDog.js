@@ -23,6 +23,7 @@ import DropDownPicker from "react-native-dropdown-picker";
 import { CameraCompo } from "../components/CameraCompo";
 import { ElementsText, window } from "../constants/sizes";
 import { withAnchorPoint } from "../utils/anchor-point";
+import { useFonts } from 'expo-font'; // FONT
 
 const colors = ["#F1AF5A", "#FCE9D8", "#F7CC99", '#FFFFFF'];
 
@@ -46,6 +47,14 @@ export const CarouselDog = ({
 	const [imageTaken, setImageTaken] = useState("");
 	const carouselRef = useRef(null);
 
+	// export de la font
+	useFonts({
+		"LeagueSpartan-Light": require("../assets/fonts/LeagueSpartan-Light.ttf"),
+		"LeagueSpartan-Regular": require("../assets/fonts/LeagueSpartan-Regular.ttf"),
+		"LeagueSpartan-Medium": require("../assets/fonts/LeagueSpartan-Medium.ttf"),
+		"LeagueSpartan-Bold": require("../assets/fonts/LeagueSpartan-Bold.ttf"),
+		});
+
 	// DropDown Picker
 	const [open, setOpen] = useState(false);
 	const [value, setValue] = useState(null);
@@ -59,6 +68,7 @@ export const CarouselDog = ({
 		{ label: "Bulldog Français", value: "Bulldog Français" },
 		{ label: "Chihuahua", value: "Chihuahua" },
 		{ label: "Beagle", value: "Beagle" },
+		{label: 'Berger des Shetland', value: 'Berger des Shetland'},
 	]);
 
 	// Etat de la modal
@@ -673,7 +683,8 @@ export const CarouselDog = ({
 								setValue={setValue}
 								onSelectItem={(item) => handleChangeRace(item.value)}
 								textStyle={{
-									fontSize: 18,
+									fontSize: 20,
+									fontFamily: 'LeagueSpartan-Medium',
 								}}
 								setItems={setRaceList}
 								placeholder={"Race"}
@@ -700,7 +711,7 @@ export const CarouselDog = ({
 								onPress={() => setModalDeleteIsVisible(false)}
 							/>
 						</View>
-						<Text style={{ fontSize: 20, fontWeight: 600 }}>
+						<Text style={{ fontSize: 22, fontFamily: 'LeagueSpartan-Bold', }}>
 							Retirer {selectedDog?.name || "Unknown"}?
 						</Text>
 						<TouchableOpacity
@@ -768,13 +779,13 @@ const styles = StyleSheet.create({
 	},
 	dogDetails: {
 		color: "black",
-		fontSize: 18,
-		fontWeight: 600,
+		fontSize: 20,
+		fontFamily: 'LeagueSpartan-Medium',
 	},
 	dogDetailsInputs: {
 		color: "black",
-		fontSize: 17,
-		fontWeight: 500,
+		fontSize: 19,
+		fontFamily: 'LeagueSpartan-Medium',
 		alignSelf: "center",
 	},
 	dogDetailsLocked: {
@@ -782,8 +793,8 @@ const styles = StyleSheet.create({
 		marginBottom: 5,
 		marginLeft: 15,
 		color: "black",
-		fontSize: 19,
-		fontWeight: 500,
+		fontSize: 20,
+		fontFamily: 'LeagueSpartan-Medium',
 		alignSelf: "left",
 		justifyContent: "center",
 	},
@@ -832,8 +843,9 @@ const styles = StyleSheet.create({
 		borderWidth: 0,
 	},
 	deleteTexte: {
-		fontSize: 20,
+		fontSize: 22,
 		color: "#ffffff",
+		fontFamily: 'LeagueSpartan-Medium',
 	},
 });
 

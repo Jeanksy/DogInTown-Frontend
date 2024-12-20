@@ -4,10 +4,18 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { useState, useEffect } from 'react';
 import Comment from '../components/Comment';
 import { useIsFocused } from '@react-navigation/native';
+import { useFonts } from 'expo-font'; // FONT
 
 
 
 export default function CommentsScreen({ route, navigation }) {
+// export de la font
+useFonts({
+    "LeagueSpartan-Light": require("../assets/fonts/LeagueSpartan-Light.ttf"),
+    "LeagueSpartan-Regular": require("../assets/fonts/LeagueSpartan-Regular.ttf"),
+    "LeagueSpartan-Medium": require("../assets/fonts/LeagueSpartan-Medium.ttf"),
+    "LeagueSpartan-Bold": require("../assets/fonts/LeagueSpartan-Bold.ttf"),
+    });
 
     const { name } = route.params;
     const [comments, setComments] = useState([]);
@@ -99,16 +107,17 @@ const styles = StyleSheet.create({
         marginLeft: '5%',
         color: '#5B1A10',
         fontSize: 15,
+        fontFamily: 'LeagueSpartan-Light',
     },
     titlesContainer: {
         width: '100%,',
-        height: '70%',
+        height: '80%',
         padding: '7%',
     },
     placeText: {
         fontSize: 30,
         color: '#5B1A10',
-        fontWeight: 600,
+        fontFamily: 'LeagueSpartan-Bold',
     },
     commentTitleContainer: {
         flexDirection: 'row',
@@ -118,6 +127,7 @@ const styles = StyleSheet.create({
     },
     commentTitle: {
         fontSize: 28,
+        fontFamily: 'LeagueSpartan-Regular',
         marginRight: '30%',
         color: '#A23D42',
     },
@@ -126,7 +136,7 @@ const styles = StyleSheet.create({
         width: 50,
         position: 'absolute',
         top: '80%',
-        left: '93%',
+        left: '90%',
         justifyContent: 'center',
         alignItems: 'center',
     },
@@ -144,8 +154,9 @@ const styles = StyleSheet.create({
         backgroundColor: '#A23D42',
     },
     buttonText: {
-        fontWeight: 700,
-        fontSize: 18,
+        fontFamily: 'LeagueSpartan-Bold',
+        fontSize: 22,
+        marginTop: '2%',
         color: 'white',
     },
 

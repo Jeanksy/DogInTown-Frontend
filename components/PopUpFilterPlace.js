@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { useState, useEffect } from "react";
+import { useFonts } from 'expo-font'; // FONT
 
 const DOG_SIZE_S = "petit";
 const DOG_SIZE_M = "moyen";
@@ -30,6 +31,14 @@ const PopUpFilterPlace = ({
 	const [selectedResto, setSelectedResto] = useState(false);
 	const [selectedBars, setSelectedBars] = useState(false);
 	const [selectedCafe, setSelectedCafe] = useState(false);
+
+	// export de la font
+			useFonts({
+			"LeagueSpartan-Light": require("../assets/fonts/LeagueSpartan-Light.ttf"),
+			"LeagueSpartan-Regular": require("../assets/fonts/LeagueSpartan-Regular.ttf"),
+			"LeagueSpartan-Medium": require("../assets/fonts/LeagueSpartan-Medium.ttf"),
+			"LeagueSpartan-Bold": require("../assets/fonts/LeagueSpartan-Bold.ttf"),
+			});
 
 	// const getComments = async () => {
 	//     const response = await fetch(`https://dog-in-town-backend.vercel.app/places/comments/${friendlyToSee.name}`) //appelle la route avec le nom du lieu en parametre
@@ -55,10 +64,10 @@ const PopUpFilterPlace = ({
 				<Text
 					style={{
 						textAlign: "center",
-						fontWeight: 700,
 						fontSize: 30,
 						color: "#A23D42",
 						height: "10%",
+						fontFamily: 'LeagueSpartan-Bold',
 					}}
 				>
 					Filtres
@@ -188,7 +197,7 @@ const styles = StyleSheet.create({
 	type: {
 		marginTop: "3%",
 		fontSize: 16,
-		fontStyle: "italic",
+		fontFamily: 'LeagueSpartan-Light',
 		color: "#525252",
 	},
 	modalBodyContainer: {
@@ -207,7 +216,7 @@ const styles = StyleSheet.create({
 	texts: {
 		textAlign: "center",
 		fontSize: 16,
-		fontWeight: 500,
+		fontFamily: 'LeagueSpartan-Medium',
 	},
 	encadreText: {
 		justifyContent: "center",
@@ -246,6 +255,7 @@ const styles = StyleSheet.create({
 	},
 	dogPictureText: {
 		fontSize: 20,
+		fontFamily: 'LeagueSpartan-Medium',
 		color: "#5B1A10",
 		marginBottom: "2%",
 	},
@@ -266,8 +276,8 @@ const styles = StyleSheet.create({
 		borderRadius: 12,
 	},
 	textButtonDown: {
-		fontWeight: 700,
-		fontSize: 18,
+		fontFamily: 'LeagueSpartan-Bold',
+		fontSize: 20,
 		color: "white",
 	},
 });
