@@ -8,6 +8,9 @@ export default {
     name: "dogInTown-frontend",
     slug: "dogintown",
     owner: "mistersupraez",
+    android: {
+      "softInputMode": "adjustResize"
+    },
     extra: {
       eas: {
         projectId: "b1ef12f5-49d9-4c9f-90bd-f831155ce39a" 

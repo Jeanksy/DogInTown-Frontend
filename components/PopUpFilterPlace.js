@@ -61,7 +61,7 @@ const PopUpFilterPlace = ({
 						height: "10%",
 					}}
 				>
-					Filter map
+					Filtres
 				</Text>
 				<View style={styles.modalOptions}>
 					<Pressable
