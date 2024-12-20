@@ -66,7 +66,6 @@ useFonts({
                 removeClippedSubviews={true}
             >
                 {sortedComments.map((data, i) => (
-                    console.log(data.user.dogs[0]),
                     <Comment
                         key={i}
                         username={data.user.username}

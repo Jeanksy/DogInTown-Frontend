@@ -115,7 +115,6 @@ const takePicture = async () => {
 		.then((data) => {
 		
 		  if (data.result) {
-			console.log(data.url)
 			setImage(data.url)
 		  } else {
 			console.error('Upload failed:', data.error);

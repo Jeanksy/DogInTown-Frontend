@@ -59,7 +59,6 @@ export default function UserScreen({ navigation }) {
 
 	useEffect(() => {
 		if (imageTaken) {
-			console.log( 'useEffect', imageTaken);
 			setNewPhoto(imageTaken)
 		}
 	}, [imageTaken]);

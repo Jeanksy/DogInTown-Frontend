@@ -117,7 +117,6 @@ export default function MapScreen({ navigation }) {
 			if (isGeoloc && status === "denied") {
 				let data;
 				try {
-					console.log(user.postCode);
 					const response = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?address=${user.postCode}&components=country:FR&key=${API_GOOGLE_KEY}`);
 					if (response.ok) {
 						data = await response.json();
@@ -215,7 +214,6 @@ export default function MapScreen({ navigation }) {
 
 		// Filtre les friendlies dont le nom contient la recherche
 		return friendlies.filter((friendly) => {
-			console.log(friendly.name);
 			return friendly.name.toLowerCase().includes(searchText.toLowerCase()); // Comparaison insensible à la casse
 		});
 	};
@@ -224,7 +222,6 @@ export default function MapScreen({ navigation }) {
 	const searchPlace = async () => {
 		if (!searchText.trim().length) return;
 
-		console.log("Recherche:", searchText);
 		const radius = 10000; // 10000 metres = 10 km autour de position utilisateur
 		const googleApiUrl = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${searchText}bars+cafes+restaurants&location=${currentPosition.latitude},${currentPosition.longitude}&radius=${radius}&key=${API_GOOGLE_KEY}`;
 		setFriendlies(filterFriendlies());
@@ -236,8 +233,6 @@ export default function MapScreen({ navigation }) {
 				const placeData = data.results;
 				setPlaces(placeData); // enregistre la data du lieu recherché dans l'état places
 				setSearchText("");
-			} else {
-				console.log("Pas de résultats trouvé", data.status);
 			}
 		} catch (error) {
 			console.error("Erreur fetch:", error);
