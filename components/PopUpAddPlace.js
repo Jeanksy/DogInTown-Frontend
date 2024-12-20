@@ -14,16 +14,16 @@ const PopUpAddPlace = ({ addPlaceName, placeToAdd, setModalVisible, setPlaces, u
     const [dogSize, setDogSize] = useState('petit'); //taille du chien
     const [firstComment, setFirstComment] = useState(''); //contenu d'un premier commentaire
 
-
-    //Fonction pour ajouter à la BDD un nouveau lieu
-    const handleAddingPlace = async (place) => {
-        // export de la font
-      useFonts({
+    // export de la font
+    useFonts({
         "LeagueSpartan-Light": require("../assets/fonts/LeagueSpartan-Light.ttf"),
         "LeagueSpartan-Regular": require("../assets/fonts/LeagueSpartan-Regular.ttf"),
         "LeagueSpartan-Medium": require("../assets/fonts/LeagueSpartan-Medium.ttf"),
         "LeagueSpartan-Bold": require("../assets/fonts/LeagueSpartan-Bold.ttf"),
         });
+
+    //Fonction pour ajouter à la BDD un nouveau lieu
+    const handleAddingPlace = async (place) => {
 
         try {
           if (firstComment !== '') {
