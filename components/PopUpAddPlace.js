@@ -2,6 +2,7 @@ import React from 'react';
 import { StyleSheet, Pressable, Text, View, TouchableOpacity, Image, TextInput, KeyboardAvoidingView } from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { useState} from 'react';
+import { useFonts } from 'expo-font'; // FONT
 
 
 const DOG_SIZE_S = 'petit';
@@ -16,6 +17,14 @@ const PopUpAddPlace = ({ addPlaceName, placeToAdd, setModalVisible, setPlaces, u
 
     //Fonction pour ajouter à la BDD un nouveau lieu
     const handleAddingPlace = async (place) => {
+        // export de la font
+      useFonts({
+        "LeagueSpartan-Light": require("../assets/fonts/LeagueSpartan-Light.ttf"),
+        "LeagueSpartan-Regular": require("../assets/fonts/LeagueSpartan-Regular.ttf"),
+        "LeagueSpartan-Medium": require("../assets/fonts/LeagueSpartan-Medium.ttf"),
+        "LeagueSpartan-Bold": require("../assets/fonts/LeagueSpartan-Bold.ttf"),
+        });
+
         try {
           if (firstComment !== '') {
             const responseComment = await fetch(`https://dog-in-town-backend.vercel.app/comments`, {
@@ -66,7 +75,7 @@ const PopUpAddPlace = ({ addPlaceName, placeToAdd, setModalVisible, setPlaces, u
     return (
         <KeyboardAvoidingView style={styles.fenetre}>
             <Pressable style={styles.leaveContainer}>
-                <FontAwesome name='times-circle' size={30} color='black' onPress={() => setModalVisible(false)} />
+                <FontAwesome name='times-circle' size={30} color='#5B1A10' onPress={() => setModalVisible(false)} />
             </Pressable>
             <Text style={styles.addModalTitle}>Ce lieu est un espace dog friendly ?</Text>
             <View style={styles.searchBox}>
@@ -125,7 +134,8 @@ const styles = StyleSheet.create({
     },
     buttonContainer: {
         width: '80%',
-        height: 60,
+        height: '10%',
+        BorderRadius: 20,
         backgroundColor: '#FCE9D8',
         justifyContent: 'center',
         alignItems: 'center',
@@ -141,21 +151,21 @@ const styles = StyleSheet.create({
         borderRadius: 100,
     },
     dogSize: {
-        height: 140,
-        // backgroundColor: 'orange',
+        height: '30%',
         justifyContent: 'center',
         alignItems: 'center',
     },
     dogSizeText: {
         marginLeft: 8,
+        marginTop: '5%',
         fontSize: 20,
+        fontFamily: 'LeagueSpartan-Regular',
         color: '#5B1A10',
     },
     dogPicture: {
         height: 310,
         alignItems: 'center',
         justifyContent: 'space-evenly',
-        // backgroundColor: 'red',
         marginTop: 20,
     },
     sizeTextContainer: {
@@ -164,7 +174,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'puprle',
     },
     dogSizeCardContainer: {
-        height: 100,
+        height: '50%',
         width: '100%',
         alignItems: 'center',
         justifyContent: 'space-evenly',
@@ -181,20 +191,22 @@ const styles = StyleSheet.create({
         borderRadius: 15,
     },
     firstCommentTextInput: {
+        padding: '5%',
     },
     addModalTitle: {
-        fontSize: 22,
-        fontWeight: 700,
+        fontSize: 24,
+        fontFamily: 'LeagueSpartan-Bold',
         color: '#5B1A10',
+        marginBottom: '8%',
     },
     buttonLabel: {
-        fontSize: 18,
-        fontWeight: 600,
+        fontSize: 22,
+        fontFamily: 'LeagueSpartan-Bold',
         color: '#5B1A10',
     },
     searchBoxField: {
-        fontSize: 22,
-        fontWeight: 700,
+        fontSize: 25,
+        fontFamily: 'LeagueSpartan-Medium',
     },
 })
 

@@ -1,10 +1,17 @@
 import React from 'react';
 import { StyleSheet, Text, View, Image, } from 'react-native';
-
+import { useFonts } from 'expo-font'; // FONT
 
 
 
 const Comment = ({ avatar, username, race, content, date, dogAvatar }) => {
+       // export de la font
+       useFonts({
+        "LeagueSpartan-Light": require("../assets/fonts/LeagueSpartan-Light.ttf"),
+        "LeagueSpartan-Regular": require("../assets/fonts/LeagueSpartan-Regular.ttf"),
+        "LeagueSpartan-Medium": require("../assets/fonts/LeagueSpartan-Medium.ttf"),
+        "LeagueSpartan-Bold": require("../assets/fonts/LeagueSpartan-Bold.ttf"),
+        });
 
     const dateToFormat = new Date(date);
 
@@ -90,11 +97,12 @@ const styles = StyleSheet.create({
     },
     username: {
         fontSize: 22,
-        fontWeight: 600,
+        fontFamily: 'LeagueSpartan-Bold',
         color: '#A23D42',
     },
     userdogRace: {
-        fontStyle: 'italic',
+        fontFamily: 'LeagueSpartan-Light',
+        fontSize: 17,
         color: '#A23D42',
     },
     commentsPart: {
@@ -103,9 +111,9 @@ const styles = StyleSheet.create({
         padding: '3%',
     },
     commentText: {
-        fontSize: 16,
+        fontSize: 19,
         color: '#525252',
-        fontStyle: 'italic',
+        fontFamily: 'LeagueSpartan-Regular',
     },
     commentDateContainer: {
         top: '95%',
@@ -114,9 +122,9 @@ const styles = StyleSheet.create({
         height: '12%',
     },
     commentDate: {
-        fontStyle: 'italic',
+        fontFamily: 'LeagueSpartan-Light',
         paddingLeft: '4%',
-        fontSize: 13,
+        fontSize: 15,
     }
 })
 

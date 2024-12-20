@@ -2,8 +2,17 @@ import React from "react";
 import { View, Platform, KeyboardAvoidingView, Modal, StyleSheet, TouchableOpacity } from "react-native";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { DogAdd } from "../components/DogAdd";
+import { useFonts } from 'expo-font'; // FONT
 
 export const ModalAdd = ({ visible, onClose, onValidate }) => {
+  // export de la font
+  useFonts({
+    "LeagueSpartan-Light": require("../assets/fonts/LeagueSpartan-Light.ttf"),
+    "LeagueSpartan-Regular": require("../assets/fonts/LeagueSpartan-Regular.ttf"),
+    "LeagueSpartan-Medium": require("../assets/fonts/LeagueSpartan-Medium.ttf"),
+    "LeagueSpartan-Bold": require("../assets/fonts/LeagueSpartan-Bold.ttf"),
+    });
+    
   return (
 	  <Modal
 	  	key={visible}
