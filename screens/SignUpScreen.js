@@ -91,7 +91,7 @@ const toggleFlashStatus = () => {
 
 // Function to take a picture and save it to the reducer store
 const takePicture = async () => {
-	const photo = await cameraRef.current?.takePictureAsync({ quality: 0.5 });
+	const photo = await cameraRef.current?.takePictureAsync({ quality: 0.3 });
   
 	if (!photo?.uri) {
 	  console.error('No photo URI available');
@@ -137,7 +137,7 @@ const takePicture = async () => {
 		  mediaTypes: ['images'],
 		  allowsEditing: true,
 		  aspect: [4, 3],
-		  quality: 1,
+		  quality: 0.3,
 		});
 	  
 		if (!result.canceled) {

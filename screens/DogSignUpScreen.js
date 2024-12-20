@@ -90,7 +90,7 @@ const delay = (ms) => new Promise(res => setTimeout(res, ms));	 /// to set timer
   const takePicture = async () => {
     setIsImageUploading(true);
 
-    const photo = await cameraRef.current?.takePictureAsync({ quality: 0.5 });
+    const photo = await cameraRef.current?.takePictureAsync({ quality: 0.3 });
     console.log('Photo:', photo);
     
     if (!photo?.uri) {
@@ -155,7 +155,7 @@ const delay = (ms) => new Promise(res => setTimeout(res, ms));	 /// to set timer
       mediaTypes: ['images'],
       allowsEditing: true,
       aspect: [4, 3],
-      quality: 1,
+      quality: 0.3,
     });
       
     if (!result.canceled) {

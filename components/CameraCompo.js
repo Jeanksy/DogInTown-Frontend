@@ -38,7 +38,7 @@ export const CameraCompo = ({modalCamIsVisible, setModalCamIsVisible, setImageTa
 
   // Fonction pour prendre une photo
   const takePicture = async () => {
-    const photo = await cameraRef.current?.takePictureAsync({ quality: 0.5 });
+    const photo = await cameraRef.current?.takePictureAsync({ quality: 0.3 });
 
     if (!photo?.uri) {
       console.error('No photo URI available');

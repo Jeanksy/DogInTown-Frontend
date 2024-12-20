@@ -24,7 +24,7 @@ import { CameraCompo } from "../components/CameraCompo";
 import { ElementsText, window } from "../constants/sizes";
 import { withAnchorPoint } from "../utils/anchor-point";
 
-const colors = ["#F1AF5A", "#FCE9D8", "#F7CC99"];
+const colors = ["#F1AF5A", "#FCE9D8", "#F7CC99", '#FFFFFF'];
 
 const DOG_SIZE_S = "Petit";
 const DOG_SIZE_M = "Moyen";
@@ -67,7 +67,8 @@ export const CarouselDog = ({
 	const [modalRaceIsVisible, setModalRaceIsVisible] = useState(false);
 	const [isEditing, setIsEditing] = useState(false);
 	const [modalDeleteIsVisible, setModalDeleteIsVisible] = useState(false);
-	const [activeIndex, setActiveIndex] = useState(0);
+	const [activeIndex, setActiveIndex] = useState(doggies.length > 0 ? doggies.length - 1 : 0);
+
 
 	const baseOptions = {
 		vertical: false,
@@ -76,20 +77,24 @@ export const CarouselDog = ({
 	};
 	// Function to scroll to a specific dog
 	const handleScrollToIndex = (index) => {
+		console.log('Scrolling to index:', index);
 		carouselRef.current?.scrollTo({ index });
-	};
+	  };
 
 	// Expose the scroll function to the parent
 	useEffect(() => {
 		if (
-			scrollToIndex !== null &&
-			scrollToIndex !== undefined &&
-			carouselRef.current
+		  scrollToIndex !== null &&
+		  scrollToIndex !== undefined &&
+		  carouselRef.current &&
+		  scrollToIndex !== activeIndex // Only scroll if the index is different
 		) {
-			carouselRef.current.scrollTo({ index: scrollToIndex });
+		  console.log('Scrolling to index via scrollToIndex:', scrollToIndex);
+		  handleScrollToIndex(scrollToIndex);
+		  setActiveIndex(scrollToIndex);
 		}
-	}, [scrollToIndex]);
-
+	  }, [scrollToIndex]);
+	  
 	// Handlers for modals of editing fields(name, size, race)
 	const openModalName = (dog) => {
 		setSelectedDog(dog);
@@ -250,10 +255,11 @@ export const CarouselDog = ({
 	}, [newPhoto]);
 
 	useEffect(() => {
-		if (doggies.length > 0) {
-			handleScrollToIndex(doggies.length - 1);
+		if (doggies.length > 0 && activeIndex >= doggies.length) {
+		  // If the active index is out of bounds, scroll to the last item
+		  handleScrollToIndex(doggies.length - 1);
 		}
-	}, [doggies.length]);
+	  }, [doggies.length]);
 
 	const Card = memo(({ index, animationValue, dog }) => {
 		const WIDTH = PAGE_WIDTH;
@@ -493,7 +499,7 @@ export const CarouselDog = ({
 				removeClippedSubviews={false}
 				loop={doggies.length !== 1} // desactive la rotation si dog = 1
 				ref={carouselRef}
-				onSnapToItem={(index) => setActiveIndex(index)} // Track l'index actuel et set une valeur pour snapper la vue sur la card
+				onSnapToItem={(index) => { setActiveIndex(index)}} // Track l'index actuel et set une valeur pour snapper la vue sur la card
 				withAnimation={{
 					type: "spring",
 					config: {

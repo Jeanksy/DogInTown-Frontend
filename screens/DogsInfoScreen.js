@@ -42,7 +42,6 @@ export default function DogsInfoScreen() {
 	const [addModalIsVisible, setAddModalIsVisible] = useState(false);
 	const [scrollToIndex, setScrollToIndex] = useState(null);
 
-
 	// LOADER CHECK
 	const delay = (ms) => new Promise((res) => setTimeout(res, ms));
 
@@ -54,28 +53,33 @@ export default function DogsInfoScreen() {
 
 	const handleCloseModal = () => {
 		setAddModalIsVisible(false);
-		updateDoggies();
+		updateDoggies(true);
 	};
 
+	// When pressing a dog, we now only scroll to that dog
+	// and possibly update the doggies without forcing another scroll.
 	const handleDogPress = (key) => {
 		setScrollToIndex(key);
 		setMainDog(doggies[key]);
-		updateDoggies();
+		// Only call updateDoggies if necessary, and do NOT treat it as an adding action
+		updateDoggies(); 
 	};
 
+	// Modified updateDoggies so it only sets scrollToIndex when a dog is actually added
 	const updateDoggies = (isAdding = false) => {
 		setUpdate((previousUpdate) => previousUpdate + 1);
-	
+
 		setTimeout(() => {
 			if (isAdding && doggies.length > 0) {
 				// Scroll to the newly added dog (last one)
 				setScrollToIndex(doggies.length);
-			} else if (doggies.length === 1) {
-				// Scroll to the last remaining dog
+			} else if (!isAdding && doggies.length === 1) {
+				// Scroll to the last remaining dog only if there's one
 				setScrollToIndex(0);
 			}
 		}, 500);
 	};
+
 	const handleRetour = () => {
 		navigation.navigate("TabNavigator", { screen: "Options" });
 	};
@@ -215,7 +219,7 @@ const styles = StyleSheet.create({
 		marginTop: '5%',
 		marginLeft: '5%',
 		alignSelf: 'Left',
-	  },
+	},
 	retourContainer: {
 		flex: 0,
 		alignItems: "flex-end",
@@ -257,7 +261,6 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 	},
 	cadre: {
-		// backgroundColor: 'red',
 		justifyContent: "center",
 		alignItems: "center",
 		borderWidth: 1,
@@ -277,7 +280,6 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 	},
 	close: {
-		// backgroundColor: 'red',
 		height: 30,
 		width: 30,
 		borderRadius: 100,
