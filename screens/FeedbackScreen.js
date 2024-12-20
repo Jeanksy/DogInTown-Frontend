@@ -40,7 +40,7 @@ export default function FeedbackScreen({ route, navigation }) {
     },[selectedDogIndex, comments])
 
     const handleCommentAdd = async() => {
-        if(selectedDogIndex === null && dogs.length > 0){
+        if(selectedDogIndex === null && dogs.length > 0){ //Si l'utilisateur à au moins 1 chien et n'a pas sélectionner de chien
             setError('Veuillez sélectionner un chien.')
             return
         }else if(comment === ''){
