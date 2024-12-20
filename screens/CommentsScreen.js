@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, SafeAreaView, ScrollView, Pressable, Image, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, SafeAreaView, ScrollView, Pressable, TouchableOpacity } from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { useState, useEffect } from 'react';
 import Comment from '../components/Comment';
@@ -17,15 +17,14 @@ useFonts({
     "LeagueSpartan-Bold": require("../assets/fonts/LeagueSpartan-Bold.ttf"),
     });
 
-    const { name } = route.params;
-    const [comments, setComments] = useState([]);
+    const { name } = route.params; //récupérer le nom du lieu via la naviguation
+    const [comments, setComments] = useState([]); //tableau d'objets des commentaire
     const isFocused = useIsFocused();
-    const [sorted, setSorted] = useState(false);
-
-    let commentList = [];
+    const [sorted, setSorted] = useState(false); //état pour gérer le tri des commentaire dans l'ordre chronologique
 
 
 
+    //Récupérer l'ensemble des commentaires d'un lieu
     useEffect(() => {
         (async () => {
             const response = await fetch(`https://dog-in-town-backend.vercel.app/places/comments/${name}`)
@@ -45,7 +44,7 @@ useFonts({
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.upperContent}>
-                <Pressable onPress={() => navigation.goBack()}>
+                <Pressable onPress={() => navigation.navigate('TabNavigator')}>
                     <View style={styles.leaveRow}>
                         <FontAwesome name='arrow-left' size={25} color='#5B1A10' />
                         <Text style={styles.backText}>revenir sur la map</Text>
@@ -66,12 +65,12 @@ useFonts({
                 removeClippedSubviews={true}
             >
                 {sortedComments.map((data, i) => (
-                    <Comment
+                    <Comment //composant commentaire
                         key={i}
                         username={data.user.username}
                         avatar={data.user.avatar}
                         content={data.content}
-                        race={data.user.dogs && data.user.dogs[0] && data.user.dogs[0].race ? data.user.dogs[0].race.toLowerCase() : ''}
+                        race={data.user.dogs && data.user.dogs[0] && data.user.dogs[0].race ? data.user.dogs[0].race.toLowerCase() : ''} 
                         dogAvatar={data.user.dogs && data.user.dogs[0] && data.user.dogs[0].photo ? data.user.dogs[0].photo : ''}
                         date={data.date}
                     />
