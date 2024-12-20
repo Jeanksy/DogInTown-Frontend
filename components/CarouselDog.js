@@ -41,6 +41,8 @@ export const CarouselDog = ({
 	const user = useSelector((state) => state.user.value);
 	const [selectedDog, setSelectedDog] = useState(null);
 	const [newName, setNewName] = useState("");
+	const [newSize, setNewSize] = useState("");
+	const [newRace, setNewRace] = useState("");
 	const [dogSize, setDogSize] = useState("");
 	const [newPhoto, setNewPhoto] = useState("");
 	const [modalCamIsVisible, setModalCamIsVisible] = useState(false);
