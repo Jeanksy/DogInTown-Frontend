@@ -137,7 +137,6 @@ export const CarouselDog = ({
 			.then((res) => res.json())
 			.then((data) => {
 				if (data.result) {
-					alert("Dog name updated!");
 					setNewName("");
 					setModalNameIsVisible(false);
 					updateDoggiesCallBack();
