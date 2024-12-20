@@ -144,7 +144,7 @@ const deleteButton = () => {
                         <Text style={styles.commentsOpenText}>lire les commentaires...</Text>
                     </Pressable>
                     <Pressable onPress={() => { navigation.navigate('Comments', {name : friendlyToSee.name}); setModalFriendlyVisible(false) }}>
-                        <FontAwesome name='caret-down' size={30} color='#A23D42' onPress={() => setModalFriendlyVisible(false)} />
+                        <FontAwesome name='caret-down' size={30} color='#A23D42'/>
                     </Pressable>
                 </View>}
             </View>
