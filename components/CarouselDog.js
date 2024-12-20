@@ -87,7 +87,6 @@ export const CarouselDog = ({
 	};
 	// Function to scroll to a specific dog
 	const handleScrollToIndex = (index) => {
-		console.log('Scrolling to index:', index);
 		carouselRef.current?.scrollTo({ index });
 	  };
 
@@ -99,7 +98,6 @@ export const CarouselDog = ({
 		  carouselRef.current &&
 		  scrollToIndex !== activeIndex // Only scroll if the index is different
 		) {
-		  console.log('Scrolling to index via scrollToIndex:', scrollToIndex);
 		  handleScrollToIndex(scrollToIndex);
 		  setActiveIndex(scrollToIndex);
 		}
@@ -151,7 +149,6 @@ export const CarouselDog = ({
 	const handleChangeSize = (dogSize) => {
 		setNewSize(dogSize);
 		setModalSizeIsVisible(true);
-		console.log("SelectedDog:", selectedDog._id);
 
 		fetch(`https://dog-in-town-backend.vercel.app/users/dog/${user.token}`, {
 			// fetch(`http://192.168.1.60:3000/users/dog/wqUJx2Hd86ZP0nffCdC3HlouzkCnAdEj`, {
@@ -198,7 +195,6 @@ export const CarouselDog = ({
 	};
 
 	const handleDelete = (dog) => {
-		console.log(dog._id);
 		fetch(`https://dog-in-town-backend.vercel.app/users/dog/${user.token}`, {
 			// fetch(`http://172.20.10.6:3000/users/dog/${user.token}`, {
 			method: "DELETE",
@@ -251,7 +247,6 @@ export const CarouselDog = ({
 
 	useEffect(() => {
 		if (imageTaken) {
-			console.log("useEffect", imageTaken);
 			setNewPhoto(imageTaken);
 		}
 	}, [imageTaken]);

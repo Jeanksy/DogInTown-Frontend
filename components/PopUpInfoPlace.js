@@ -66,7 +66,7 @@ const PopUpInfoPlace = ({ friendlyToSee, setModalFriendlyVisible, userLocation, 
     			body: JSON.stringify({ placeId: friendlyToSee._id }),
     		}).then(response => response.json())
             .then(data => {
-                console.log("Favoris ajoutés avec succès:", data);
+
                 setAddFavorite(true); // Met à jour l'état si l'ajout a réussi
             })
             .catch(error => {
@@ -82,7 +82,7 @@ const deleteButton = () => {
         body: JSON.stringify({ placeId: friendlyToSee._id }),
     }).then(response => response.json())
     .then(data => {
-        console.log("Favoris supprimés avec succès:", data);
+
         setAddFavorite(false); // Met à jour l'état si la suppression a réussi
     })
     .catch(error => {

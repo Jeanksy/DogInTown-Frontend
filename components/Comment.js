@@ -26,7 +26,6 @@ const Comment = ({ avatar, username, race, content, date, dogAvatar }) => {
         minute: '2-digit',
     });
 
-    console.log(dogAvatar);
 
     return (
         <View style={styles.commentCard} height={200 + content.length/1.5}>

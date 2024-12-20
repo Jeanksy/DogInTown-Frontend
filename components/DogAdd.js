@@ -138,7 +138,6 @@ export const DogAdd = ( {added} ) => {
 		setIsImageUploading(true);
 
 		const photo = await cameraRef.current?.takePictureAsync({ quality: 0.3 });
-		console.log("Photo:", photo);
 
 		if (!photo?.uri) {
 			console.error("No photo URI available");
@@ -160,7 +159,7 @@ export const DogAdd = ( {added} ) => {
 			})
 				.then((response) => response.json())
 				.then((data) => {
-					console.log("Response Data:", data);
+
 					if (data.result) {
 						setImage(data.url);
 					} else {
@@ -225,9 +224,9 @@ export const DogAdd = ( {added} ) => {
 					})
 						.then((response) => response.json())
 						.then((data) => {
-							console.log("Response Data:", data);
+
 							if (data.result) {
-								console.log("Data URL:", data.url);
+
 								setImage(data.url); // Mise à jour de l'URL de l'image après l'upload
 							} else {
 								console.error("Upload failed:", data.error);
