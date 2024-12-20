@@ -50,7 +50,7 @@ export default function FeedbackScreen({ route, navigation }) {
         const response = await fetch(`https://dog-in-town-backend.vercel.app/comments/add/${name}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ content: comment, token: user.token, size: dogs[selectedDogIndex]}),
+            body: JSON.stringify({ content: comment, token: user.token, size: dogs[selectedDogIndex].size}),
           });
         navigation.navigate('Comments', {name : name, comments : comments});
         setComment('');
