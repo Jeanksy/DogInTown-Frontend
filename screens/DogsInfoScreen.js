@@ -24,6 +24,7 @@ import {
 } from "react-native-reanimated";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { ModalAdd } from "../components/ModalAdd";
+import { useFonts } from 'expo-font'; // FONT
 
 // This is the default configuration
 configureReanimatedLogger({
@@ -41,6 +42,14 @@ export default function DogsInfoScreen() {
 	// Etat de la modal
 	const [addModalIsVisible, setAddModalIsVisible] = useState(false);
 	const [scrollToIndex, setScrollToIndex] = useState(null);
+
+	// export de la font
+	useFonts({
+		"LeagueSpartan-Light": require("../assets/fonts/LeagueSpartan-Light.ttf"),
+		"LeagueSpartan-Regular": require("../assets/fonts/LeagueSpartan-Regular.ttf"),
+		"LeagueSpartan-Medium": require("../assets/fonts/LeagueSpartan-Medium.ttf"),
+		"LeagueSpartan-Bold": require("../assets/fonts/LeagueSpartan-Bold.ttf"),
+		});
 
 	// LOADER CHECK
 	const delay = (ms) => new Promise((res) => setTimeout(res, ms));
@@ -156,7 +165,7 @@ export default function DogsInfoScreen() {
 									onPress={() => handleAdd()}
 								>
 									<Text
-										style={{ fontSize: 40, fontWeight: 600, color: "white" }}
+										style={{ fontSize: 40, fontFamily: 'LeagueSpartan-Bold', color: "white" }}
 									>
 										+
 									</Text>
@@ -192,8 +201,8 @@ const styles = StyleSheet.create({
 		paddingTop: Platform.OS === "android" ? 30 : 0,
 	},
 	textsDogs: {
-		fontSize: 14,
-		fontWeight: 600,
+		fontSize: 19,
+		fontFamily: 'LeagueSpartan-Medium',
 	},
 	shadow: {
 		shadowColor: "black",
@@ -226,9 +235,9 @@ const styles = StyleSheet.create({
 		marginRight: "3%",
 	},
 	dogsTitle: {
-		color: "black",
-		fontSize: 22,
-		fontWeight: 700,
+		color: "#A23D42",
+		fontSize: 30,
+		fontFamily: 'LeagueSpartan-Bold',
 	},
 
 	// AFFICHAGE DOGS
