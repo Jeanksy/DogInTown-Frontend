@@ -24,7 +24,7 @@ const PopUpInfoPlace = ({ friendlyToSee, setModalFriendlyVisible, userLocation, 
 
     // Fonction pour récupérer tous les commentaires d'un lieu
     const getComments = async () => {
-        const response = await fetch(`https://dog-in-town-backend.vercel.app/places/comments/${friendlyToSee.name}`) //appelle la route avec le nom du lieu en parametre
+        const response = await fetch(`https://dog-in-town-backend-three.vercel.app/places/comments/${friendlyToSee.name}`) //appelle la route avec le nom du lieu en parametre
         const result = await response.json()
         setComments(result.comments)
     }
@@ -46,7 +46,7 @@ const PopUpInfoPlace = ({ friendlyToSee, setModalFriendlyVisible, userLocation, 
         useEffect(() => {
             if (isFocused) {
             (async () => {
-                const response = await fetch(`https://dog-in-town-backend.vercel.app/users/favoris/${user.token}`);
+                const response = await fetch(`https://dog-in-town-backend-three.vercel.app/users/favoris/${user.token}`);
                 const data = await response.json();
                 const recherche = data.allPlaces.filter((e) => e._id === friendlyToSee._id)
                 if (recherche.length > 0) {  // si le lieu existe dans les favoris
@@ -60,7 +60,7 @@ const PopUpInfoPlace = ({ friendlyToSee, setModalFriendlyVisible, userLocation, 
 
 //      Fetch pour  ajouter un lieu dans la base de données User *** AJOUTER FAVORIS
     	const handleFavorite = () => {    
-        fetch(`https://dog-in-town-backend.vercel.app/users/addFavoris/${user.token}`, {
+        fetch(`https://dog-in-town-backend-three.vercel.app/users/addFavoris/${user.token}`, {
     			method: 'POST',
     			headers: { 'Content-Type': 'application/json' },
     			body: JSON.stringify({ placeId: friendlyToSee._id }),
@@ -76,7 +76,7 @@ const PopUpInfoPlace = ({ friendlyToSee, setModalFriendlyVisible, userLocation, 
     
     // bouton supprime favoris
 const deleteButton = () => {
-    fetch(`https://dog-in-town-backend.vercel.app/users/deleteFavoris/${user.token}`,{
+    fetch(`https://dog-in-town-backend-three.vercel.app/users/deleteFavoris/${user.token}`,{
       method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ placeId: friendlyToSee._id }),

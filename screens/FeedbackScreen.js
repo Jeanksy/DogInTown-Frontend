@@ -26,7 +26,7 @@ export default function FeedbackScreen({ route, navigation }) {
     const [error, setError] = useState('');
 
     useEffect(() => {
-        fetch(`https://dog-in-town-backend.vercel.app/users/dog/${user.token}`)    //  <<<<< Token dynamique
+        fetch(`https://dog-in-town-backend-three.vercel.app/users/dog/${user.token}`)    //  <<<<< Token dynamique
             .then((response) => response.json())
             .then((data) => {
                 if (data) {
@@ -47,7 +47,7 @@ export default function FeedbackScreen({ route, navigation }) {
             setError('Veuillez remplir le formulaire.')
             return
         }
-        const response = await fetch(`https://dog-in-town-backend.vercel.app/comments/add/${name}`, {
+        const response = await fetch(`https://dog-in-town-backend-three.vercel.app/comments/add/${name}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ content: comment, token: user.token, size: dogs[selectedDogIndex].size}),

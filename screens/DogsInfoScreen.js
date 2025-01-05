@@ -94,7 +94,7 @@ export default function DogsInfoScreen() {
 	};
 
 	useEffect(() => {
-		fetch(`https://dog-in-town-backend.vercel.app/users/dog/${user.token}`)
+		fetch(`https://dog-in-town-backend-three.vercel.app/users/dog/${user.token}`)
 			.then((response) => response.json())
 			.then((data) => {
 				if (data) {

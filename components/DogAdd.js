@@ -153,7 +153,7 @@ export const DogAdd = ( {added} ) => {
 		});
 
 		try {
-			fetch("https://dog-in-town-backend.vercel.app/users/upload", {
+			fetch("https://dog-in-town-backend-three.vercel.app/users/upload", {
 				method: "POST",
 				body: formData,
 			})
@@ -218,7 +218,7 @@ export const DogAdd = ( {added} ) => {
 						base64: fileInfo, // Ajout du fichier encodé en base64
 					});
 
-					fetch("https://dog-in-town-backend.vercel.app/users/upload", {
+					fetch("https://dog-in-town-backend-three.vercel.app/users/upload", {
 						method: "POST",
 						body: formData,
 					})
@@ -254,7 +254,7 @@ export const DogAdd = ( {added} ) => {
 			return;
 		}
 
-		await fetch(`https://dog-in-town-backend.vercel.app/users/dog`, {
+		await fetch(`https://dog-in-town-backend-three.vercel.app/users/dog`, {
 		// await fetch(`http://192.168.1.60:3000/users/dog`, {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },

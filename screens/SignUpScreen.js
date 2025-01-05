@@ -107,7 +107,7 @@ const takePicture = async () => {
 	});
   
 	try {
-	  fetch('https://dog-in-town-backend.vercel.app/users/upload', {
+	  fetch('https://dog-in-town-backend-three.vercel.app/users/upload', {
 		method: "POST",
 		body: formData,
 	  })
@@ -159,7 +159,7 @@ const takePicture = async () => {
 						base64: fileInfo,  // Ajout du fichier encodé en base64
 					});
 
-					fetch('https://dog-in-town-backend.vercel.app/users/upload', {
+					fetch('https://dog-in-town-backend-three.vercel.app/users/upload', {
 						method: "POST",
 						body: formData,
 					})
@@ -218,7 +218,7 @@ const takePicture = async () => {
 	//on press check if email is valid email structure, if both passwords match and post code is valid
 	const handleSignUp = () => {
 		if (isFormValid()) {
-			fetch("https://dog-in-town-backend.vercel.app/users/inscription", {
+			fetch("https://dog-in-town-backend-three.vercel.app/users/inscription", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({

@@ -155,7 +155,7 @@ const delay = (ms) => new Promise(res => setTimeout(res, ms));	 /// to set timer
     });
     
     try {
-      fetch('https://dog-in-town-backend.vercel.app/users/upload', {            //sends photo to the back using POST
+      fetch('https://dog-in-town-backend-three.vercel.app/users/upload', {            //sends photo to the back using POST
         method: "POST",
         body: formData,
       })
@@ -222,7 +222,7 @@ const delay = (ms) => new Promise(res => setTimeout(res, ms));	 /// to set timer
             base64: fileInfo,  // Ajout du fichier encodé en base64
           });
       
-          fetch('https://dog-in-town-backend.vercel.app/users/upload', {
+          fetch('https://dog-in-town-backend-three.vercel.app/users/upload', {
             method: "POST",
             body: formData,
           })
@@ -257,7 +257,7 @@ const delay = (ms) => new Promise(res => setTimeout(res, ms));	 /// to set timer
       return;
     };
     
-    await fetch(`https://dog-in-town-backend.vercel.app/users/dog`, {
+    await fetch(`https://dog-in-town-backend-three.vercel.app/users/dog`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ userToken: user.token, name: dogName, race: selectedRace, photo: image, size: dogSize })

@@ -41,7 +41,7 @@ const PopUpFilterPlace = ({
 			});
 
 	// const getComments = async () => {
-	//     const response = await fetch(`https://dog-in-town-backend.vercel.app/places/comments/${friendlyToSee.name}`) //appelle la route avec le nom du lieu en parametre
+	//     const response = await fetch(`https://dog-in-town-backend-three.vercel.app/places/comments/${friendlyToSee.name}`) //appelle la route avec le nom du lieu en parametre
 	//     const result = await response.json()
 	//     setComments(result.comments)
 	// }

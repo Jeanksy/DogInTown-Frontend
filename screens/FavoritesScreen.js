@@ -26,7 +26,7 @@ export default function FavoritesScreen() {
   useEffect(() => {
     if (isFocused) {
       (async () => {
-        const response = await fetch(`https://dog-in-town-backend.vercel.app/users/favoris/${user.token}`);
+        const response = await fetch(`https://dog-in-town-backend-three.vercel.app/users/favoris/${user.token}`);
         const data = await response.json();
         setResult(data.allPlaces);  // Mise à jour de l'état
       })();
@@ -48,7 +48,7 @@ export default function FavoritesScreen() {
 
 // bouton supprime favoris
 const deleteButton = (idPlace) => {
-fetch(`https://dog-in-town-backend.vercel.app/users/deleteFavoris/${user.token}`,{
+fetch(`https://dog-in-town-backend-three.vercel.app/users/deleteFavoris/${user.token}`,{
   method: 'DELETE',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ placeId: idPlace }),

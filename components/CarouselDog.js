@@ -126,7 +126,7 @@ export const CarouselDog = ({
 	const handleChangeName = () => {
 		setModalNameIsVisible(true);
 
-		fetch(`https://dog-in-town-backend.vercel.app/users/dog/${user.token}`, {
+		fetch(`https://dog-in-town-backend-three.vercel.app/users/dog/${user.token}`, {
 			// fetch(`http://192.168.1.60:3000/users/dog/wqUJx2Hd86ZP0nffCdC3HlouzkCnAdEj`, {
 			method: "PUT",
 			headers: {
@@ -151,7 +151,7 @@ export const CarouselDog = ({
 		setNewSize(dogSize);
 		setModalSizeIsVisible(true);
 
-		fetch(`https://dog-in-town-backend.vercel.app/users/dog/${user.token}`, {
+		fetch(`https://dog-in-town-backend-three.vercel.app/users/dog/${user.token}`, {
 			// fetch(`http://192.168.1.60:3000/users/dog/wqUJx2Hd86ZP0nffCdC3HlouzkCnAdEj`, {
 			method: "PUT",
 			headers: {
@@ -176,7 +176,7 @@ export const CarouselDog = ({
 		setNewRace(dogRace);
 		setModalRaceIsVisible(true);
 
-		fetch(`https://dog-in-town-backend.vercel.app/users/dog/${user.token}`, {
+		fetch(`https://dog-in-town-backend-three.vercel.app/users/dog/${user.token}`, {
 			// fetch(`http://192.168.1.60:3000/users/dog/wqUJx2Hd86ZP0nffCdC3HlouzkCnAdEj`, {
 			method: "PUT",
 			headers: {
@@ -196,7 +196,7 @@ export const CarouselDog = ({
 	};
 
 	const handleDelete = (dog) => {
-		fetch(`https://dog-in-town-backend.vercel.app/users/dog/${user.token}`, {
+		fetch(`https://dog-in-town-backend-three.vercel.app/users/dog/${user.token}`, {
 			// fetch(`http://172.20.10.6:3000/users/dog/${user.token}`, {
 			method: "DELETE",
 			headers: {
@@ -227,7 +227,7 @@ export const CarouselDog = ({
 	};
 
 	const handleUpdatePhoto = () => {
-		fetch(`https://dog-in-town-backend.vercel.app/users/dog/${user.token}`, {
+		fetch(`https://dog-in-town-backend-three.vercel.app/users/dog/${user.token}`, {
 			// fetch(`http://192.168.1.60:3000/users/dog/wqUJx2Hd86ZP0nffCdC3HlouzkCnAdEj`, {
 			method: "PUT",
 			headers: {

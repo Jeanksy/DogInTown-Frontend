@@ -25,7 +25,7 @@ export default function SignInScreen({ navigation }) {
 	const dispatch = useDispatch();  
 
   const handleSignIn = () => {
-  fetch('https://dog-in-town-backend.vercel.app/users/connection', {
+  fetch('https://dog-in-town-backend-three.vercel.app/users/connection', {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({ email: email, password: password }),

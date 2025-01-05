@@ -97,7 +97,7 @@ export default function MapScreen({ navigation }) {
 		}
 		(async () => {
 			const response = await fetch(
-				"https://dog-in-town-backend.vercel.app/places"
+				"https://dog-in-town-backend-three.vercel.app/places"
 			);
 			const result = await response.json();
 			setFriendlies(result.allPlaces);

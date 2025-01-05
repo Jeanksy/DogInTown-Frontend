@@ -46,7 +46,7 @@ export default function UserScreen({ navigation }) {
 
 	//INFO USER ----->Reccupération des infos du user avec le fetch de la route get
 	useEffect(() => {
-		fetch(`https://dog-in-town-backend.vercel.app/users/${user.token}`)
+		fetch(`https://dog-in-town-backend-three.vercel.app/users/${user.token}`)
 			.then((response) => response.json())
 			.then((data) => {
 				if (data.result) {
@@ -83,7 +83,7 @@ export default function UserScreen({ navigation }) {
 
 	//Fonction pour supprimer compte
 	const handleDelete = async () => {
-		const result = await fetch(`https://dog-in-town-backend.vercel.app/users/${user.token}`, {
+		const result = await fetch(`https://dog-in-town-backend-three.vercel.app/users/${user.token}`, {
 			method: 'DELETE',
 			headers: {
 				'Content-Type': 'application/json',
@@ -122,7 +122,7 @@ export default function UserScreen({ navigation }) {
 
 		// Envoyer les données au backend
 		try {
-			const response = await fetch(`https://dog-in-town-backend.vercel.app/users/profil/${user.token}`, {
+			const response = await fetch(`https://dog-in-town-backend-three.vercel.app/users/profil/${user.token}`, {
 				method: "PUT",
 				headers: {
 					"Content-Type": "application/json",

@@ -53,7 +53,7 @@ export const CameraCompo = ({modalCamIsVisible, setModalCamIsVisible, setImageTa
     });
 
     try {
-      const response = await fetch('https://dog-in-town-backend.vercel.app/users/upload', {
+      const response = await fetch('https://dog-in-town-backend-three.vercel.app/users/upload', {
         method: "POST",
         body: formData,
       });

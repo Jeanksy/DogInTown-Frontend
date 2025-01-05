@@ -27,7 +27,7 @@ useFonts({
     //Récupérer l'ensemble des commentaires d'un lieu
     useEffect(() => {
         (async () => {
-            const response = await fetch(`https://dog-in-town-backend.vercel.app/places/comments/${name}`)
+            const response = await fetch(`https://dog-in-town-backend-three.vercel.app/places/comments/${name}`)
             const result = await response.json()
             setComments(result.comments)
         })();

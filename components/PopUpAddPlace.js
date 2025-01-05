@@ -27,13 +27,13 @@ const PopUpAddPlace = ({ addPlaceName, placeToAdd, setModalVisible, setPlaces, u
 
         try {
           if (firstComment !== '') {
-            const responseComment = await fetch(`https://dog-in-town-backend.vercel.app/comments`, {
+            const responseComment = await fetch(`https://dog-in-town-backend-three.vercel.app/comments`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ content: firstComment, token: userToken }),
             });
             const result = await responseComment.json();
-            const responsePlace = await fetch(`https://dog-in-town-backend.vercel.app/places/addPlace`, {
+            const responsePlace = await fetch(`https://dog-in-town-backend-three.vercel.app/places/addPlace`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
@@ -48,7 +48,7 @@ const PopUpAddPlace = ({ addPlaceName, placeToAdd, setModalVisible, setPlaces, u
               }),
             });
           } else {
-            const responsePlace = await fetch(`https://dog-in-town-backend.vercel.app/places/addPlace`, {
+            const responsePlace = await fetch(`https://dog-in-town-backend-three.vercel.app/places/addPlace`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
